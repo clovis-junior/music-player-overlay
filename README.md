@@ -23,5 +23,4 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - Show a music duration *remaining time or a total duration*
 
 ## 👇🏻 Check it out
-- ☕ Buy me a coffe (or energy drink): [Click Here](https://ko-fi.com/clovao).
 - 🧑🏻‍💼 Thats my [LinkedIn](https://www.linkedin.com/in/clovis-junior-/): [Click Here](https://www.linkedin.com/in/clovis-junior-/)!
