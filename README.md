@@ -2,14 +2,16 @@
 Hi, thats a project made only by myself using React, SCSS and love!
 Its a FREE overlay for streaming show current music playing in your favorite platform.
 
+<img src="https://i.imgur.com/ZmmV4PI.png" alt> <img src="https://i.imgur.com/CEydge8.png" alt> <img src="https://i.imgur.com/pXDIxjj.png" alt>
+
 ## 🎥 Supported Streaming Softwares
 - [x] **[Open Broadcast Software (OBS)](https://obsproject.com/)**
-- [x] **xSplit**
-- [ ] **vMix** *(I'm not tested for now)*
+- [x] **[xSplit](https://www.xsplit.com/)**
+- [ ] **[vMix](https://www.vmix.com/)** *(I'm not tested for now)*
 
 ## 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)**
-- [x] **Spotify** *(in Beta for now)*
+- [x] **Spotify** *(In "developer mode" for now)*
 - [ ] **Apple Music**
 - [ ] **Amazon Music**
 
