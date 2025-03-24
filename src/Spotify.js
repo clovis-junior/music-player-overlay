@@ -40,8 +40,6 @@ export async function GetDataFromSpotify() {
 
     const data = await response.json() /*songData*/;
 
-    console.log(data.item);
-
     const isPlaying = data.item.isPlaying;
     const title = data.item.name;
     const artist = data.item.artists.map((artist) => artist.name).join(', ');
