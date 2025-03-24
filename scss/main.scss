@@ -10,6 +10,19 @@
 	}
 }
 
+@include keyframes(waveform-dinamic) {
+	0%, 100% {
+		background-color: #2e1bd6;
+		box-shadow: 0 0 8px 0 #2e1bd6;
+		@include transform(scaleY(1.2));
+	}
+	50% {
+		background-color: #14d444;
+		box-shadow: 0 0 4px 0 #14d444;
+		@include transform(scaleY(0.4));
+	}
+}
+
 .container {
 	width: 100vw;
 	height: 100vh;
@@ -22,8 +35,10 @@
 
 .music-player {
 	$size: 8rem;
-	$background-color: #212121;
-	$font-color: #fff;
+	$radius: 10px;
+
+	--background-color: #0d0d0e;
+	--font-color: #f1eaea;
 
 	pointer-events: none;
 	width: calc(#{$size} * 4);
@@ -34,7 +49,7 @@
 	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	@include user-select(none);
 	@include filter(opacity(0));
-	@include transform(scale(3));
+	@include transform(scale(2));
 	@include transition(all 200ms linear);
 
 	&.show {
@@ -43,17 +58,31 @@
 
 	&:not(.paused) .waveform {
 		animation-name: waveform;
-		animation-direction: alternate;
-		animation-iteration-count: infinite;
+	}
+
+	&.dinamic .waveform {
+		animation-name: waveform-dinamic;
+	}
+
+	&.no-shadow {
+		& .music-cover,
+		& .music-infos {
+			@include box-shadow(0 0 0 0 transparent);
+		}
+	}
+
+	&.square {
+		& .music-cover,
+		& .music-infos {@include border-radius(2px)}
 	}
 
 	& .music-cover,
 	& .music-infos {
-		@include border-radius(10px);
-		background-color: $background-color;
-		color: $font-color;
+		@include border-radius($radius);
+		background-color: var(--background-color);
+		color: var(--font-color);
 		@include backdrop-filter(blur(8px));
-		@include box-shadow(6px 6px 2px 0 rgba(0,0,0,.6));
+		@include box-shadow(6px 6px 2px 0 rgba(0,0,0,.6))
 	}
 
 	& .music-cover {
@@ -141,7 +170,7 @@
 				flex: 1 0;
 				height: 10px;
 				overflow: hidden;
-				@include border-radius(10px);
+				@include border-radius(4px);
 				margin: 0 10px;
 				background-color: rgba(0,0,0,.9);
 				@include backdrop-filter(blur(8px));
@@ -152,8 +181,8 @@
                     width: 0;
 					height: 100%;
 					display: block;
-					@include border-radius(10px);
-					background-color: rgba($font-color,.9);
+					@include border-radius(2px);
+					background-color: var(--font-color);
 					@include transition(width .5s ease);
 				}
 			}
@@ -184,11 +213,13 @@
 				height: 1rem;
 				display: block;
 				@include border-radius(50px);
-				background-color: $font-color;
+				background-color: var(--font-color);
+				box-shadow: 0 0 1px 0 var(--font-color);
+				animation-direction: alternate;
+				animation-iteration-count: infinite;
 				@include transform(scaleY(1));
-				@include transition(all 1s linear);
 
-				@for $i from 0 through 48 {
+				@for $i from 0 through 42 {
 					&:nth-child(#{$i}) {
 						animation-duration: 1s;
 						animation-delay: ($i * 0.2s);

@@ -93,8 +93,27 @@ function Player(props) {
 
   }, [result.isPlaying, props.sleepAfter, sleeping, setSleeping]);
 
+  const playerClasses = [];
+
+  playerClasses.push('music-player');
+
+  if(loaded && !sleeping )
+    playerClasses.push('show');
+
+  if(!result?.isPlaying)
+    playerClasses.push('paused');
+
+  if(props.wavesDinamic)
+    playerClasses.push('dinamic');
+
+  if(props.noShadow)
+    playerClasses.push('no-shadow');
+
+  if(props.squareLayout)
+    playerClasses.push('square');
+
   return (
-    <main className={`music-player ${loaded && !sleeping ? 'show' : ''} ${!result?.isPlaying ? 'paused' : ''}`}>
+    <main className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
           <div className='music-cover'>
             <figure>
@@ -137,8 +156,11 @@ function App() {
         platform={params.get('platform') || 'youtube'}
         sleepAfter={params.get('sleepAfter') || 10}
         waves={parseInt(params.get('waves')) || 0}
+        wavesDinamic={params.has('wavesDinamic')}
         progress={!params.has('hideProgress')}
         remainingTime={params.has('remainingTime')}
+        squareLayout={params.has('squareLayout')}
+        noShadow={params.has('noShadow')}
         showAlbum={!params.has('hideAlbum')}
         solidColor={params.has('solidColor')}
       />
