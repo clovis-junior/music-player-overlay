@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { GetDataFromSpotify } from './Spotify';
-import { GetDataFromYouTubeMusic } from './YouTubeMusic';
+import { GetDataFromSpotify } from './platforms/Spotify';
+import { GetDataFromAppleMusic } from './platforms/AppleMusic';
+import { GetDataFromYouTubeMusic } from './platforms/YouTubeMusic';
 import { ConvertTime } from './Utils';
 import './player.css';
 
@@ -23,6 +24,7 @@ function WaveForms({ number = 8} ) {
 function Player(props) {
   const [result, setResult] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [sleeping, setSleeping] = useState(false);
   
   const musicName = useRef(null);
   const artistName = useRef(null);
@@ -39,21 +41,23 @@ function Player(props) {
     if(!loaded) 
       return;
 
-    var promises;
-
-    switch(props.platform) {
-      case 'spotify':
-        promises = [GetDataFromSpotify()];
-      break;
-      case 'youtube':
-      default:
-        promises = [GetDataFromYouTubeMusic()];
+    async function getResult() {
+      switch(props.platform) {
+        case 'spotify':
+          setResult(await GetDataFromSpotify());
+        break;
+        case 'applemusic':
+        case 'apple':
+          setResult(await GetDataFromAppleMusic());
+        break;
+        case 'youtubemusic':
+        case 'youtube':
+        default:
+          setResult(await GetDataFromYouTubeMusic());
+      }
     }
 
-    Promise.all(promises)
-    .then(results => {
-      setResult(results[0])
-    })
+    getResult()
   });
   
   useEffect(()=> {
@@ -79,8 +83,18 @@ function Player(props) {
     };
   }, [musicNameScrolled, artistNameScrolled]);
 
+  useEffect(()=> {
+    if(!result?.isPlaying) {
+      const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000) || 0);
+
+      return ()=> clearInterval(playerSleep)
+    } else if(result?.isPlaying && sleeping)
+      setSleeping(false);
+
+  }, [result.isPlaying, props.sleepAfter, sleeping, setSleeping]);
+
   return (
-    <main className={`music-player ${loaded ? 'show' : ''} ${!result?.isPlaying ? 'paused' : ''}`}>
+    <main className={`music-player ${loaded && !sleeping ? 'show' : ''} ${!result?.isPlaying ? 'paused' : ''}`}>
       {(props.showAlbum) ? (
           <div className='music-cover'>
             <figure>
@@ -121,6 +135,7 @@ function App() {
     <div className='container'>
       <Player 
         platform={params.get('platform') || 'youtube'}
+        sleepAfter={params.get('sleepAfter') || 10}
         waves={parseInt(params.get('waves')) || 0}
         progress={!params.has('hideProgress')}
         remainingTime={params.has('remainingTime')}

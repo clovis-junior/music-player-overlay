@@ -95,7 +95,7 @@
 			z-index: -1;
 			width: 100%;
 			height: 100%;
-			@include filter(blur(10px) brightness(20%));
+			@include filter(blur(10px) brightness(33%));
 			@include transform(translate(-50%, -50%) scale(2));
 			position: absolute;
 			left: 50%;
@@ -149,12 +149,12 @@
 				& > * {
 					min-width: 0%;
 					max-width: 100%;
-                    width: 0%;
+                    width: 0;
 					height: 100%;
 					display: block;
 					@include border-radius(10px);
 					background-color: rgba($font-color,.9);
-					@include transition(all 1s ease);
+					@include transition(width .5s ease);
 				}
 			}
 

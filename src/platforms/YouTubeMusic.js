@@ -12,7 +12,7 @@ export async function GetDataFromYouTubeMusic() {
     const artist = data.track.author;
     const duration = {
       elapsed: parseInt(data.player.seekbarCurrentPosition) || 0,
-      percentage: parseInt((data.player.seekbarCurrentPosition * 100) / data.track.duration),
+      percentage: (data.player.seekbarCurrentPosition * 100) / data.track.duration,
       remaining: parseInt(data.track.duration - data.player.seekbarCurrentPosition),
       total: parseInt(data.track.duration) || 0
     };

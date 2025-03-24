@@ -12,7 +12,9 @@
 /build
 
 # custom
+/src/Apple.test.json
 /src/Spotify.test.json
+/src/Amazon.test.json
 
 # misc
 .DS_Store

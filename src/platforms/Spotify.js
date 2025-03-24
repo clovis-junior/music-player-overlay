@@ -1,5 +1,5 @@
-// import songData from'./Spotify.test.json';
-import { GetURLParams } from './Utils';
+// import songData from'../Spotify.test.json';
+import { GetURLParams } from '../Utils';
 
 const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
@@ -45,7 +45,7 @@ export async function GetDataFromSpotify() {
     const artist = data.item.artists.map((artist) => artist.name).join(', ');
     const duration = {
         elapsed: parseInt(data.progress_ms / 1000) || 0,
-        percentage: parseInt((data.progress_ms * 100) / data.item.duration_ms) || 0,
+        percentage: (data.progress_ms * 100) / data.item.duration_ms || 0,
         remaining: parseInt((data.item.duration_ms - data.progress_ms) / 1000) || 0,
         total: parseInt(data.item.duration_ms / 1000) || 0
     };
