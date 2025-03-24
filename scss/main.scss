@@ -34,7 +34,7 @@
 	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	@include user-select(none);
 	@include filter(opacity(0));
-	// @include transform(scale(3));
+	@include transform(scale(3));
 	@include transition(all 200ms linear);
 
 	&.show {
