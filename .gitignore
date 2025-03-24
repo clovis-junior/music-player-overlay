@@ -11,6 +11,9 @@
 # production
 /build
 
+# custom
+/src/Spotify.test.json
+
 # misc
 .DS_Store
 .env.local

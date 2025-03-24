@@ -1,0 +1,420 @@
+/*
+ * SCSS Utils Functions
+ * Author:  Clovis Junior
+ * Author URI: https://gist.github.com/clovis-junior/
+ * Version: 1.3.5
+ * License: GNU General Public License v2 or later
+ */
+
+ @mixin selection {
+    ::-moz-selection {
+        @content;
+    }
+    ::selection {
+        @content;
+    }
+}
+
+/* ********************************************************
+    Animations
+******************************************************** */
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+    @-o-keyframes #{$name} {
+        @content;
+    }
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+/* General ------------------------------------------ */
+@mixin animation($value...) {
+    -webkit-animation: $value;
+       -moz-animation: $value;
+         -o-animation: $value;
+            animation: $value;
+}
+
+@mixin animation-name($value: initial) {
+    -webkit-animation-name: $value;
+       -moz-animation-name: $value;
+         -o-animation-name: $value;
+            animation-name: $value;
+}
+
+@mixin animation-direction($value: initial) {
+    -webkit-animation-direction: $value;
+       -moz-animation-direction: $value;
+         -o-animation-direction: $value;
+            animation-direction: $value;
+}
+
+@mixin animation-duration($value: initial) {
+    -webkit-animation-duration: $value;
+       -moz-animation-duration: $value;
+         -o-animation-duration: $value;
+            animation-duration: $value;
+}
+
+@mixin animation-timing-function($value: initial) {
+    -webkit-animation-timing-function: $value;
+       -moz-animation-timing-function: $value;
+         -o-animation-timing-function: $value;
+            animation-timing-function: $value;
+}
+
+@mixin animation-iteration-count($value: initial) {
+    -webkit-animation-iteration-count: $value;
+       -moz-animation-iteration-count: $value;
+         -o-animation-iteration-count: $value;
+            animation-iteration-count: $value;
+}
+
+@mixin animation-fill-mode($value: initial) {
+    -webkit-animation-fill-mode: $value;
+         -o-animation-fill-mode: $value;
+            animation-fill-mode: $value;
+}
+
+@mixin animation-delay($value: initial) {
+    -webkit-animation-delay: $value;
+       -moz-animation-delay: $value;
+         -o-animation-delay: $value;
+            animation-delay: $value;
+}
+
+/* ********************************************************
+    Background Functions
+******************************************************** */
+@mixin linear-gradient($value...) {
+    background-image: -webkit-linear-gradient($value);
+    background-image: -moz-linear-gradient($value);
+    background-image: -o-linear-gradient($value);
+    background-image: linear-gradient($value);
+}
+
+@mixin radial-gradient($value...) {
+    background-image: -webkit-radial-gradient($value);
+    background-image: -moz-radial-gradient($value);
+    background-image: radial-gradient($value);
+}
+
+@mixin conic-gradient($value...) {
+    background-image: conic-gradient($value);
+}
+
+@mixin background-clip($value: initial) {
+    -webkit-background-clip: $value;
+       -moz-background-clip: $value;
+            background-clip: $value;
+}
+
+/* ********************************************************
+    Input
+******************************************************** */
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+    &:-ms-input-placeholder {
+        @content;
+    }
+    &::-moz-placeholder {
+        @content;
+    }
+    &:-moz-placeholder {
+        @content;
+    }
+    &::placeholder {
+        @content;
+    }
+}
+
+@mixin appearance($value: initial) {
+    -webkit-appearance: $value;
+       -moz-appearance: $value;
+            appearance: $value;
+}
+
+/* ********************************************************
+    Grid
+******************************************************** */
+@mixin display-grid {
+    display: -moz-grid;
+    display: -ms-grid;
+    display: grid;
+}
+
+
+/* ********************************************************
+    Flex
+******************************************************** */
+@mixin display-flex {
+    display: -webkit-flex;
+    /*display: -webkit-box;
+    display: -ms-flexbox;
+    display: -moz-box;*/
+    display: flex;
+}
+@mixin display-inline-flex {
+    display: -webkit-inline-flex;
+    /*display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: -moz-inline-box;*/
+    display: inline-flex;
+}
+@mixin flex-order($value: initial) {
+    /*-webkit-box-ordinal-group: $value;
+       -moz-box-ordinal-group: $value;*/
+               -ms-flex-order: $value;
+                -webkit-order: $value;
+                        order: $value;
+}
+@mixin flex($value: initial) {
+    /*-webkit-box-flex: $value; 
+       -moz-box-flex: $value;*/
+        -webkit-flex: $value;
+            -ms-flex: $value;
+                flex: $value;
+}
+@mixin flex-wrap($value: initial) {
+    -ms-flex-wrap: $value;
+        flex-wrap: $value;
+}
+@mixin flex-direction($value: initial) {
+    -ms-flex-direction: $value;
+        flex-direction: $value;
+}
+@mixin flex-justify($value: initial) {
+    //-webkit-box-pack: $value;
+       -ms-flex-pack: $value;
+     justify-content: $value;
+}
+@mixin flex-align($value: initial) {
+    //-webkit-box-align: $value;
+       -ms-flex-align: $value;
+          align-items: $value;
+}
+
+/* ********************************************************
+    Box
+******************************************************** */
+@mixin display-box {
+    display: -webkit-box;
+    display: -moz-box;
+}
+@mixin display-inline-box {
+    display: -webkit-inline-box;
+    display: -moz-inline-box;
+}
+@mixin line-clamp($value: initial) {
+    -webkit-line-clamp: $value;
+            line-clamp: $value;
+}
+@mixin box-orient($value: initial) {
+    -webkit-box-orient: $value;
+       -moz-box-orient: $value;
+}
+
+
+/* ********************************************************
+    Usage
+******************************************************** */
+
+@mixin touch-action($value: initial) {
+    -ms-touch-action: $value;
+        touch-action: $value;
+}
+
+/* ------------------------------------------
+    Border Radius
+   ------------------------------------------
+    Webkit: Safari (3 - 4) | iOS (1 - 3.2)
+    Moz: Firefox (1 - 3.6)
+------------------------------------------ */
+@mixin border-radius($value...) {
+    -webkit-border-radius: $value;
+       -moz-border-radius: $value;
+            border-radius: $value;
+}
+@mixin border-radius-bottom-right($value: 0) {
+    -webkit-border-bottom-right-radius: $value;
+            border-bottom-right-radius: $value;
+}
+@mixin border-radius-bottom-left($value: 0) {
+    -webkit-border-bottom-left-radius: $value;
+            border-bottom-left-radius: $value;
+}
+@mixin border-radius-top-left($value: 0) {
+    -webkit-border-top-left-radius: $value;
+            border-top-left-radius: $value;
+}
+@mixin border-radius-top-right($value: 0) {
+    -webkit-border-top-right-radius: $value;
+            border-top-right-radius: $value;
+}
+
+/* Box Shadow ------------------------------------------ */
+@mixin box-shadow($value...) {
+    -webkit-box-shadow: $value;
+       -moz-box-shadow: $value;
+            box-shadow: $value;
+}
+
+@mixin box-sizing($value: initial) {
+    -webkit-box-sizing: $value;
+       -moz-box-sizing: $value;
+            box-sizing: $value;
+}
+
+@mixin user-select($value: initial) {
+    -webkit-user-select: $value;
+       -moz-user-select: $value;
+            user-select: $value;
+}
+
+@mixin backface-visibility($value: initial) {
+    -webkit-backface-visibility: $value;
+       -moz-backface-visibility: $value;
+            backface-visibility: $value;
+}
+
+/* Filters ------------------------------------------ */
+@mixin backdrop-filter($value: initial) {
+    -webkit-backdrop-filter: $value;
+            backdrop-filter: $value;
+}
+
+@mixin filter($value: initial) {
+    -webkit-filter: $value;
+            filter: $value;
+}
+
+@mixin object-fit($value: cover) {
+    -o-object-fit: $value;
+       object-fit: $value;
+}
+
+/* Transform ------------------------------------------ */
+@mixin transform($value: initial) {
+    -webkit-transform: $value;
+       -moz-transform: $value;
+        -ms-transform: $value;
+         -o-transform: $value;
+            transform: $value;
+}
+@mixin transform-style($value: initial) {
+    -webkit-transform-style: $value;
+            transform-style: $value;
+}
+@mixin transform-origin($value: initial) {
+    -webkit-transform-origin: $value;
+       -moz-transform-origin: $value;
+        -ms-transform-origin: $value;
+         -o-transform-origin: $value;
+            transform-origin: $value;
+}
+@mixin transform-origin-x($value: initial) {
+    -webkit-transform-origin-x: $value;
+        -ms-transform-origin-x: $value;
+}
+@mixin transform-origin-y($value: initial) {
+    -webkit-transform-origin-y: $value;
+        -ms-transform-origin-y: $value;
+}
+@mixin transform-origin-z($value: initial) {
+    -webkit-transform-origin-z: $value;
+        -ms-transform-origin-z: $value;
+}
+
+/* Transition ------------------------------------------ */
+@mixin transition($value...) {
+    -webkit-transition: $value;
+       -moz-transition: $value;
+         -o-transition: $value;
+            transition: $value;
+}
+@mixin transition-property($value) {
+    -webkit-transition-property: $value;
+       -moz-transition-property: $value;
+         -o-transition-property: $value;
+            transition-property: $value;
+}
+@mixin transition-duration($value) {
+    -webkit-transition-duration: $value;
+       -moz-transition-duration: $value;
+         -o-transition-duration: $value;
+            transition-duration: $value;
+}
+@mixin transition-timing-function($value) {
+    -webkit-transition-timing-function: $value;
+       -moz-transition-timing-function: $value;
+         -o-transition-timing-function: $value;
+            transition-timing-function: $value;
+}
+@mixin transition-delay($value) {
+    -webkit-transition-delay: $value;
+       -moz-transition-delay: $value;
+         -o-transition-delay: $value;
+            transition-delay: $value;
+}
+
+/* perspective ------------------------------------------ */
+@mixin perspective($value: initial) {
+    -webkit-perspective: $value;
+       -moz-perspective: $value;
+        -ms-perspective: $value;
+            perspective: $value;
+}
+
+/* Generate Position ------------------------------------------ */
+@mixin position($type: initial, $top: 0, $right: 0, $bottom: $top, $left: $right) {
+    position: $type;
+      bottom: $bottom;
+       right: $right;
+        left: $left;
+         top: $top;
+}
+
+/* Mask ------------------------------------------ */
+@mixin mask-repeat($value: initial) {
+    -webkit-mask-repeat:$value;
+            mask-repeat:$value;
+}
+
+@mixin mask-position($value: initial) {
+    -webkit-mask-position:$value;
+            mask-position:$value;
+}
+
+@mixin mask-type($value: initial) {
+    -webkit-mask-type: $value;
+            mask-type: $value;
+}
+
+@mixin mask-image($value) {
+    -webkit-mask-image: $value;
+            mask-image: $value;
+}
+
+/* ********************************************************
+    Text Functions
+******************************************************** */
+@mixin text-size-adjust($value: initial) {
+    -webkit-text-size-adjust: $value;
+       -moz-text-size-adjust: $value;
+        -ms-text-size-adjust: $value;
+            text-size-adjust: $value;
+}
+
+@mixin text-overflow($value: initial) {
+    -ms-text-overflow: $value;
+     -o-text-overflow: $value;
+        text-overflow: $value;
+}
