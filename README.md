@@ -12,7 +12,11 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 ## 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)**
 - [x] **Spotify** *(In "developer mode" for now)*
+<<<<<<< HEAD
 - [ ] **Apple Music** *(In progress using [Cider](https://cider.sh/))*
+=======
+- [ ] **Apple Music**
+>>>>>>> ca0632c9602177f8d00c04c64060734c95e51567
 - [ ] **Amazon Music**
 
 ## 🎛️ Player Options
