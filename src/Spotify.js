@@ -44,10 +44,10 @@ export async function GetDataFromSpotify() {
     const title = data.item.name;
     const artist = data.item.artists.map((artist) => artist.name).join(', ');
     const duration = {
-        elapsed: (data.progress_ms / 1000) || 0,
-        percentage: (data.progress_ms * 100) / data.item.duration_ms || 0,
+        elapsed: parseInt(data.progress_ms / 1000) || 0,
+        percentage: parseInt((data.progress_ms * 100) / data.item.duration_ms) || 0,
         remaining: parseInt((data.item.duration_ms - data.progress_ms) / 1000) || 0,
-        total: (data.item.duration_ms / 1000) || 0
+        total: parseInt(data.item.duration_ms / 1000) || 0
     };
     const albumCover = data.item.album.images[0].url;
 

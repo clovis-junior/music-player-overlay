@@ -11,10 +11,10 @@ export async function GetDataFromYouTubeMusic() {
     const title = data.track.title;
     const artist = data.track.author;
     const duration = {
-      elapsed: (data.player.seekbarCurrentPosition) || 0,
-      percentage: (data.player.seekbarCurrentPosition * 100) / data.track.duration,
+      elapsed: parseInt(data.player.seekbarCurrentPosition) || 0,
+      percentage: parseInt((data.player.seekbarCurrentPosition * 100) / data.track.duration),
       remaining: parseInt(data.track.duration - data.player.seekbarCurrentPosition),
-      total: (data.track.duration) || 0
+      total: parseInt(data.track.duration) || 0
     };
     const albumCover = data.track.cover;
   
