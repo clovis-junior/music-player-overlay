@@ -44,7 +44,7 @@ export async function GetDataFromSpotify() {
     const title = data.item.name;
     const artist = data.item.artists.map((artist) => artist.name).join(', ');
     const duration = {
-        elapsed: Math.round(data.progress_ms / 1000) || 0,
+        elapsed: Math.floor(data.progress_ms / 1000) || 0,
         percentage: (data.progress_ms * 100) / data.item.duration_ms || 0,
         remaining: Math.round((data.item.duration_ms - data.progress_ms) / 1000) || 0,
         total: Math.round(data.item.duration_ms / 1000) || 0
