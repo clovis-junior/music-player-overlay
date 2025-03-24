@@ -5,11 +5,6 @@ import { GetDataFromYouTubeMusic } from './YouTubeMusic';
 import { ConvertTime } from './Utils';
 import './player.css';
 
-/*
-cd C:\Projetos\stream-your-player | sass --watch scss/main.scss:src/player.css --style compressed -->
-cd C:\Projetos\stream-your-player | npm start --port 80 -->
-*/
-
 function WaveForms({ number = 8} ) {
   let waves = [];
 
