@@ -55,21 +55,8 @@ export function Player(props) {
     });
     
     useEffect(()=> {
-        const musicNameScroll = setInterval(()=> {
-          musicName.current.style.transform = (!musicNameScrolled) 
-          ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
-          : `translateX(0)`;
-  
-          setMusicNameScrolled(!musicNameScrolled);
-        }, 5000);
-  
-        const artistNameScroll = setInterval(()=> {
-          artistName.current.style.transform = (!artistNameScrolled) 
-          ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
-          : `translateX(0)`;
-  
-          setArtistNameScrolled(!artistNameScrolled);
-        }, 5000);
+        const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), 7000);
+        const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), 14000);
   
         return ()=> {
           clearInterval(musicNameScroll);
@@ -111,19 +98,30 @@ export function Player(props) {
               <div className='music-cover-blur' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
             ) : (<></>)}
             <div className='music-info-mask'>
-              <span ref={musicName} id='music-title'>{result?.title}</span>
+              <span ref={musicName} id='music-title' style={{
+                'transform': (!musicNameScrolled) 
+                  ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
+                  : `translateX(0)`
+                }}>{result?.title}</span>
             </div>
             <div className='music-info-mask'>
-              <span ref={artistName} id='music-artist'>{result?.artist}</span>
+              <span ref={artistName} id='music-artist' style={{
+                'transform': (!artistNameScrolled) 
+                ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
+                : `translateX(0)`
+              }}>{result?.artist}</span>
             </div>
-            {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
-            {(!props?.hideProgress || props?.showWaves <= 0) ? (
+            {(props?.hideProgress && props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
+            {(!props?.hideProgress) ? (
             <footer className='music-progress'>
-              <span id='music-time-elapsed'>{ConvertTime(result?.duration?.elapsed)}</span>
+              <div className='music-progress-values'>
+                <span id='music-time-elapsed'>{ConvertTime(result?.duration?.elapsed)}</span>
+                {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
+                <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
+              </div>
               <div className={props?.progressBarColored ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
                 <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
               </div>
-              <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
             </footer>
             ) : (<></>)}
           </aside>

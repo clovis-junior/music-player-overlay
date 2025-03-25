@@ -23,6 +23,15 @@
 	}
 }
 
+@include keyframes(pulse) {
+	0% {
+		@include box-shadow(0 0 0 0 rgba(0,0,0,.2));
+	}
+	100% {
+		@include box-shadow(0 0 0 1rem rgba(0,0,0,0));
+	}
+  }
+
 .container {
 	height: 100vh;
 	@include display-flex;
@@ -35,7 +44,7 @@
 	$size: 8rem;
 	$radius: 10px;
 
-	$bg-color: #0d0d0e;
+	$bg-color: #0d0d0f;
 	$font-color: #f1eaea;
 
 	pointer-events: none;
@@ -80,7 +89,7 @@
 	& .music-cover,
 	& .music-infos {
 		@include border-radius($radius);
-		background-color: rgba($bg-color,.8);
+		background-color: rgba($bg-color,.9);
 		color: $font-color;
 		@include backdrop-filter(blur(8px));
 		@include box-shadow(6px 6px 2px 0 rgba(0,0,0,.6))
@@ -117,8 +126,8 @@
 		flex-direction: column;
 		justify-content: space-around;
 		overflow: hidden;
-		padding: 10px;
-		text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.6);
+		padding: 20px 10px;
+		text-shadow: 1px 1px 1px rgba(0,0,0,.8);
 		position: relative;
 
 		& .music-cover-blur:not(.hidden) {
@@ -134,15 +143,15 @@
 
 		& .music-info-mask {
 			width: 100%;
-			height: 3rem;
 			display: block;
 			overflow: hidden;
-			padding: 4px;
+			padding: 0 4px;
 			@include mask-image(linear-gradient(90deg, transparent 0%, white 6px,white calc(100% - 10px), transparent 100%));
 		}
 
 		& #music-title,
 		& #music-artist {
+			min-height: 2rem;
 			display: block;
 			line-height: 100%;
 			white-space: nowrap;
@@ -161,22 +170,24 @@
 		}
 
 		& .music-progress {
-			max-width: 100%;
-			height: 1rem;
-			@include display-flex;
-			flex-direction: row;
-			flex-wrap: nowrap;
-			justify-content: space-between;
-			align-items: baseline;
-			margin-top: 8px;
+			width: 100%;
+			display: block;
 			padding: 0 4px;
+
+			& .music-progress-values {
+				min-height: 2rem;
+				@include display-flex;
+				flex-direction: row;
+				flex-wrap: nowrap;
+				justify-content: space-between;
+				align-items: center;
+			}
 
 			& .music-progress-bar {
 				flex: 1 0;
 				height: 10px;
 				overflow: hidden;
-				@include border-radius(4px);
-				margin: 0 10px;
+				@include border-radius(50px);
 				background-color: rgba(0,0,0,.9);
 				@include backdrop-filter(blur(8px));
 
@@ -188,10 +199,9 @@
 				& > * {
 					min-width: 0%;
 					max-width: 100%;
-                    width: 0;
 					height: 100%;
 					display: block;
-					@include border-radius(2px);
+					@include border-radius(50px);
 					background-color: $font-color;
 					@include transition(width .5s ease);
 				}
@@ -204,22 +214,19 @@
 				line-height: 1rem;
 				display: block;
 				letter-spacing: 2px;
-				font-weight: 300;
 				font-size: 1rem;
 			}
 		}
 
 		& .music-waveforms {
 			width: 100%;
-			height: 3rem;
 			@include display-flex;
 			flex-direction: row;
 			justify-content: center;
 			align-items: center;
-			overflow: hidden;
 
 			& .waveform {
-				width: 6px;
+				flex: 0 1 4px;
 				height: 1rem;
 				display: block;
 				@include border-radius(50px);

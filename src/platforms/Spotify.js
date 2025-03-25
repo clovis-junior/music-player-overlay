@@ -46,8 +46,6 @@ async function RefreshAccessToken() {
         })
     });
 
-    console.log(await response.json());
-
     if(!response || response.status !== 200)
         return;
 
