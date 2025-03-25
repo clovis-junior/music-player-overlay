@@ -9,54 +9,64 @@ const refreshToken = localStorage.getItem('SpotifyAPIRefreshToken') || null;
 export async function GetAccessToken(code) {
     if(!code) return false;
 
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            'grant_type': 'authorization_code',
-            'redirect_uri': 'http://localhost',
-            'code': code
-        })
-    });
-
-    if(!response || response.status !== 200)
-        return false;
-
-    const data = await response.json();
-
-    localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
-    localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
-
-    return (accessToken && refreshToken) ? true : false
+    try {
+        const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'grant_type': 'authorization_code',
+                'redirect_uri': 'http://localhost',
+                'code': code
+            })
+        });
+    
+        if(response.status !== 200)
+            return false;
+    
+        const data = await response.json();
+    
+        localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
+        localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
+    
+        return (accessToken && refreshToken) ? true : false
+    } catch(err) {
+        console.error(err.message.toString());
+        return false
+    }
 }
 
 async function RefreshAccessToken() {
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            'grant_type': 'refresh_token',
-            'refresh_token': refreshToken,
-            'client_id': clientID
-        })
-    });
-
-    if(!response || response.status !== 200)
-        return;
-
-    const data = await response.json();
-
-    localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
-
-    if (data.refresh_token)
-        localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
-
-    return await GetDataFromSpotify()
+    try {
+        const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'grant_type': 'refresh_token',
+                'refresh_token': refreshToken,
+                'client_id': clientID
+            })
+        });
+    
+        if(!response || response.status !== 200)
+            return;
+    
+        const data = await response.json();
+    
+        localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
+    
+        if (data.refresh_token)
+            localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
+    
+        return await GetDataFromSpotify()
+    } catch(err) {
+        console.error(err.message.toString());
+        return false
+    }
 }
 
 export async function GetDataFromSpotify() {
