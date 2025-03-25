@@ -125,7 +125,7 @@ export function Player(props) {
                 {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
                 <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
               </div>
-              <div className={props?.progressBarColored ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
+              <div className={props?.progressBarWithColor ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
                 <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
               </div>
             </footer>

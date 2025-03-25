@@ -30,7 +30,7 @@ export default function App() {
                 sleepAfter={params.get('sleepAfter') || 10}
                 showWaves={parseInt(params.get('showWaves')) || 0}
                 wavesDinamic={params.has('wavesDinamic')}
-                progressBarColored={params.has('progressBarColored')}
+                progressBarWithColor={params.has('progressBarWithColor')}
                 hideProgress={params.has('hideProgress')}
                 remainingTime={params.has('remainingTime')}
                 squareLayout={params.has('squareLayout')}
