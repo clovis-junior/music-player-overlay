@@ -129,11 +129,11 @@ function Player(props) {
         <div className='music-info-mask'>
           <span ref={artistName} id='music-artist'>{result?.artist}</span>
         </div>
-        {(props.waves > 0) ? (<WaveForms number={props.waves} />) : (<></>)}
-        {(props.progress) ? (
+        {(props.showWaves > 0) ? (<WaveForms number={props.showWaves} />) : (<></>)}
+        {(!props.hideProgress || props.showWaves <= 0) ? (
             <footer className='music-progress'>
               <span id='music-time-elapsed'>{ConvertTime(result?.duration?.elapsed)}</span>
-              <div className='music-progress-bar'>
+              <div className={props.progressBarColored ? `music-progress-bar ${props.platform}` : 'music-progress-bar'}>
                 <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
               </div>
               <span id='music-time-total'>{props.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
@@ -155,9 +155,10 @@ function App() {
       <Player 
         platform={params.get('platform') || 'youtube'}
         sleepAfter={params.get('sleepAfter') || 10}
-        waves={parseInt(params.get('waves')) || 0}
+        showWaves={parseInt(params.get('showWaves')) || 0}
         wavesDinamic={params.has('wavesDinamic')}
-        progress={!params.has('hideProgress')}
+        progressBarColored={params.has('progressBarColored')}
+        hideProgress={params.has('hideProgress')}
         remainingTime={params.has('remainingTime')}
         squareLayout={params.has('squareLayout')}
         noShadow={params.has('noShadow')}
