@@ -3,9 +3,11 @@ export async function GetDataFromYouTubeMusic() {
       method: 'GET'
     });
   
-    if(!response || response.status !== 200)
+    if(!response || response.status !== 200) {
+      console.error('Access denied or invalid');
       return { error: 'Access denied or invalid' };
-  
+    }
+
     const data = await response.json();
     const isPlaying = !data.player.isPaused;
     const title = data.track.title;

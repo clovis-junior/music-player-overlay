@@ -1,46 +1,75 @@
 // import songData from'../Spotify.test.json';
-import { GetURLParams } from '../Utils';
 
-const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
+const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
-var request = null;
+const accessToken = localStorage.getItem('SpotifyAPIAccessToken') || '';
+const refreshToken = localStorage.getItem('SpotifyAPIRefreshToken') || '';
 
-async function GetAccessToken() {
-    const params = GetURLParams();
-
+export async function GetAccessToken(code) {
     const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
-            'Authorization': `Basic ${btoa(`${client_id}:${client_secret}`)}`,
+            'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
             'grant_type': 'authorization_code',
             'redirect_uri': 'http://localhost',
-            'code': params.code
+            'code': code || ''
         })
     });
 
-    return await response.json()
+    if(response.status !== 200)
+        return false;
+
+    const data = await response.json();
+
+    localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
+    localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
+
+    return true
+}
+
+async function RefreshAccessToken() {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'grant_type': 'refresh_token',
+            'refresh_token': refreshToken,
+            'client_id': clientID
+        })
+    });
+
+    const data = await response.json();
+
+    localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
+
+    return await GetDataFromSpotify()
 }
 
 export async function GetDataFromSpotify() {
-    if(!request)
-        request = await GetAccessToken();
-
     const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
         headers: {
-            'Authorization': `Bearer ${request.access_token}`
+            'Authorization': `Bearer ${accessToken}`
         }
     });
 
-    if(!response || response.status !== 200)
-        return { error: 'Access denied or invalid' };
+    if(response.status === 401)
+        return await RefreshAccessToken();
+
+    if(!response || response.status !== 200) {
+        console.error('Access denied');
+        return { error: 'Access denied' };
+    }
 
     const data = await response.json() /*songData*/;
 
-    const isPlaying = data.item.isPlaying;
+    const isPlaying = data.is_playing;
     const title = data.item.name;
     const artist = data.item.artists.map((artist) => artist.name).join(', ');
     const duration = {

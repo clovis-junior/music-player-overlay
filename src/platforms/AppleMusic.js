@@ -12,8 +12,10 @@ export async function GetDataFromAppleMusic() {
       method: 'GET'
     });
   
-    if(!response || response.status !== 200)
+    if(!response || response.status !== 200) {
+      console.error('Access denied or invalid');
       return { error: 'Access denied or invalid' };
+    }
   
     const data = await response.json() /*songData*/;
 
