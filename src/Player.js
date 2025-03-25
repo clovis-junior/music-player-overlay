@@ -92,13 +92,9 @@ export function Player(props) {
     playerClasses.push('music-player');
   
     if(loaded && !sleeping ) playerClasses.push('show');
-  
     if(!result?.isPlaying) playerClasses.push('paused');
-  
     if(props.wavesDinamic) playerClasses.push('dinamic');
-  
     if(props.noShadow) playerClasses.push('no-shadow');
-  
     if(props.squareLayout) playerClasses.push('square');
   
     return (
