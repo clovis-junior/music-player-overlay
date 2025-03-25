@@ -46,7 +46,7 @@
 	@include display-flex;
 	flex-direction: row;
 	align-items: stretch;
-	font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	@include user-select(none);
 	@include filter(opacity(0));
 	@include transform(scale(2));
