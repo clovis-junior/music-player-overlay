@@ -12,7 +12,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 ## 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)**
 - [x] **Spotify** *(In "developer mode" for now)*
-- [ ] **Apple Music** *(In progress using [Cider](https://cider.sh/))*
+- [x] **Apple Music** *(I'm not tested! Necessary [Cider](https://cider.sh/))*
 - [ ] **Amazon Music**
 
 ## 🎛️ Player Options
@@ -22,6 +22,8 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - **Show/Hide** waveforms on player
 - **Show** a music duration *remaining time or a total duration*
 - **Hide** player after determinate seconds of music paused
+
+More options soon...
 
 ## 👇🏻 Check it out
 - 🧑🏻‍💼 Thats my [LinkedIn](https://www.linkedin.com/in/clovis-junior-/): [Click Here](https://www.linkedin.com/in/clovis-junior-/)!
