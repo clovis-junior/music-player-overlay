@@ -86,7 +86,7 @@ export function Player(props) {
   
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
     if(!result?.isPlaying) playerClasses.push('paused');
-    if(props?.wavesDinamic) playerClasses.push('dinamic');
+    if(props?.dinamicWaves) playerClasses.push('dinamic');
     if(props?.noShadow) playerClasses.push('no-shadow');
     if(props?.squareLayout) playerClasses.push('square');
   

@@ -29,7 +29,7 @@ export default function App() {
                 platform={params.get('platform') || 'youtube'}
                 sleepAfter={params.get('sleepAfter') || 10}
                 showWaves={parseInt(params.get('showWaves')) || 0}
-                wavesDinamic={params.has('wavesDinamic')}
+                dinamicWaves={params.has('dinamicWaves')}
                 progressBarWithColor={params.has('progressBarWithColor')}
                 hideProgress={params.has('hideProgress')}
                 remainingTime={params.has('remainingTime')}

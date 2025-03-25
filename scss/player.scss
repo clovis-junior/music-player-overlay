@@ -30,14 +30,18 @@
 	100% {
 		@include box-shadow(0 0 0 1rem rgba(0,0,0,0));
 	}
-  }
+}
+
+
 
 .container {
-	height: 100vh;
+	width: 100vw;
+	min-height: 100vh;
 	@include display-flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+	margin: 0 auto;
 	letter-spacing: 2px;
 	font-family: system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	font-weight: 800;
@@ -55,9 +59,7 @@
 	$font-color: #f1eaea;
 
 	pointer-events: none;
-	width: 100%;
-	height: 100%;
-	max-width: calc(#{$size} * 4);
+	width: calc(#{$size} * 4);
 	max-height: $size;
 	@include display-flex;
 	flex-wrap: nowrap;
@@ -132,7 +134,7 @@
 	}
 
 	& .music-infos {
-		flex: 2 0 calc(100% - #{$size});
+		flex: 2 0 calc(100% - (#{$size} - 1rem));
 		@include display-flex;
 		flex-wrap: nowrap;
 		flex-direction: column;
