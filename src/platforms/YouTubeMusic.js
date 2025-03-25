@@ -1,12 +1,9 @@
 export async function GetDataFromYouTubeMusic() {
-    const response = await fetch('http://192.168.15.152:9863/query', {
-      method: 'GET'
-    });
-  
-    if(!response || response.status !== 200) {
-      console.error('Access denied or invalid');
+  try {
+    const response = await fetch('http://localhost:9863/query');
+
+    if(response.status !== 200)
       return { error: 'Access denied or invalid' };
-    }
 
     const data = await response.json();
     const isPlaying = !data.player.isPaused;
@@ -21,4 +18,7 @@ export async function GetDataFromYouTubeMusic() {
     const albumCover = data.track.cover;
   
     return {isPlaying, title, artist, duration, albumCover}
+  } catch(error) {
+    return { error: error.message.toString() };
+  }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { GetDataFromSpotify } from './platforms/Spotify';
 import { GetDataFromAppleMusic } from './platforms/AppleMusic';
 import { GetDataFromYouTubeMusic } from './platforms/YouTubeMusic';
@@ -54,7 +54,7 @@ export function Player(props) {
       getResult()
     });
     
-    useEffect(()=> {
+    useLayoutEffect(()=> {
         const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), 7000);
         const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), 14000);
   
@@ -64,7 +64,7 @@ export function Player(props) {
         }
     }, [musicNameScrolled, artistNameScrolled]);
   
-    useEffect(()=> {
+    useLayoutEffect(()=> {
       if(!result?.isPlaying) {
         const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000) || 0);
   
@@ -74,8 +74,14 @@ export function Player(props) {
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
-    useEffect(()=> setLoaded(!result?.error), [result, loaded]);
+    useLayoutEffect(()=> setLoaded(!result?.error), [result, loaded]);
   
+    if(result?.error)
+      return (<>{result?.error}</>);
+
+    if(!loaded)
+      return (<>{'Loading...'}</>);
+
     playerClasses.push('music-player');
   
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
@@ -84,7 +90,7 @@ export function Player(props) {
     if(props?.noShadow) playerClasses.push('no-shadow');
     if(props?.squareLayout) playerClasses.push('square');
   
-    return !loaded ? (<div>Loading...</div>) : (
+    return (
       <main className={playerClasses.join(' ')}>
         {(props.showAlbum) ? (
           <div className='music-cover'>

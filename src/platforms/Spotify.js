@@ -60,35 +60,34 @@ async function RefreshAccessToken() {
 }
 
 export async function GetDataFromSpotify() {
-    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    });
-
-    if(!response) {
-        console.error('Invalid request');
-        return { error: 'Invalid request' };
+    try {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+    
+        if(response.status === 401)
+            return await RefreshAccessToken();
+    
+        if(response.status !== 200)
+            return { error: 'Access denied' };
+    
+        const data = await response.json() /*songData*/;
+    
+        const isPlaying = data.is_playing;
+        const title = data.item?.name;
+        const artist = data.item?.artists.map((artist) => artist.name).join(', ');
+        const duration = {
+            elapsed: parseInt(data.progress_ms / 1000) || 0,
+            percentage: (data.progress_ms * 100) / data.item.duration_ms || 0,
+            remaining: parseInt((data.item.duration_ms - data.progress_ms) / 1000) || 0,
+            total: parseInt(data.item.duration_ms / 1000) || 0
+        };
+        const albumCover = data.item.album.images[0].url;
+    
+        return {isPlaying, title, artist, duration, albumCover}
+    } catch(error) {
+        return { error: error.message.toString() };
     }
-
-    if(response.status === 401)
-        return await RefreshAccessToken();
-
-    if(response.status !== 200)
-        return { error: 'Access denied' };
-
-    const data = await response.json() /*songData*/;
-
-    const isPlaying = data.is_playing;
-    const title = data.item?.name;
-    const artist = data.item?.artists.map((artist) => artist.name).join(', ');
-    const duration = {
-        elapsed: parseInt(data.progress_ms / 1000) || 0,
-        percentage: (data.progress_ms * 100) / data.item.duration_ms || 0,
-        remaining: parseInt((data.item.duration_ms - data.progress_ms) / 1000) || 0,
-        total: parseInt(data.item.duration_ms / 1000) || 0
-    };
-    const albumCover = data.item.album.images[0].url;
-
-    return {isPlaying, title, artist, duration, albumCover}
 }

@@ -38,6 +38,13 @@
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+	letter-spacing: 2px;
+	font-family: system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+	font-weight: 800;
+	font-size: 24px;
+	color: #0d0d0f;
+	text-transform: uppercase;
+	@include user-select(none);
 }
 
 .music-player {
@@ -57,10 +64,15 @@
 	flex-direction: row;
 	align-items: stretch;
 	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	text-transform: initial;
 	@include user-select(none);
-	@include filter(opacity(0));
 	@include transform(scale(2));
 	@include transition(filter 200ms);
+
+	&:not(.show) {
+		@include filter(opacity(0));
+	}
 
 	&.show {
 		@include filter(opacity(1));
@@ -214,6 +226,7 @@
 				line-height: 1rem;
 				display: block;
 				letter-spacing: 2px;
+				font-weight: 400;
 				font-size: 1rem;
 			}
 		}

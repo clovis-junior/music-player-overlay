@@ -8,27 +8,27 @@ function GetAlbumCover(url, size = 300) {
 }
 
 export async function GetDataFromAppleMusic() {
-    const response = await fetch('http://192.168.15.152:10767/currentPlayingSong', {
-      method: 'GET'
-    });
+    try {
+      const response = await fetch('http://localhost:10767/currentPlayingSong');
   
-    if(!response || response.status !== 200) {
-      console.error('Access denied or invalid');
-      return { error: 'Access denied or invalid' };
-    }
-  
-    const data = await response.json() /*songData*/;
+      if(response.status !== 200)
+        return { error: 'Access denied or invalid' };
+    
+      const data = await response.json() /*songData*/;
 
-    const isPlaying = !data.info.isPlaying;
-    const title = data.info.name;
-    const artist = data.info.artistName;
-    const duration = {
-      elapsed: parseInt(data.info.currentPlaybackTime) || 0,
-      percentage: (data.info.currentPlaybackProgress * 100),
-      remaining: parseInt((data.info.durationInMillis * 100) - data.info.currentPlaybackTime),
-      total: parseInt(data.info.durationInMillis / 1000) || 0
-    };
-    const albumCover = GetAlbumCover(data.info.artwork.url, data.info.artwork.width) || '';
-  
-    return {isPlaying, title, artist, duration, albumCover}
+      const isPlaying = !data.info.isPlaying;
+      const title = data.info.name;
+      const artist = data.info.artistName;
+      const duration = {
+        elapsed: parseInt(data.info.currentPlaybackTime) || 0,
+        percentage: (data.info.currentPlaybackProgress * 100),
+        remaining: parseInt((data.info.durationInMillis * 100) - data.info.currentPlaybackTime),
+        total: parseInt(data.info.durationInMillis / 1000) || 0
+      };
+      const albumCover = GetAlbumCover(data.info.artwork.url, data.info.artwork.width) || '';
+    
+      return {isPlaying, title, artist, duration, albumCover}
+    } catch(error) {
+      return { error: error.message.toString() };
+    }
 }
