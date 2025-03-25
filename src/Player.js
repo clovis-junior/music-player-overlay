@@ -91,7 +91,7 @@ export function Player(props) {
   
     playerClasses.push('music-player');
   
-    if(loaded && (!sleeping || !result?.isPlaying)) playerClasses.push('show');
+    if((!sleeping || !result?.isPlaying) && loaded) playerClasses.push('show');
     if(!result?.isPlaying) playerClasses.push('paused');
     if(props.wavesDinamic) playerClasses.push('dinamic');
     if(props.noShadow) playerClasses.push('no-shadow');
