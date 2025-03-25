@@ -14,24 +14,30 @@ export default function App() {
         const SpotifyAccess = GetSpotifyAccess();
 
         if(SpotifyAccess)
-            return window.location.href = `${window.location.protocol}//${window.location.host}?platform=spotify`;
+            setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?platform=spotify`, 1000);
+        
+        return (
+            <div className='container'>
+                <h3>Connecting...</h3>
+            </div>
+        )
     }
 
     return (
-    <div className='container'>
-        <Player 
-            platform={params.get('platform') || 'youtube'}
-            sleepAfter={params.get('sleepAfter') || 10}
-            showWaves={parseInt(params.get('showWaves')) || 0}
-            wavesDinamic={params.has('wavesDinamic')}
-            progressBarColored={params.has('progressBarColored')}
-            hideProgress={params.has('hideProgress')}
-            remainingTime={params.has('remainingTime')}
-            squareLayout={params.has('squareLayout')}
-            noShadow={params.has('noShadow')}
-            showAlbum={!params.has('hideAlbum')}
-            solidColor={params.has('solidColor')}
-        />
-    </div>
+        <div className='container'>
+            <Player 
+                platform={params.get('platform') || 'youtube'}
+                sleepAfter={params.get('sleepAfter') || 10}
+                showWaves={parseInt(params.get('showWaves')) || 0}
+                wavesDinamic={params.has('wavesDinamic')}
+                progressBarColored={params.has('progressBarColored')}
+                hideProgress={params.has('hideProgress')}
+                remainingTime={params.has('remainingTime')}
+                squareLayout={params.has('squareLayout')}
+                noShadow={params.has('noShadow')}
+                showAlbum={!params.has('hideAlbum')}
+                solidColor={params.has('solidColor')}
+            />
+        </div>
     )
 }

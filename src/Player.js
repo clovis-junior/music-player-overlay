@@ -32,24 +32,22 @@ export function Player(props) {
 
     const playerClasses = [];
   
-    useEffect(()=> setLoaded(!result?.error || false), [result, loaded]);
-  
     useEffect(()=> {
       if(!loaded) return;
   
       async function getResult() {
         switch(props.platform) {
-            case 'spotify':
-                setResult(await GetDataFromSpotify());
+          case 'spotify':
+            setResult(await GetDataFromSpotify());
             break;
-            case 'applemusic':
-                case 'apple':
+          case 'applemusic':
+          case 'apple':
             setResult(await GetDataFromAppleMusic());
             break;
-            case 'youtubemusic':
-            case 'youtube':
-            default:
-                setResult(await GetDataFromYouTubeMusic());
+          case 'youtubemusic':
+          case 'youtube':
+          default:
+            setResult(await GetDataFromYouTubeMusic());
         }
       }
   
@@ -58,24 +56,24 @@ export function Player(props) {
     
     useEffect(()=> {
         const musicNameScroll = setInterval(()=> {
-            musicName.current.style.transform = (!musicNameScrolled) 
-            ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
-            : `translateX(0)`;
+          musicName.current.style.transform = (!musicNameScrolled) 
+          ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
+          : `translateX(0)`;
   
-            setMusicNameScrolled(!musicNameScrolled);
+          setMusicNameScrolled(!musicNameScrolled);
         }, 5000);
   
         const artistNameScroll = setInterval(()=> {
-            artistName.current.style.transform = (!artistNameScrolled) 
-            ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
-            : `translateX(0)`;
+          artistName.current.style.transform = (!artistNameScrolled) 
+          ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
+          : `translateX(0)`;
   
-            setArtistNameScrolled(!artistNameScrolled);
+          setArtistNameScrolled(!artistNameScrolled);
         }, 5000);
   
         return ()=> {
-            clearInterval(musicNameScroll);
-            clearInterval(artistNameScroll)
+          clearInterval(musicNameScroll);
+          clearInterval(artistNameScroll)
         }
     }, [musicNameScrolled, artistNameScrolled]);
   
@@ -87,46 +85,48 @@ export function Player(props) {
       } else if(result?.isPlaying && sleeping)
         setSleeping(false);
   
-    }, [result.isPlaying, props.sleepAfter, sleeping, setSleeping]);
+    }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
+
+    useEffect(()=> setLoaded(!result?.error), [result, loaded]);
   
     playerClasses.push('music-player');
   
-    if((!sleeping || !result?.isPlaying) && loaded) playerClasses.push('show');
+    if(!sleeping || !result?.isPlaying) playerClasses.push('show');
     if(!result?.isPlaying) playerClasses.push('paused');
-    if(props.wavesDinamic) playerClasses.push('dinamic');
-    if(props.noShadow) playerClasses.push('no-shadow');
-    if(props.squareLayout) playerClasses.push('square');
+    if(props?.wavesDinamic) playerClasses.push('dinamic');
+    if(props?.noShadow) playerClasses.push('no-shadow');
+    if(props?.squareLayout) playerClasses.push('square');
   
-    return (
-    <main className={playerClasses.join(' ')}>
+    return !loaded ? (<div>Loading...</div>) : (
+      <main className={playerClasses.join(' ')}>
         {(props.showAlbum) ? (
-        <div className='music-cover'>
+          <div className='music-cover'>
             <figure>
-                <img id='music-cover' src={result?.albumCover} alt={result?.title} />
+              <img id='music-cover' src={result?.albumCover} alt={result?.title} />
             </figure>
-        </div>
-        ) : (<></>)}
-        <aside className='music-infos'>
-            {(!props.solidColor) ? (
-                <div className='music-cover-blur' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
+          </div>
+          ) : (<></>)}
+          <aside className='music-infos'>
+            {(!props?.solidColor) ? (
+              <div className='music-cover-blur' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
             ) : (<></>)}
             <div className='music-info-mask'>
-                <span ref={musicName} id='music-title'>{result?.title}</span>
+              <span ref={musicName} id='music-title'>{result?.title}</span>
             </div>
             <div className='music-info-mask'>
-                <span ref={artistName} id='music-artist'>{result?.artist}</span>
+              <span ref={artistName} id='music-artist'>{result?.artist}</span>
             </div>
-            {(props.showWaves > 0) ? (<WaveForms number={props.showWaves} />) : (<></>)}
-            {(!props.hideProgress || props.showWaves <= 0) ? (
+            {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
+            {(!props?.hideProgress || props?.showWaves <= 0) ? (
             <footer className='music-progress'>
-                <span id='music-time-elapsed'>{ConvertTime(result?.duration?.elapsed)}</span>
-                <div className={props.progressBarColored ? `music-progress-bar ${props.platform}` : 'music-progress-bar'}>
-                    <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
-                </div>
-                <span id='music-time-total'>{props.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
+              <span id='music-time-elapsed'>{ConvertTime(result?.duration?.elapsed)}</span>
+              <div className={props?.progressBarColored ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
+                <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
+              </div>
+              <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
             </footer>
             ) : (<></>)}
-        </aside>
-    </main>
+          </aside>
+      </main>
     )
 }

@@ -24,33 +24,34 @@
 }
 
 .container {
-	width: 100vw;
 	height: 100vh;
 	@include display-flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	padding: 1rem;
 }
 
 .music-player {
 	$size: 8rem;
 	$radius: 10px;
 
-	--background-color: #0d0d0e;
-	--font-color: #f1eaea;
+	$bg-color: #0d0d0e;
+	$font-color: #f1eaea;
 
 	pointer-events: none;
-	width: calc(#{$size} * 4);
-	height: $size;
+	width: 100%;
+	height: 100%;
+	max-width: calc(#{$size} * 4);
+	max-height: $size;
 	@include display-flex;
+	flex-wrap: nowrap;
 	flex-direction: row;
 	align-items: stretch;
 	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	@include user-select(none);
 	@include filter(opacity(0));
 	@include transform(scale(2));
-	@include transition(all 200ms linear);
+	@include transition(filter 200ms);
 
 	&.show {
 		@include filter(opacity(1));
@@ -79,8 +80,8 @@
 	& .music-cover,
 	& .music-infos {
 		@include border-radius($radius);
-		background-color: var(--background-color);
-		color: var(--font-color);
+		background-color: rgba($bg-color,.8);
+		color: $font-color;
 		@include backdrop-filter(blur(8px));
 		@include box-shadow(6px 6px 2px 0 rgba(0,0,0,.6))
 	}
@@ -124,7 +125,7 @@
 			z-index: -1;
 			width: 100%;
 			height: 100%;
-			@include filter(blur(10px) brightness(33%));
+			@include filter(blur(10px) brightness(33%) opacity(.9));
 			@include transform(translate(-50%, -50%) scale(2));
 			position: absolute;
 			left: 50%;
@@ -191,7 +192,7 @@
 					height: 100%;
 					display: block;
 					@include border-radius(2px);
-					background-color: var(--font-color);
+					background-color: $font-color;
 					@include transition(width .5s ease);
 				}
 			}
@@ -222,8 +223,8 @@
 				height: 1rem;
 				display: block;
 				@include border-radius(50px);
-				background-color: var(--font-color);
-				box-shadow: 0 0 1px 0 var(--font-color);
+				background-color: $font-color;
+				box-shadow: 0 0 1px 0 $font-color;
 				animation-direction: alternate;
 				animation-iteration-count: infinite;
 				@include transform(scaleY(1));

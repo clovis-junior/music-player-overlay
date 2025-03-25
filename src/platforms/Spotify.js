@@ -3,10 +3,12 @@
 const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
-const accessToken = localStorage.getItem('SpotifyAPIAccessToken') || '';
-const refreshToken = localStorage.getItem('SpotifyAPIRefreshToken') || '';
+const accessToken = localStorage.getItem('SpotifyAPIAccessToken') || null;
+const refreshToken = localStorage.getItem('SpotifyAPIRefreshToken') || null;
 
 export async function GetAccessToken(code) {
+    if(!code) return false;
+
     const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
@@ -16,11 +18,11 @@ export async function GetAccessToken(code) {
         body: new URLSearchParams({
             'grant_type': 'authorization_code',
             'redirect_uri': 'http://localhost',
-            'code': code || ''
+            'code': code
         })
     });
 
-    if(response.status !== 200)
+    if(!response || response.status !== 200)
         return false;
 
     const data = await response.json();
@@ -28,14 +30,13 @@ export async function GetAccessToken(code) {
     localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
     localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
 
-    return true
+    return (accessToken && refreshToken) ? true : false
 }
 
 async function RefreshAccessToken() {
     const response = await fetch('https://accounts.spotify.com/api/token', {
         method: 'POST',
         headers: {
-            'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
@@ -45,9 +46,17 @@ async function RefreshAccessToken() {
         })
     });
 
+    console.log(await response.json());
+
+    if(!response || response.status !== 200)
+        return;
+
     const data = await response.json();
 
-    localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
+    localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
+
+    if (data.refresh_token)
+        localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
 
     return await GetDataFromSpotify()
 }
@@ -59,19 +68,22 @@ export async function GetDataFromSpotify() {
         }
     });
 
+    if(!response) {
+        console.error('Invalid request');
+        return { error: 'Invalid request' };
+    }
+
     if(response.status === 401)
         return await RefreshAccessToken();
 
-    if(!response || response.status !== 200) {
-        console.error('Access denied');
+    if(response.status !== 200)
         return { error: 'Access denied' };
-    }
 
     const data = await response.json() /*songData*/;
 
     const isPlaying = data.is_playing;
-    const title = data.item.name;
-    const artist = data.item.artists.map((artist) => artist.name).join(', ');
+    const title = data.item?.name;
+    const artist = data.item?.artists.map((artist) => artist.name).join(', ');
     const duration = {
         elapsed: parseInt(data.progress_ms / 1000) || 0,
         percentage: (data.progress_ms * 100) / data.item.duration_ms || 0,
