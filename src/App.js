@@ -16,11 +16,7 @@ export default function App() {
         if(SpotifyAccess)
             setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?platform=spotify`, 1000);
         
-        return (
-            <div className='container'>
-                <h3>Connecting...</h3>
-            </div>
-        )
+        return (<>Connecting...</>)
     }
 
     const options = new URLSearchParams(atob(params.get('options')));
