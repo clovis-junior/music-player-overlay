@@ -82,26 +82,64 @@ export function Player(props) {
     if(!loaded)
       return (<>{'Loading...'}</>);
 
-    playerClasses.push('music-player');
-  
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
-    if(!result?.isPlaying) playerClasses.push('paused');
-    if(props?.dinamicWaves) playerClasses.push('dinamic');
     if(props?.noShadow) playerClasses.push('no-shadow');
     if(props?.squareLayout) playerClasses.push('square');
+
+    if(props.compact) {
+      playerClasses.push('music-player-compact');
+
+      return (
+        <main className={playerClasses.join(' ')}>
+          {(!props?.solidColor) ? (
+            <div className='music-album-blur-container'>
+              <div className='music-album-art' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
+            </div>
+          ) : (<></>)}
+          {(!props?.hideProgress) ? (
+            <div className={props?.progressBarWithColor ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
+              <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
+            </div>
+            ) : (<></>)}
+          <div className='music-infos'>
+            <div className='music-info-mask'>
+              <span ref={musicName} id='music-title' style={{
+                'transform': (!musicNameScrolled) 
+                ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
+                : `translateX(0)`
+              }}>{result?.title}</span>
+            </div>
+            <div className='music-info-mask'>
+              <span ref={artistName} id='music-artist' style={{
+                'transform': (!artistNameScrolled) 
+                ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
+                : `translateX(0)`
+              }}>{result?.artist}</span>
+            </div>
+          </div>  
+        </main>
+      )
+    }
+
+    playerClasses.push('music-player');
+  
+    if(!result?.isPlaying) playerClasses.push('paused');
+    if(props?.dinamicWaves) playerClasses.push('dinamic');
   
     return (
       <main className={playerClasses.join(' ')}>
         {(props.showAlbum) ? (
-          <div className='music-cover'>
+          <div className='music-album-art'>
             <figure>
-              <img id='music-cover' src={result?.albumCover} alt={result?.title} />
+              <img id='music-album-art' src={result?.albumCover} alt={result?.title} />
             </figure>
           </div>
           ) : (<></>)}
           <aside className='music-infos'>
             {(!props?.solidColor) ? (
-              <div className='music-cover-blur' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
+              <div className='music-album-blur-container'>
+                <div className='music-album-art' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
+              </div>
             ) : (<></>)}
             <div className='music-info-mask'>
               <span ref={musicName} id='music-title' style={{
