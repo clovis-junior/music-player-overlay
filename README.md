@@ -9,20 +9,22 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - [ ] **[vMix](https://www.vmix.com/)** *(I'm not tested for now)*
 
 ## 🎧 Supported Music Platforms
-- [x] **[YouTube Music Desktop](https://ytmdesktop.app/)**
+- [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
 - [x] **Spotify** *(In "developer mode" for now)*
 - [x] **Apple Music** *(I'm not tested! Necessary [Cider](https://cider.sh/))*
 - [ ] **Amazon Music**
 
 ## 🎛️ Player Options
+- Compact Mode
+- Progress bar colored (platform color) or a white color
+- Rounded or square design
+- **Show/Hide** background shadow
 - **Show/Hide** album image
 - **Show/Hide** a blur on background
 - **Show/Hide** a music player progress
-- **Show/Hide** waveforms on player
-- **Show** a music duration *remaining time or a total duration*
+- **Show/Hide** sound waves on player
+- **Show** a *remaining time or a music duration*
 - **Hide** player after determinate seconds of music paused
-
-More options soon...
 
 ## 👇🏻 Check it out
 - 🧑🏻‍💼 Thats my [LinkedIn](https://www.linkedin.com/in/clovis-junior-/): [Click Here](https://www.linkedin.com/in/clovis-junior-/)!
