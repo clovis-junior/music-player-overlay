@@ -33,6 +33,9 @@ export function Player(props) {
     const playerClasses = [];
   
     useEffect(()=> {
+      if(!loaded)
+        return;
+
       async function getResult() {
         switch(props?.platform) {
           case 'spotify':
@@ -54,18 +57,21 @@ export function Player(props) {
     });
     
     useLayoutEffect(()=> {
-        const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), (7 * 1000));
-        const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), (6 * 1000));
+      if(!loaded)
+        return;
+
+      const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), (6 * 1000));
+      const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), (6 * 1000));
   
-        return ()=> {
-          clearInterval(musicNameScroll);
-          clearInterval(artistNameScroll)
-        }
-    }, [musicNameScrolled, artistNameScrolled]);
+      return ()=> {
+        clearInterval(musicNameScroll);
+        clearInterval(artistNameScroll)
+      }
+    }, [loaded, musicNameScrolled, artistNameScrolled]);
   
     useLayoutEffect(()=> {
       if(!result?.isPlaying) {
-        const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000) || 0);
+        const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000));
   
         return ()=> clearInterval(playerSleep)
       } else if(result?.isPlaying && sleeping)
