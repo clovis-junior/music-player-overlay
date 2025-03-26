@@ -17,16 +17,16 @@ export async function GetDataFromAppleMusic() {
     
       const data = await response.json() /*songData*/;
 
-      const isPlaying = !data.info.isPlaying;
-      const title = data.info.name;
-      const artist = data.info.artistName;
+      const isPlaying = !data.info?.isPlaying;
+      const title = data.info?.name;
+      const artist = data.info?.artistName;
       const duration = {
-        elapsed: parseInt(data.info.currentPlaybackTime) || 0,
-        percentage: (data.info.currentPlaybackProgress * 100),
-        remaining: parseInt((data.info.durationInMillis * 100) - data.info.currentPlaybackTime),
-        total: parseInt(data.info.durationInMillis / 1000) || 0
+        elapsed: parseInt(data.info?.currentPlaybackTime) || 0,
+        percentage: (data.info?.currentPlaybackProgress * 100),
+        remaining: parseInt((data.info?.durationInMillis * 100) - data.info?.currentPlaybackTime),
+        total: parseInt(data.info?.durationInMillis / 1000) || 0
       };
-      const albumCover = GetAlbumCover(data.info.artwork.url, data.info.artwork.width) || '';
+      const albumCover = GetAlbumCover(data.info?.artwork.url, data.info?.artwork.width) || '';
     
       return {isPlaying, title, artist, duration, albumCover}
     } catch(error) {

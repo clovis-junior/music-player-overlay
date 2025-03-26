@@ -9,15 +9,15 @@ export async function GetDataFromYouTubeMusic() {
 
     const data = await response.json();
     const isPlaying = !data.player.isPaused;
-    const title = data.track.title;
-    const artist = data.track.author;
+    const title = data.track?.title;
+    const artist = data.track?.author;
     const duration = {
-      elapsed: parseInt(data.player.seekbarCurrentPosition) || 0,
-      percentage: (data.player.seekbarCurrentPosition * 100) / data.track.duration,
-      remaining: parseInt(data.track.duration - data.player.seekbarCurrentPosition),
-      total: parseInt(data.track.duration) || 0
+      elapsed: parseInt(data.player?.seekbarCurrentPosition) || 0,
+      percentage: (data.player?.seekbarCurrentPosition * 100) / data.track?.duration,
+      remaining: parseInt(data.track?.duration - data.player?.seekbarCurrentPosition),
+      total: parseInt(data.track?.duration) || 0
     };
-    const albumCover = data.track.cover;
+    const albumCover = data.track?.cover;
   
     return {isPlaying, title, artist, duration, albumCover}
   } catch(error) {
