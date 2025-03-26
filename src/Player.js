@@ -55,8 +55,8 @@ export function Player(props) {
     });
     
     useLayoutEffect(()=> {
-        const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), 7000);
-        const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), 14000);
+        const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), (7 * 1000));
+        const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), (6 * 1000));
   
         return ()=> {
           clearInterval(musicNameScroll);

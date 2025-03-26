@@ -3,10 +3,10 @@
 
 @include keyframes(waveform) {
 	0%, 100% {
-		@include transform(scaleY(1.2));
+		@include transform(scaleY(.4));
 	}
 	50% {
-		@include transform(scaleY(0.4));
+		@include transform(scaleY(1.2));
 	}
 }
 
@@ -89,11 +89,11 @@ $font-color: #f1eaea;
 	}
 
 	&:not(.paused) .waveform {
-		animation-name: waveform;
+		@include animation-name(waveform);
 	}
 
 	&.dinamic .waveform {
-		animation-name: waveform-dinamic;
+		@include animation-name(waveform-dinamic);
 	}
 
 	&.no-shadow {
@@ -265,20 +265,20 @@ $font-color: #f1eaea;
 			align-items: center;
 
 			& .waveform {
-				flex: 0 1 4px;
+				flex: 0 0 4px;
 				height: 1rem;
 				display: block;
 				@include border-radius(50px);
 				background-color: $font-color;
 				box-shadow: 0 0 1px 0 $font-color;
-				animation-direction: alternate;
-				animation-iteration-count: infinite;
-				@include transform(scaleY(1));
+				@include animation-timing-function(ease-in-out);
+				@include animation-iteration-count(infinite);
+				@include transform(scaleY(.4));
 
 				@for $i from 0 through 42 {
 					&:nth-child(#{$i}) {
-						animation-duration: 1s;
-						animation-delay: ($i * 0.2s);
+						@include animation-duration(1s);
+						@include animation-delay(($i * .1s));
 					}
 				}
 
