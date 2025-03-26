@@ -3,6 +3,11 @@
 const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
+const params = new URLSearchParams(window.location.search);
+
+const refreshToken = localStorage.getItem('SpotifyRefreshToken') || params.get('refreshToken');
+const accessToken = localStorage.getItem('SpotifyAccessToken') || params.get('accessToken');
+
 export async function GetAccessToken(code) {
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -23,6 +28,9 @@ export async function GetAccessToken(code) {
     
         const data = await response.json();
 
+        localStorage.setItem('SpotifyAccessToken', data.access_token);
+        localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
+
         const tokens = {
             'access': data.access_token, 
             'refresh': data.refresh_token
@@ -36,8 +44,6 @@ export async function GetAccessToken(code) {
 }
 
 async function RefreshAccessToken() {
-    const params = new URLSearchParams(window.location.search);
-
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -46,7 +52,7 @@ async function RefreshAccessToken() {
             },
             body: new URLSearchParams({
                 'grant_type': 'refresh_token',
-                'refresh_token': params.get('refreshToken'),
+                'refresh_token': refreshToken,
                 'client_id': clientID
             })
         });
@@ -63,7 +69,7 @@ async function RefreshAccessToken() {
     }
 }
 
-export async function GetDataFromSpotify(accessToken) {
+export async function GetDataFromSpotify() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
