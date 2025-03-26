@@ -226,7 +226,7 @@ $font-color: #f1eaea;
 				height: 10px;
 				overflow: hidden;
 				@include border-radius(50px);
-				background-color: rgba(0,0,0,.9);
+				background-color: rgba($font-color,.4);
 				@include backdrop-filter(blur(8px));
 
 				&.amazon > * { background-color: #0077C1; }
