@@ -1,6 +1,8 @@
+const url = '//192.168.15.152:9863';
+
 export async function GetDataFromYouTubeMusic() {
   try {
-    const response = await fetch('http://localhost:9863/query');
+    const response = await fetch(`${url}/query`);
 
     if(response.status !== 200)
       return { error: 'Access denied or invalid' };

@@ -1,4 +1,5 @@
 // import songData from'../Apple.test.json';
+const url = '//192.168.15.152:10767';
 
 function GetAlbumCover(url, size = 300) {
     const cover = url.replace('{w}', size)
@@ -9,7 +10,7 @@ function GetAlbumCover(url, size = 300) {
 
 export async function GetDataFromAppleMusic() {
     try {
-      const response = await fetch('http://localhost:10767/currentPlayingSong');
+      const response = await fetch(`${url}/currentPlayingSong`);
   
       if(response.status !== 200)
         return { error: 'Access denied or invalid' };

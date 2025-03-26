@@ -23,20 +23,22 @@ export default function App() {
         )
     }
 
+    const options = new URLSearchParams(window.atob(params.get('options')));
+
     return (
         <div className='container'>
             <Player 
-                platform={params.get('platform') || 'youtube'}
-                sleepAfter={params.get('sleepAfter') || 10}
-                showWaves={parseInt(params.get('showWaves')) || 0}
-                dinamicWaves={params.has('dinamicWaves')}
-                progressBarWithColor={params.has('progressBarWithColor')}
-                hideProgress={params.has('hideProgress')}
-                remainingTime={params.has('remainingTime')}
-                squareLayout={params.has('squareLayout')}
-                noShadow={params.has('noShadow')}
-                showAlbum={!params.has('hideAlbum')}
-                solidColor={params.has('solidColor')}
+                platform={options.get('platform') || 'youtube'}
+                sleepAfter={options.get('sleepAfter') || 10}
+                showWaves={parseInt(options.get('showWaves')) || 0}
+                dinamicWaves={options.has('dinamicWaves')}
+                progressBarWithColor={options.has('progressBarWithColor')}
+                hideProgress={options.has('hideProgress')}
+                remainingTime={options.has('remainingTime')}
+                squareLayout={options.has('squareLayout')}
+                noShadow={options.has('noShadow')}
+                showAlbum={!options.has('hideAlbum')}
+                solidColor={options.has('solidColor')}
             />
         </div>
     )
