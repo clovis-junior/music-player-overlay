@@ -13,8 +13,14 @@ export default function App() {
 
         const SpotifyAccess = GetSpotifyAccess();
 
-        if(SpotifyAccess)
-            setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?platform=spotify`, 1000);
+        if(SpotifyAccess) {
+            const params = [];
+            params.push(`platform=spotify`);
+            params.push(`refreshToken=${SpotifyAccess.tokens?.refresh}`);
+            params.push(`accessToken=${SpotifyAccess.tokens?.access}`);
+        }
+
+        setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?${params.join('&')}`, 1000);
         
         return (<>Connecting...</>)
     }

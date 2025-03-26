@@ -3,9 +3,6 @@
 const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
-const accessToken = localStorage.getItem('SpotifyAPIAccessToken') || null;
-const refreshToken = localStorage.getItem('SpotifyAPIRefreshToken') || null;
-
 export async function GetAccessToken(code) {
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -25,11 +22,13 @@ export async function GetAccessToken(code) {
             return false;
     
         const data = await response.json();
-    
-        localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
-        localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
-    
-        return (accessToken && refreshToken) ? true : false
+
+        return {
+            tokens: {
+                access: data.access_token, 
+                refresh: data.refresh_token
+            }
+        }
     } catch(err) {
         console.error(err.message.toString());
         return false
@@ -37,6 +36,8 @@ export async function GetAccessToken(code) {
 }
 
 async function RefreshAccessToken() {
+    const params = new URLSearchParams(window.location.search);
+
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -45,7 +46,7 @@ async function RefreshAccessToken() {
             },
             body: new URLSearchParams({
                 'grant_type': 'refresh_token',
-                'refresh_token': refreshToken,
+                'refresh_token': params.get('refreshToken'),
                 'client_id': clientID
             })
         });
@@ -55,19 +56,14 @@ async function RefreshAccessToken() {
     
         const data = await response.json();
     
-        localStorage.setItem('SpotifyAPIAccessToken', data.access_token);
-    
-        if (data.refresh_token)
-            localStorage.setItem('SpotifyAPIRefreshToken', data.refresh_token);
-    
-        return await GetDataFromSpotify()
+        return await GetDataFromSpotify(data.access_token)
     } catch(err) {
         console.error(err.message.toString());
         return false
     }
 }
 
-export async function GetDataFromSpotify() {
+export async function GetDataFromSpotify(accessToken) {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
