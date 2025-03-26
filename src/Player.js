@@ -74,12 +74,12 @@ export function Player(props) {
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
     useLayoutEffect(()=> setLoaded(!result?.error), [result, loaded]);
-  
-    if(result?.error)
-      return (<>{result?.error}</>);
 
     if(!loaded)
       return (<>{'Loading...'}</>);
+
+    if(result?.error)
+      return (<>{result?.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
     if(props?.noShadow) playerClasses.push('no-shadow');
@@ -100,7 +100,7 @@ export function Player(props) {
               <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
             </div>
             ) : (<></>)}
-          <div className='music-infos'>
+          <div className={props?.textCentered ? 'music-infos centered' : 'music-infos'}>
             <div className='music-info-mask'>
               <span ref={musicName} id='music-title' style={{
                 'transform': (!musicNameScrolled) 

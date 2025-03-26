@@ -26,10 +26,11 @@ export default function App() {
     const options = new URLSearchParams(atob(params.get('options')));
 
     return (
-        <div className='container'>
+        <div className='music-player-container'>
             <Player 
                 platform={params.get('platform') || 'youtube'}
                 compact={options.has('compact')}
+                textCentered={options.has('textCentered')}
                 sleepAfter={options.get('sleepAfter') || 10}
                 showWaves={parseInt(options.get('showWaves')) || 0}
                 dinamicWaves={options.has('dinamicWaves')}
