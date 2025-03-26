@@ -7,8 +7,6 @@ const accessToken = localStorage.getItem('SpotifyAPIAccessToken') || null;
 const refreshToken = localStorage.getItem('SpotifyAPIRefreshToken') || null;
 
 export async function GetAccessToken(code) {
-    if(!code) return false;
-
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -52,7 +50,7 @@ async function RefreshAccessToken() {
             })
         });
     
-        if(!response || response.status !== 200)
+        if(response.status !== 200)
             return;
     
         const data = await response.json();

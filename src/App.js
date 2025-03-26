@@ -28,7 +28,7 @@ export default function App() {
     return (
         <div className='container'>
             <Player 
-                platform={options.get('platform') || 'youtube'}
+                platform={params.get('platform') || 'youtube'}
                 compact={options.has('compact')}
                 sleepAfter={options.get('sleepAfter') || 10}
                 showWaves={parseInt(options.get('showWaves')) || 0}

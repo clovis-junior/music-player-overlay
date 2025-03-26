@@ -33,12 +33,11 @@ export function Player(props) {
     const playerClasses = [];
   
     useEffect(()=> {
-      if(!loaded) return;
-  
       async function getResult() {
-        switch(props.platform) {
+        switch(props?.platform) {
           case 'spotify':
             setResult(await GetDataFromSpotify());
+            console.log(await GetDataFromSpotify());
             break;
           case 'applemusic':
           case 'apple':
@@ -131,14 +130,14 @@ export function Player(props) {
         {(props.showAlbum) ? (
           <div className='music-album-art'>
             <figure>
-              <img id='music-album-art' src={result?.albumCover} alt={result?.title} />
+              <img id='music-album-art' src={result.albumCover} alt={result.title} />
             </figure>
           </div>
           ) : (<></>)}
           <aside className='music-infos'>
             {(!props?.solidColor) ? (
               <div className='music-album-blur-container'>
-                <div className='music-album-art' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
+                <div className='music-album-art' style={{'backgroundImage': `url(${result.albumCover})`}}></div>
               </div>
             ) : (<></>)}
             <div className='music-info-mask'>
@@ -159,12 +158,12 @@ export function Player(props) {
             {(!props?.hideProgress) ? (
             <footer className='music-progress'>
               <div className='music-progress-values'>
-                <span id='music-time-elapsed'>{ConvertTime(result?.duration?.elapsed)}</span>
+                <span id='music-time-elapsed'>{ConvertTime(result.duration?.elapsed)}</span>
                 {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
-                <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>
+                <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
               </div>
               <div className={props?.progressBarWithColor ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
-                <div id='music-progress-bar' style={{'width': `${result?.duration?.percentage}%`}} />
+                <div id='music-progress-bar' style={{'width': `${result.duration?.percentage}%`}} />
               </div>
             </footer>
             ) : (<></>)}
