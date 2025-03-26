@@ -25,7 +25,7 @@
 
 @include keyframes(pulse) {
 	0% {
-		@include box-shadow(0 0 0 0 rgba(0,0,0,.2));
+		@include box-shadow(0 0 0 0 rgba(0,0,0,.6));
 	}
 	100% {
 		@include box-shadow(0 0 0 1rem rgba(0,0,0,0));
@@ -45,6 +45,15 @@ $size: 8rem;
 $radius: 10px;
 $bg-color: #0d0d0f;
 $font-color: #f1eaea;
+
+html {
+    @include text-size-adjust(100%);
+}
+body {
+	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
 
 .music-player-container {
 	width: 100vw;
@@ -263,10 +272,15 @@ $font-color: #f1eaea;
 	text-transform: initial;
 	text-shadow: 1px 1px 1px rgba(0,0,0,.8);
 	@include box-shadow(6px 6px 2px 0 rgba(0,0,0,.6));
+	@include animation(pulse 1s infinite);
 	position: relative;
 
 	&.no-shadow {
 		@include box-shadow(0 0 0 0 transparent);
+	}
+
+	&.no-pulse {
+		@include animation(unset);
 	}
 
 	&.square {
@@ -377,7 +391,7 @@ $font-color: #f1eaea;
 
 .music-progress-bar {
 	& > * {
-		@include transition(all 5s linear);
+		@include transition(all 500ms linear);
 	}
 	&.amazon > * { background-color: #0077C1; }
 	&.apple > * { background-color: #fc3c44; }

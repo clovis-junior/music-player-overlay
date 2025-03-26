@@ -26,6 +26,7 @@ export default function App() {
             <Player 
                 platform={params.get('platform') || 'youtube'}
                 compact={options.has('compact')}
+                noPulse={options.has('noPulse')}
                 textCentered={options.has('textCentered')}
                 sleepAfter={options.get('sleepAfter') || 10}
                 showWaves={parseInt(options.get('showWaves')) || 0}
