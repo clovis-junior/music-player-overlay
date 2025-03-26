@@ -71,14 +71,17 @@ async function RefreshAccessToken() {
 
 export async function GetDataFromSpotify() {
     try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+        const response = await fetch('https://api.spotify.com/v1/me/player', {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }
         });
     
-        if(response.status !== 200)
+        if(response.status === 401)
             return await RefreshAccessToken();
+    
+        if(response.status !== 200)
+            return { error: 'Access denied' };
     
         const data = await response.json() /*songData*/;
     

@@ -134,14 +134,14 @@ export function Player(props) {
         {(props.showAlbum) ? (
           <div className='music-album-art'>
             <figure>
-              <img id='music-album-art' src={result.albumCover} alt={result.title} />
+              <img id='music-album-art' src={result?.albumCover} alt={result?.title} />
             </figure>
           </div>
           ) : (<></>)}
           <aside className='music-infos'>
             {(!props?.solidColor) ? (
               <div className='music-album-blur-container'>
-                <div className='music-album-art' style={{'backgroundImage': `url(${result.albumCover})`}}></div>
+                <div className='music-album-art' style={{'backgroundImage': `url(${result?.albumCover})`}}></div>
               </div>
             ) : (<></>)}
             <div className='music-info-mask'>
