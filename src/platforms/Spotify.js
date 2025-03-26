@@ -77,11 +77,8 @@ export async function GetDataFromSpotify() {
             }
         });
     
-        if(response.status === 401)
-            return await RefreshAccessToken();
-    
         if(response.status !== 200)
-            return { error: 'Access denied' };
+            return await RefreshAccessToken();
     
         const data = await response.json() /*songData*/;
     
