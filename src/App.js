@@ -23,7 +23,7 @@ export default function App() {
         )
     }
 
-    const options = new URLSearchParams(window.atob(params.get('options')));
+    const options = new URLSearchParams(atob(params.get('options')));
 
     return (
         <div className='container'>
