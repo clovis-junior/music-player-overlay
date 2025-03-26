@@ -97,7 +97,7 @@ $font-color: #f1eaea;
 	}
 
 	&.no-shadow {
-		& .music-cover,
+		& .music-album-art,
 		& .music-infos {
 			@include box-shadow(0 0 0 0 transparent);
 		}
