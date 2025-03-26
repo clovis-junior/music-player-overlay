@@ -30,17 +30,14 @@ export function Player(props) {
     const [musicNameScrolled, setMusicNameScrolled] = useState(false);
     const [artistNameScrolled, setArtistNameScrolled] = useState(false);
 
+    const params = new URLSearchParams(window.location.search);
     const playerClasses = [];
   
     useEffect(()=> {
-      if(!loaded)
-        return;
-
       async function getResult() {
         switch(props?.platform) {
           case 'spotify':
-            setResult(await GetDataFromSpotify());
-            console.log(await GetDataFromSpotify());
+            setResult(await GetDataFromSpotify(params.get('accessToken')));
             break;
           case 'applemusic':
           case 'apple':
@@ -55,6 +52,10 @@ export function Player(props) {
   
       getResult()
     });
+
+    useEffect(()=> {
+      setLoaded(result);
+    }, [result]);
     
     useLayoutEffect(()=> {
       if(!loaded)
@@ -79,12 +80,10 @@ export function Player(props) {
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
-    useLayoutEffect(()=> setLoaded(!result?.error), [result, loaded]);
-
     if(!loaded)
       return (<>{'Loading...'}</>);
 
-    if(result?.error)
+    else if(result?.error)
       return (<>{result?.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');

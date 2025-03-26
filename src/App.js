@@ -8,20 +8,18 @@ export default function App() {
 
     if(params.has('code')) {
         async function GetSpotifyAccess() {
-            return await GetAccessToken(params.get('code'));
+            const SpotifyAccess = await GetAccessToken(params.get('code'));
+
+            const redirectParams = [];
+            redirectParams.push(`platform=spotify`);
+            redirectParams.push(`refreshToken=${SpotifyAccess.refresh || ''}`);
+            redirectParams.push(`accessToken=${SpotifyAccess.access || ''}`);
+
+            setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?${redirectParams.join('&')}`, 1000);
         }
 
-        const SpotifyAccess = GetSpotifyAccess();
+        GetSpotifyAccess();
 
-        if(SpotifyAccess) {
-            const params = [];
-            params.push(`platform=spotify`);
-            params.push(`refreshToken=${SpotifyAccess.tokens?.refresh}`);
-            params.push(`accessToken=${SpotifyAccess.tokens?.access}`);
-        }
-
-        setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?${params.join('&')}`, 1000);
-        
         return (<>Connecting...</>)
     }
 

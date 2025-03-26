@@ -19,19 +19,19 @@ export async function GetAccessToken(code) {
         });
     
         if(response.status !== 200)
-            return false;
+            return {};
     
         const data = await response.json();
 
-        return {
-            tokens: {
-                access: data.access_token, 
-                refresh: data.refresh_token
-            }
-        }
+        const tokens = {
+            'access': data.access_token, 
+            'refresh': data.refresh_token
+        };
+
+        return tokens
     } catch(err) {
         console.error(err.message.toString());
-        return false
+        return {}
     }
 }
 
