@@ -71,9 +71,10 @@ async function RefreshAccessToken() {
 
 export async function GetDataFromSpotify() {
     try {
-        const response = await fetch('https://api.spotify.com/v1/me/player', {
+        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
             }
         });
     
@@ -98,6 +99,7 @@ export async function GetDataFromSpotify() {
     
         return {isPlaying, title, artist, duration, albumCover}
     } catch(error) {
+        setTimeout(()=> GetDataFromSpotify(), 3000);
         return { error: error.message.toString() };
     }
 }
