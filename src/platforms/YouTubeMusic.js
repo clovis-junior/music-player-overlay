@@ -1,8 +1,12 @@
-const url = '//192.168.15.152:9863';
+const url = '//127.0.0.1:9863';
 
 export async function GetDataFromYouTubeMusic() {
   try {
-    const response = await fetch(`${url}/query`);
+    const response = await fetch(`${url}/query`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 
     if(response.status !== 200)
       return { error: 'Access denied or invalid' };
