@@ -99,7 +99,6 @@ export async function GetDataFromSpotify() {
     
         return {isPlaying, title, artist, duration, albumCover}
     } catch(error) {
-        setTimeout(()=> GetDataFromSpotify(), 3000);
         return { error: error.message.toString() };
     }
 }
