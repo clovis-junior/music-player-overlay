@@ -1,6 +1,6 @@
 // import songData from'../Apple.test.json';
 import { URLValidade } from '../Utils';
-const url = '//127.0.0.1:10767';
+const url = 'http://127.0.0.1:10767';
 
 function GetAlbumCover(url, size) {
     if(URLValidade(url))
@@ -15,6 +15,7 @@ function GetAlbumCover(url, size) {
 export async function GetDataFromAppleMusic() {
     try {
         const response = await fetch(`${url}/currentPlayingSong`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
