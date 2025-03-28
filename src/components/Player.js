@@ -80,7 +80,7 @@ export function Player(props) {
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
     if(!loaded)
-      return (<>{'Loading...'}</>);
+      return (<span className='loading'>Loading</span>);
     
     if(result?.error)
       return (<>{result?.error}</>);

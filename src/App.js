@@ -20,7 +20,7 @@ export default function App() {
 
         GetSpotifyAccess();
 
-        return (<>Connecting...</>)
+        return (<span className='loading'>Connecting</span>)
     }
 
     const options = new URLSearchParams(atob(params.get('options')));
