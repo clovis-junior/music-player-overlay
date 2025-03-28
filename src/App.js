@@ -23,34 +23,26 @@ export default function App() {
         return (<>Connecting...</>)
     }
 
+    const options = new URLSearchParams(atob(params.get('options')));
+
     return (
-        <div className='container'>
-            <div className='box'>
-                teste
-            </div>
+        <div className='music-player-container'>
+            <Player 
+                platform={params.get('platform') || 'youtube'}
+                compact={options.has('compact')}
+                noPulse={options.has('noPulse')}
+                textCentered={options.has('textCentered')}
+                sleepAfter={options.get('sleepAfter') || 10}
+                showWaves={parseInt(options.get('showWaves')) || 0}
+                dinamicWaves={options.has('dinamicWaves')}
+                progressBarWithColor={options.has('progressBarWithColor')}
+                hideProgress={options.has('hideProgress')}
+                remainingTime={options.has('remainingTime')}
+                squareLayout={options.has('squareLayout')}
+                noShadow={options.has('noShadow')}
+                showAlbum={!options.has('hideAlbum')}
+                solidColor={options.has('solidColor')}
+            />
         </div>
     )
-
-    // const options = new URLSearchParams(atob(params.get('options')));
-
-    // return (
-    //     <div className='music-player-container'>
-    //         <Player 
-    //             platform={params.get('platform') || 'youtube'}
-    //             compact={options.has('compact')}
-    //             noPulse={options.has('noPulse')}
-    //             textCentered={options.has('textCentered')}
-    //             sleepAfter={options.get('sleepAfter') || 10}
-    //             showWaves={parseInt(options.get('showWaves')) || 0}
-    //             dinamicWaves={options.has('dinamicWaves')}
-    //             progressBarWithColor={options.has('progressBarWithColor')}
-    //             hideProgress={options.has('hideProgress')}
-    //             remainingTime={options.has('remainingTime')}
-    //             squareLayout={options.has('squareLayout')}
-    //             noShadow={options.has('noShadow')}
-    //             showAlbum={!options.has('hideAlbum')}
-    //             solidColor={options.has('solidColor')}
-    //         />
-    //     </div>
-    // )
 }

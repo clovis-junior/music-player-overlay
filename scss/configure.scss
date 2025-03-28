@@ -22,7 +22,7 @@ $rate-good: #1daf4e;
 $rate-medium: #f6b828;
 $rate-bad: #ed213c;
 
-$border-radius: 4px;
+$border-radius: 10px;
 
 /* ********************************************************
     Base
@@ -47,6 +47,13 @@ $border-radius: 4px;
         --font-secondary-color: #{$light-pallete-2nd};
         --font-tertiary-color: #{$light-pallete-3rd};
     }
+}
+
+:root {
+    --info-color: #0284c7;
+    --warning-color: #f97316;
+    --danger-color: #dc2626;
+    --success-color: #16a34a;
 }
 
 html {
@@ -74,4 +81,37 @@ body {
     &::-webkit-scrollbar-thumb {
         background-color: var(--font-primary-color);
     }
+}
+
+.container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.middle-align {
+    width: 100%;
+    min-height: 100vh;
+    @include display-flex;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include flex-justify(center);
+    @include flex-align(center);
+    padding: 1rem 0;
+}
+
+.main-box {
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    padding: 1rem;
+    @include border-radius($border-radius);
+    overflow: hidden;
+    background-color: var(--foreground-color);
+    white-space: normal;
+    word-wrap: break-word;
+    color: var(--font-primary-color);
+    @include box-shadow(0 0 4px rgba(0,0,0,.5));
 }
