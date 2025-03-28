@@ -1,6 +1,9 @@
 @import "functions.scss";
 @import "reset.scss";
 
+/* ********************************************************
+    Animations
+******************************************************** */
 @include keyframes(waveform) {
 	0%, 100% {
 		@include transform(scaleY(.4));
@@ -41,11 +44,17 @@
 	}
 }
 
+/* ********************************************************
+    Variables
+******************************************************** */
 $size: 8rem;
 $radius: 10px;
 $bg-color: #0d0d0f;
 $font-color: #f1eaea;
 
+/* ********************************************************
+    Base
+******************************************************** */
 html {
     @include text-size-adjust(100%);
 }
@@ -74,6 +83,57 @@ body {
 	@include user-select(none);
 }
 
+.music-album-blur-container:not(.hidden) {
+	@include animation-name(fade-in);
+	@include animation-duration(300ms);
+	@include animation-iteration-count(1);
+
+	& .music-album-art {
+		z-index: -1;
+		width: 100%;
+		height: 100%;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		@include filter(blur(10px) brightness(33%) opacity(.9));
+		@include transform(translate(-50%, -50%) scale(2));
+		position: absolute;
+		left: 50%;
+		top: 50%;
+	}
+}
+
+#music-title, #music-artist {
+	display: block;
+	line-height: 100%;
+	white-space: nowrap;
+	@include animation-name(fade-in);
+	@include animation-duration(300ms);
+	@include animation-iteration-count(1);
+	@include transition(transform 1s linear);
+}
+
+.music-info-mask {
+	width: 100%;
+	display: block;
+	overflow: hidden;
+	padding: 0 4px;
+	@include mask-image(linear-gradient(90deg, transparent 0%, white 6px,white calc(100% - 10px), transparent 100%));
+}
+
+.music-progress-bar {
+	& > * {
+		@include transition(all 500ms linear);
+	}
+	&.amazon > * { background-color: #0077C1; }
+	&.apple > * { background-color: #fc3c44; }
+	&.spotify > * { background-color: #1db954; }
+	&.youtube > * { background-color: #FF0033; }
+}
+
+/* ********************************************************
+    Player
+******************************************************** */
 .music-player {
 	pointer-events: none;
 	width: calc(#{$size} * 4);
@@ -259,6 +319,9 @@ body {
 	}
 }
 
+/* ********************************************************
+    Compact Player
+******************************************************** */
 .music-player-compact {
 	width: calc(100% - $size);
 	height: $size;
@@ -349,52 +412,4 @@ body {
 			font-size: 1.75rem;
 		}
 	}
-}
-
-.music-album-blur-container:not(.hidden) {
-	@include animation-name(fade-in);
-	@include animation-duration(300ms);
-	@include animation-iteration-count(1);
-
-	& .music-album-art {
-		z-index: -1;
-		width: 100%;
-		height: 100%;
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-		@include filter(blur(10px) brightness(33%) opacity(.9));
-		@include transform(translate(-50%, -50%) scale(2));
-		position: absolute;
-		left: 50%;
-		top: 50%;
-	}
-}
-
-#music-title, #music-artist {
-	display: block;
-	line-height: 100%;
-	white-space: nowrap;
-	@include animation-name(fade-in);
-	@include animation-duration(300ms);
-	@include animation-iteration-count(1);
-	@include transition(transform 1s linear);
-}
-
-.music-info-mask {
-	width: 100%;
-	display: block;
-	overflow: hidden;
-	padding: 0 4px;
-	@include mask-image(linear-gradient(90deg, transparent 0%, white 6px,white calc(100% - 10px), transparent 100%));
-}
-
-.music-progress-bar {
-	& > * {
-		@include transition(all 500ms linear);
-	}
-	&.amazon > * { background-color: #0077C1; }
-	&.apple > * { background-color: #fc3c44; }
-	&.spotify > * { background-color: #1db954; }
-	&.youtube > * { background-color: #FF0033; }
 }

@@ -1,0 +1,75 @@
+@import "functions.scss";
+@import "reset.scss";
+
+/* ********************************************************
+    Variables
+******************************************************** */
+$light-color: #fafafa;
+$light-pallete-1st: #dfdfdf;
+$light-pallete-2nd: #c9c9c9;
+$light-pallete-3rd: #b1b1b1;
+$light-pallete-4th: #9f9f9f;
+
+$dark-color: #0a0a0a;
+$dark-pallete-1st: #131313;
+$dark-pallete-2nd: #202020;
+$dark-pallete-3rd: #313131;
+$dark-pallete-4th: #4f4f4f;
+
+$rate-good: #1daf4e;
+$rate-medium: #f6b828;
+$rate-bad: #ed213c;
+
+$border-radius: 4px;
+
+/* ********************************************************
+    Base
+******************************************************** */
+@media (prefers-color-scheme: light) {
+    :root {
+        --background-color: #{$light-pallete-1st};
+        --foreground-color: #{$light-color};
+                
+        --font-primary-color: #{$dark-pallete-1st};
+        --font-secondary-color: #{$dark-pallete-2nd};
+        --font-tertiary-color: #{$dark-pallete-3rd};
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #{$dark-pallete-1st};
+        --foreground-color: #{$dark-pallete-2nd};
+                    
+        --font-primary-color: #{$light-pallete-1st};
+        --font-secondary-color: #{$light-pallete-2nd};
+        --font-tertiary-color: #{$light-pallete-3rd};
+    }
+}
+
+html {
+    -webkit-tap-highlight-color: transparent;
+    @include text-size-adjust(100%);
+}
+
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--background-color); 
+    font-family: $fonts;
+    color: var(--font-primary-color);
+    @include transition(all 180ms cubic-bezier(.4,0,.2,1));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+
+    &::-webkit-scrollbar {
+        width: .5rem;
+        background-color: var(--background-color);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--font-primary-color);
+    }
+}
