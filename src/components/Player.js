@@ -1,8 +1,8 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { GetDataFromSpotify } from './platforms/Spotify';
-import { GetDataFromAppleMusic } from './platforms/AppleMusic';
-import { GetDataFromYouTubeMusic } from './platforms/YouTubeMusic';
-import { ConvertTime } from './Utils';
+import { GetDataFromSpotify } from '../platforms/Spotify';
+import { GetDataFromAppleMusic } from '../platforms/AppleMusic';
+import { GetDataFromYouTubeMusic } from '../platforms/YouTubeMusic';
+import { ConvertTime } from '../Utils';
 
 function WaveForms({ number = 8} ) {
   let waves = [];

@@ -89,13 +89,13 @@ export async function GetDataFromSpotify() {
         const isPlaying = data.is_playing;
         const title = data.item?.name;
         const artist = data.item?.artists.map((artist) => artist.name).join(', ');
+        const albumCover = data.item?.album.images[0].url;
         const duration = {
             elapsed: parseInt(data.progress_ms / 1000) || 0,
             percentage: (data.progress_ms * 100) / data.item?.duration_ms || 0,
             remaining: parseInt((data.item.duration_ms - data.progress_ms) / 1000) || 0,
             total: parseInt(data.item?.duration_ms / 1000) || 0
         };
-        const albumCover = data.item?.album.images[0].url;
     
         return {isPlaying, title, artist, duration, albumCover}
     } catch(error) {

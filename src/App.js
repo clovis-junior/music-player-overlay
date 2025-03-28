@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { GetAccessToken } from './platforms/Spotify';
-import { Player } from './Player';
+import { Player } from './components/Player';
 import './player.css';
 
 export default function App() {
