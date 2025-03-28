@@ -6,7 +6,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - [x] **[Open Broadcast Software (OBS)](https://obsproject.com/)**
 - [x] **[xSplit](https://www.xsplit.com/)**
 - [x] **[Meld Studio](https://meldstudio.co/)**
-- [ ] **[vMix](https://www.vmix.com/)** *(I'm not tested for now)*
+- [x] **[vMix](https://www.vmix.com/)**
 
 ## 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
