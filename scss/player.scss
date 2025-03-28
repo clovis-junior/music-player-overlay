@@ -75,7 +75,7 @@ body {
 	align-items: center;
 	margin: 0 auto;
 	letter-spacing: 2px;
-	font-family: system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	font-weight: 800;
 	font-size: 24px;
 	color: #0d0d0f;
@@ -134,20 +134,22 @@ body {
 /* ********************************************************
     Player
 ******************************************************** */
-.music-player {
+.music-player, .music-player-compact {
 	pointer-events: none;
+	font-family: -apple-system, BlinkMacSystemFont, 'Roboto', system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	text-transform: initial;
+	@include user-select(none);
+	@include transform(scale(2));
+	@include transition(filter 200ms);
+}
+.music-player {
 	width: calc(#{$size} * 4);
 	max-height: $size;
 	@include display-flex;
 	flex-wrap: nowrap;
 	flex-direction: row;
 	align-items: stretch;
-	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
-	font-size: 1rem;
-	text-transform: initial;
-	@include user-select(none);
-	@include transform(scale(2));
-	@include transition(filter 200ms);
 
 	&:not(.show) {
 		@include filter(opacity(0));
@@ -329,10 +331,8 @@ body {
 	padding: 1rem;
 	@include border-radius(100px);
 	background-color: rgba($bg-color,.9);
-	font-family: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	color: $font-color;
 	@include backdrop-filter(blur(8px));
-	text-transform: initial;
 	text-shadow: 1px 1px 1px rgba(0,0,0,.8);
 	@include box-shadow(6px 6px 2px 0 rgba(0,0,0,.6));
 	@include animation(pulse 1s infinite);
