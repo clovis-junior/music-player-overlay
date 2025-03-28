@@ -1,8 +1,9 @@
-const url = '//127.0.0.1:9863';
+const url = 'http://127.0.0.1:9863';
 
 export async function GetDataFromYouTubeMusic() {
   try {
     const response = await fetch(`${url}/query`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
