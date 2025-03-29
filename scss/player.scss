@@ -86,7 +86,6 @@ body {
 }
 
 .music-player-container {
-	width: 100vw;
 	max-width: 1600px;
 	min-height: 100vh;
 	max-height: 100vh;
@@ -95,6 +94,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	margin: 0 auto;
+	padding: 2rem;
 	letter-spacing: 2px;
 	font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	font-weight: 800;
@@ -125,6 +125,7 @@ body {
 }
 
 #music-title, #music-artist {
+	min-height: 1rem;
 	display: block;
 	line-height: 100%;
 	white-space: nowrap;
@@ -136,6 +137,7 @@ body {
 
 .music-info-mask {
 	width: 100%;
+	min-height: 2rem;
 	display: block;
 	overflow: hidden;
 	padding: 0 4px;
@@ -150,6 +152,39 @@ body {
 	&.apple > * { background-color: #fc3c44; }
 	&.spotify > * { background-color: #1db954; }
 	&.youtube > * { background-color: #FF0033; }
+}
+
+& .music-waveforms {
+		width: 100%;
+		@include display-flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+
+		& .waveform {
+			flex: 0 0 4px;
+			height: 1rem;
+			display: block;
+			@include border-radius(50px);
+			background-color: $font-color;
+			@include box-shadow(0 0 1px 0 $font-color);
+			@include animation-timing-function(ease-in-out);
+			@include animation-iteration-count(infinite);
+			@include transition(all 1s ease-in-out);
+			@include transform(scaleY(.4));
+
+			@for $i from 0 through 42 {
+				&:nth-child(#{$i}) {
+					@include animation-duration(1s);
+					@include animation-delay(($i * .1s));
+				}
+			}
+
+			&:not(:last-child) {
+				margin-right: 5px;
+			}
+		}
 }
 
 /* ********************************************************
@@ -250,7 +285,7 @@ body {
 
 		& #music-title,
 		& #music-artist {
-			min-height: 2rem;
+			min-height: 1rem;
 		}
 
 		& #music-title {
@@ -305,38 +340,6 @@ body {
 				letter-spacing: 2px;
 				font-weight: 400;
 				font-size: 1rem;
-			}
-		}
-
-		& .music-waveforms {
-			width: 100%;
-			@include display-flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-
-			& .waveform {
-				flex: 0 0 4px;
-				height: 1rem;
-				display: block;
-				@include border-radius(50px);
-				background-color: $font-color;
-				@include box-shadow(0 0 1px 0 $font-color);
-				@include animation-timing-function(ease-in-out);
-				@include animation-iteration-count(infinite);
-				@include transition(all 1s ease-in-out);
-				@include transform(scaleY(.4));
-
-				@for $i from 0 through 42 {
-					&:nth-child(#{$i}) {
-						@include animation-duration(1s);
-						@include animation-delay(($i * .1s));
-					}
-				}
-
-				&:not(:last-child) {
-					margin-right: 5px;
-				}
 			}
 		}
 	}
@@ -414,12 +417,6 @@ body {
 			& #music-artist {
 				text-align: center;
 			}
-		}
-
-		& #music-title,
-		& #music-artist {
-			width: 100%;
-			min-height: 2.2rem;
 		}
 
 		& #music-title {
