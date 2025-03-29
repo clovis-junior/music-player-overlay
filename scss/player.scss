@@ -86,17 +86,12 @@ body {
 }
 
 .music-player-container {
-	max-width: 1600px;
-	min-height: 100vh;
-	max-height: 100vh;
 	@include display-flex;
-	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	margin: 0 auto;
-	padding: 2rem;
 	letter-spacing: 2px;
-	font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI",
+		Helvetica, Arial, sans-serif;
 	font-weight: 800;
 	font-size: 24px;
 	color: #0d0d0f;
@@ -125,7 +120,6 @@ body {
 }
 
 #music-title, #music-artist {
-	min-height: 1rem;
 	display: block;
 	line-height: 100%;
 	white-space: nowrap;
@@ -137,7 +131,7 @@ body {
 
 .music-info-mask {
 	width: 100%;
-	min-height: 2rem;
+	min-height: 1rem;
 	display: block;
 	overflow: hidden;
 	padding: 0 4px;
@@ -154,7 +148,7 @@ body {
 	&.youtube > * { background-color: #FF0033; }
 }
 
-& .music-waveforms {
+.music-waveforms {
 		width: 100%;
 		@include display-flex;
 		flex-direction: row;
@@ -192,6 +186,8 @@ body {
 ******************************************************** */
 .music-player, .music-player-compact {
 	pointer-events: none;
+	width: calc(100% - $size);
+	max-height: $size;
 	font-family: -apple-system, BlinkMacSystemFont, 'Roboto', system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	font-size: 1rem;
 	text-transform: initial;
@@ -200,8 +196,7 @@ body {
 	@include transition(filter 200ms);
 }
 .music-player {
-	width: calc(#{$size} * 4);
-	max-height: $size;
+	max-width: calc(#{$size} * 4);
 	@include display-flex;
 	flex-wrap: nowrap;
 	flex-direction: row;
@@ -349,8 +344,6 @@ body {
     Compact Player
 ******************************************************** */
 .music-player-compact {
-	width: calc(100% - $size);
-	height: $size;
 	overflow: hidden;
 	padding: 1rem;
 	@include border-radius(100px);
