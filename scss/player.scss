@@ -186,7 +186,7 @@ body {
 ******************************************************** */
 .music-player, .music-player-compact {
 	pointer-events: none;
-	width: calc(100% - $size);
+	width: calc(100% - #{$size});
 	max-height: $size;
 	font-family: -apple-system, BlinkMacSystemFont, 'Roboto', system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	font-size: 1rem;
