@@ -32,5 +32,7 @@ You need to download this repository and build it. After this, host the build in
 - [ ] Release own builds
 - [ ] Open your own server
 
+**If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).**
+
 ## 👇🏻 Check it out
 - 🧑🏻‍💼 Thats my [LinkedIn](https://www.linkedin.com/in/clovis-junior-/): [Click Here](https://www.linkedin.com/in/clovis-junior-/)!
