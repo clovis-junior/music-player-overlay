@@ -79,7 +79,10 @@ export function PlayerComponent(props) {
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
-    if(!loaded && result?.error)
+    if(!loaded)
+      return (<span className='loading'>Loading</span>);
+
+    if(result?.error)
       return (<>{result?.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
@@ -126,7 +129,7 @@ export function PlayerComponent(props) {
     if(!result?.isPlaying) playerClasses.push('paused');
     if(props?.dinamicWaves) playerClasses.push('dinamic');
   
-    return (!loaded) ? (<span className='loading'>Loading</span>) : (
+    return (
       <main className={playerClasses.join(' ')}>
         {(props.showAlbum) ? (
           <div className='music-album-art'>
