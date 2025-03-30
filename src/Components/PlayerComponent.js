@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { GetDataFromSpotify } from '../Platforms/Spotify';
 import { GetDataFromAppleMusic } from '../Platforms/AppleMusic';
 import { GetDataFromYouTubeMusic } from '../Platforms/YouTubeMusic';
@@ -20,7 +20,7 @@ function WaveForms({ number = 8} ) {
 }
 
 export function PlayerComponent(props) {
-    const [result, setResult] = useState({});
+    const [result, setResult] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [sleeping, setSleeping] = useState(false);
     
@@ -33,27 +33,25 @@ export function PlayerComponent(props) {
     const playerClasses = [];
   
     useEffect(()=> {
-      async function getResult() {
+      (async ()=> {
         switch(props?.platform) {
-          case 'spotify':
-            setResult(await GetDataFromSpotify());
-            break;
           case 'applemusic':
           case 'apple':
-            setResult(await GetDataFromAppleMusic());
+            setResult(await GetDataFromAppleMusic())
+            break;
+          case 'spotify':
+            setResult(await GetDataFromSpotify())
             break;
           case 'youtubemusic':
           case 'youtube':
           default:
-            setResult(await GetDataFromYouTubeMusic());
+            setResult(await GetDataFromYouTubeMusic())
         }
-      }
-  
-      getResult()
+      })()
     });
 
     useLayoutEffect(()=> {
-      setLoaded(result);
+      setLoaded(result || false);
     }, [result]);
     
     useLayoutEffect(()=> {
@@ -82,8 +80,8 @@ export function PlayerComponent(props) {
     if(!loaded)
       return (<span className='loading'>Loading</span>);
 
-    if(result?.error)
-      return (<>{result?.error}</>);
+    if(loaded && result.error)
+      return (<>{result.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
     if(props?.noShadow) playerClasses.push('no-shadow');

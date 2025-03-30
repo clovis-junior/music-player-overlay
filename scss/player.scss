@@ -57,9 +57,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-.loading::after {
-	content: '';
-  @include animation(dots 2s linear infinite);
+.loading {
+	min-width: $size;
+	display: block;
+
+	&::after {
+		content: '';
+		min-width: 3rem;
+		display: inline-block;
+		@include animation(dots 2s linear infinite);
+	}
 }
 
 .music-player-container {
