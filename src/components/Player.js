@@ -79,7 +79,7 @@ export function Player(props) {
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
-    if(result?.error)
+    if(!loaded && result?.error)
       return (<>{result?.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
