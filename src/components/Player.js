@@ -79,9 +79,6 @@ export function Player(props) {
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
-    if(!loaded)
-      return (<span className='loading'>Loading</span>);
-    
     if(result?.error)
       return (<>{result?.error}</>);
 
@@ -129,7 +126,7 @@ export function Player(props) {
     if(!result?.isPlaying) playerClasses.push('paused');
     if(props?.dinamicWaves) playerClasses.push('dinamic');
   
-    return (
+    return (!loaded) ? (<span className='loading'>Loading</span>) : (
       <main className={playerClasses.join(' ')}>
         {(props.showAlbum) ? (
           <div className='music-album-art'>
@@ -166,9 +163,11 @@ export function Player(props) {
                 {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
                 <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
               </div>
+              {(!props?.hideProgressBar) ? (
               <div className={props?.progressBarWithColor ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
                 <div id='music-progress-bar' style={{'width': `${result.duration?.percentage}%`}} />
               </div>
+              ) : (<></>)}
             </footer>
             ) : (<></>)}
           </aside>

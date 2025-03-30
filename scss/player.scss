@@ -310,8 +310,8 @@ body {
 				font-size: 1rem;
 			}
 
-			& #music-time-elapsed { margin-right: 5px }
-			& #music-time-total { margin-left: 5px }
+			& #music-time-elapsed { text-align: left; margin-right: 5px }
+			& #music-time-total { text-align: right; margin-left: 5px }
 		}
 	}
 }

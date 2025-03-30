@@ -37,6 +37,7 @@ export default function App() {
                 dinamicWaves={options.has('dinamicWaves')}
                 progressBarWithColor={options.has('progressBarWithColor')}
                 hideProgress={options.has('hideProgress')}
+                hideProgressBar={options.has('hideProgressBar')}
                 remainingTime={options.has('remainingTime')}
                 squareLayout={options.has('squareLayout')}
                 noShadow={options.has('noShadow')}
