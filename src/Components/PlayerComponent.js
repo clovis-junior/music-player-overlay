@@ -80,8 +80,8 @@ export function PlayerComponent(props) {
     if(!loaded)
       return (<span className='loading'>Loading</span>);
 
-    if(loaded && result.error)
-      return (<>{result.error}</>);
+    if(result?.error)
+      return (<>{result?.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
     if(props?.noShadow) playerClasses.push('no-shadow');

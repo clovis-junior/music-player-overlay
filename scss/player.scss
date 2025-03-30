@@ -81,6 +81,7 @@ body {
 	font-size: 24px;
 	color: #0d0d0f;
 	text-transform: uppercase;
+	@include transform(scale(2));
 	@include user-select(none);
 }
 

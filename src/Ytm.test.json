@@ -1,0 +1,55 @@
+{
+    "player": {
+      "trackState": -1 | 0 | 1 | 2, // -1 Unknown, 0 Paused, 1 Playing, 2 Buffering
+      "videoProgress": Number,
+      "volume": Number,
+      "adPlaying": Boolean, // While true, the state reflects the current song that is being disrupted by an ad. Ad metadata is never provided
+      "queue": {
+        "autoplay": Boolean,
+        "items": [
+          {
+            "thumbnails": [
+              {
+                "url": String,
+                "width": Number,
+                "height": Number
+              }
+            ],
+            "title": String,
+            "author": String,
+            "duration": String,
+            "selected": Boolean,
+            "videoId": String,
+            "counterparts": Array | null // Repeats the items object within itself for the counterparts of this video
+          }
+        ],
+        "automixItems": ref items, // Same type as queue.items (used for autoplay items after normal queue items)
+        "isGenerating": Boolean,
+        "isInfinite": Boolean,
+        "repeatMode": -1 | 0 | 1 | 2, // -1 Unknown, 0 None, 1 All, 2 One
+        "selectedItemIndex": Number
+      } | null,
+    },
+    "video": {
+      "author": String,
+      "channelId": String,
+      "title": String,
+      "album": String | null, // album can be missing from songs
+      "albumId": String | null, // albumId can be missing from songs
+      "likeStatus": (-1 | 0 | 1 | 2) | null, // -1 Unknown, 0 Dislike, 1 Indifferent, 2 Like
+      "thumbnails": [
+        {
+          "url": String,
+          "width": Number,
+          "height": Number
+        }
+      ],
+      "durationSeconds": Number,
+      "id": String,
+      // Properties below were introduced in version >= 2.0.6
+      "isLive": Boolean | undefined,
+      "videoType": (-1 | 0 | 1 | 2 | 3) | undefined, // -1 Unknown, 0 Audio, 1 Video, 2 Uploaded, 3 Podcast
+      "metadataFilled": Boolean | undefined // Indicates that the album, title, thumbnails, and other metadata for this song is filled completely. YTM initially fills this data with possibly incomplete data and this property becomes true when the data is now filled and accurate.
+    } | null,
+    "playlistId": String // This property could be an ephemeral radio queue, an album, a single song album, a users playlist. It can also change from song to song within a queue.
+  }
