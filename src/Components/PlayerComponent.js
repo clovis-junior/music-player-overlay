@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { GetDataFromSpotify } from '../Platforms/Spotify';
 import { GetDataFromAppleMusic } from '../Platforms/AppleMusic';
 import { GetDataFromYouTubeMusic } from '../Platforms/YouTubeMusic';
