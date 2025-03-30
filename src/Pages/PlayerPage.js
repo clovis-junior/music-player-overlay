@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { GetAccessToken } from '../Platforms/Spotify';
-import { Player } from '../components/Player';
-import './player.css';
+import { PlayerComponent } from '../Components/PlayerComponent';
+import '../player.css';
 
 export default function PlayerPage() {
     const [params] = useSearchParams();
@@ -27,7 +27,7 @@ export default function PlayerPage() {
 
     return (
         <div className='music-player-container'>
-            <Player 
+            <PlayerComponent 
                 platform={params.get('platform') || 'youtube'}
                 compact={options.has('compact')}
                 noPulse={options.has('noPulse')}

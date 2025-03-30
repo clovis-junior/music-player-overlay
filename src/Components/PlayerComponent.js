@@ -19,7 +19,7 @@ function WaveForms({ number = 8} ) {
   )
 }
 
-export function Player(props) {
+export function PlayerComponent(props) {
     const [result, setResult] = useState({});
     const [loaded, setLoaded] = useState(false);
     const [sleeping, setSleeping] = useState(false);

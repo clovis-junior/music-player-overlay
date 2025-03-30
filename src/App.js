@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import PlayerPage from './pages/player';
+import PlayerPage from './Pages/PlayerPage';
 
 export default function App() {
     return (
