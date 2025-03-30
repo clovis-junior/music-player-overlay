@@ -5,6 +5,7 @@ export default function App() {
     return (
         <Routes>
             <Route path='/' element={<PlayerPage />} />
+            <Route path='/player' element={<PlayerPage />} />
         </Routes>
     )
 }
