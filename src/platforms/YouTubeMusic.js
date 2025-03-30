@@ -1,4 +1,4 @@
-const url = 'http://127.0.0.1:9863';
+const url = 'http://localhost:9863';
 
 export async function GetDataFromYouTubeMusic() {
   try {

@@ -1,6 +1,6 @@
 // import songData from'../Apple.test.json';
 import { URLValidade } from '../Utils';
-const url = 'http://127.0.0.1:10767';
+const url = 'http://localhost:10767';
 
 function GetAlbumCover(url, size) {
     if(URLValidade(url))
