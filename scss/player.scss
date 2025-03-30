@@ -112,7 +112,7 @@ body {
 	min-height: 2rem;
 	display: block;
 	overflow-x: hidden;
-	@include mask-image(linear-gradient(90deg, transparent 0%, white 6px,white calc(100% - 10px), transparent 100%));
+	@include mask-image(linear-gradient(90deg, transparent 0%, white 4px, white calc(100% - 2rem), transparent 100%));
 	text-overflow: ellipsis;
 }
 
