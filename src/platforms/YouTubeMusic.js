@@ -9,6 +9,8 @@ const params = new URLSearchParams(window.location.search);
 
 const token = localStorage.getItem('YouTubeMusicDesktopToken') || params.get('token');
 
+export var authCode;
+
 async function RequestCode() {
   try {
     const response = await fetch(`${baseURL}/auth/requestcode`, {
@@ -26,7 +28,7 @@ async function RequestCode() {
     const data = await response.json();
 
     if(data.statusCode)
-      return { statusCode: data.statusCode, message: data.message };
+      return { statusCode: data.statusCode, message: data?.message };
 
     return data;
   } catch(e) {
@@ -40,6 +42,8 @@ export async function RequestToken() {
   if(request.statusCode)
     return { statusCode: request.statusCode, message: request.message };
 
+  authCode = request?.code;
+
   try {
     const response = await fetch(`${baseURL}/auth/request`, {
       method: 'POST',
@@ -48,14 +52,14 @@ export async function RequestToken() {
       },
       body: JSON.stringify({
         'appId': appID,
-        'code': request.code
+        'code': request?.code
       })
     });
     
     const data = await response.json();
 
     if(data.statusCode)
-      return { statusCode: data.statusCode, message: data.message };
+      return { statusCode: data.statusCode, message: data?.message };
 
     return data;
   } catch(e) {
@@ -63,7 +67,7 @@ export async function RequestToken() {
   }
 }
 
-export  function UpdatePlayerData(data) {
+export function UpdatePlayerData(data) {
   const player = data?.player;
   const song = data?.video;
 

@@ -4,8 +4,12 @@ export function AddZero(number = 0) {
   return (number.length < 2) ? `0${number.toString()}` : number
 }
 
+export function IsEmpty(variable) {
+  return (typeof variable === 'undefined' || variable === null || (typeof variable === 'string' && variable.length <= 0))
+}
+
 export function URLValidade(value) {
-  let filter=/^(https?)\:\/\/(?:www\.)?([a-zA-Z0-9-]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%\+.~#?&\/\/=]*)$/is;
+  let filter=/^(https?):\/\/(?:www\.)?([a-zA-Z0-9-]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&//=]*)$/is;
   return (filter.test(value)) ? true : false;
 }
   

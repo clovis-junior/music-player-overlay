@@ -27,28 +27,6 @@ $border-radius: 10px;
 /* ********************************************************
     Base
 ******************************************************** */
-@media (prefers-color-scheme: light) {
-    :root {
-        --background-color: #{$light-pallete-1st};
-        --foreground-color: #{$light-color};
-                
-        --font-primary-color: #{$dark-pallete-1st};
-        --font-secondary-color: #{$dark-pallete-2nd};
-        --font-tertiary-color: #{$dark-pallete-3rd};
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: #{$dark-pallete-1st};
-        --foreground-color: #{$dark-pallete-2nd};
-                    
-        --font-primary-color: #{$light-pallete-1st};
-        --font-secondary-color: #{$light-pallete-2nd};
-        --font-tertiary-color: #{$light-pallete-3rd};
-    }
-}
-
 :root {
     --info-color: #0284c7;
     --warning-color: #f97316;
@@ -59,6 +37,13 @@ $border-radius: 10px;
     --apple-color: #fc3c44;
     --spotify-color: #1db954;
     --youtube-color: #FF0033;
+
+    --background-color: #{$light-pallete-1st};
+    --foreground-color: #{$light-color};
+                
+    --font-primary-color: #{$dark-pallete-1st};
+    --font-secondary-color: #{$dark-pallete-2nd};
+    --font-tertiary-color: #{$dark-pallete-3rd};
 }
 
 html {
@@ -69,10 +54,8 @@ html {
 body {
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: var(--background-color); 
     font-family: $fonts;
     color: var(--font-primary-color);
-    @include transition(all 180ms cubic-bezier(.4,0,.2,1));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -106,7 +89,7 @@ body {
     align-items: center;
 }
 
-.content {
+.panel {
     width: 100%;
     max-width: 600px;
     display: block;
@@ -117,13 +100,30 @@ body {
     background-color: var(--foreground-color);
     white-space: normal;
     word-wrap: break-word;
+    line-height: 2rem;
+    font-size: 1.1rem;
     color: var(--font-primary-color);
     @include box-shadow(0 0 4px rgba(0,0,0,.5));
+
+    & .panel-content {
+        padding: 0 1rem 1rem;
+
+        & ul, & ol {
+            padding-left: 1rem;
+        }
+    }
+
+    .platform-logo {
+        width: 100%;
+        display: block;
+        @include object-fit(cover);
+    }
 
     .input-text {
         width: 100%;
         display: block;
         padding: 1rem;
+        margin-bottom: 1rem;
         border: 1px solid var(--font-tertiary-color);
         @include border-radius($border-radius);
         font-weight: 300;
@@ -138,7 +138,10 @@ body {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin-top: 1rem;
+
+        &.centered {
+            justify-content: center;
+        }
     }
 
     .btn {
@@ -148,12 +151,21 @@ body {
         align-items: center;
         padding: 1rem;
         @include border-radius($border-radius);
-        background-color: var(--background-color);
+        background-color: var(--font-tertiary-color);
         letter-spacing: 1px;
         font-weight: 600;
         color: $light-color;
         text-transform: uppercase;
         @include user-select(none);
+        @include transition(all 100ms ease);
+
+        &:not(:disabled):hover {
+            cursor: pointer;
+        }
+
+        &:not(:disabled):active {
+            @include transform(scale(.9));
+        }
 
         &.ytm { background-color: var(--youtube-color) }
     }
@@ -168,7 +180,7 @@ body {
     background-color: var(--info-color);
     letter-spacing: 2px;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 1.25rem;
     color: $light-color;
     text-align: center;
     @include user-select(none);
