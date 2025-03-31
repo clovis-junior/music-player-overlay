@@ -51,14 +51,10 @@ export function Player(props) {
       });
     }, [result]);
 
-    useLayoutEffect(()=>{
-      setLoaded(result);
-    }, [setLoaded, result]);
-    
-    useLayoutEffect(()=> {
+    useEffect(()=> {
       if(!loaded)
         return;
-
+			
       const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), (6 * 1000));
       const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), (6 * 1000));
   
@@ -68,7 +64,7 @@ export function Player(props) {
       }
     }, [loaded, musicNameScrolled, artistNameScrolled]);
   
-    useLayoutEffect(()=> {
+    useEffect(()=> {
       if(!result?.isPlaying) {
         const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000));
   
@@ -77,6 +73,10 @@ export function Player(props) {
         setSleeping(false);
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
+
+		useLayoutEffect(()=>{
+      setLoaded(result);
+    }, [setLoaded, result]);
 
     if(!loaded)
       return (<span className='loading'>Loading</span>);
