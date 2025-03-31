@@ -7,7 +7,7 @@ import '../scss/configure.scss';
 
 export default function Home() {
     const [output, setOutput] = useState('');
-    const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname.substring(0, -1)}`;
+    const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
     async function RequestAccess() {
         const request = await RequestToken();
@@ -38,7 +38,7 @@ export default function Home() {
                     </div>
                     {output.token ? (
                         <>
-                            <input type='text' className='input-text' value={`${browserURL}/player?platform=youtube&token=${output.token}`} readOnly />
+                            <input type='text' className='input-text' value={`${browserURL}#player?platform=youtube&token=${output.token}`} readOnly />
                             <footer className='btns centered'>
                                 <button type='button' className='btn success' onClick={()=> {
                                 navigator.clipboard.writeText(`${browserURL}/player?platform=youtube&token=${output.token}`)
