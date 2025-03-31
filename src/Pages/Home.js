@@ -36,7 +36,7 @@ export default function Home() {
                             <li>Click on the button below to connect.</li>
                         </ul>
                     </div>
-                    {!IsEmpty(authCode) ? (
+                    {(!IsEmpty(authCode) && !output.token) ? (
                         <div className='alert'>
                             <p>Código de autenticação: <b>{authCode}</b></p>
                         </div>) : (<></>)}
