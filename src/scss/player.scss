@@ -147,9 +147,9 @@ body {
 
 .music-info-mask {
 	width: 100%;
-	min-height: 2rem;
 	display: block;
-	overflow-x: hidden;
+	padding: 4px 0;
+	overflow: hidden;
 	@include mask-image(linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%));
 	text-overflow: ellipsis;
 }
@@ -168,7 +168,7 @@ body {
 
 .music-waveforms {
 	width: 100%;
-	min-height: 1rem;
+	height: 1.25rem;
 	@include display-flex;
 	flex-direction: row;
 	justify-content: center;
@@ -317,17 +317,16 @@ body {
 			display: block;
 
 			& .music-progress-values {
-				min-height: 1rem;
 				@include display-flex;
 				flex-direction: row;
 				flex-wrap: nowrap;
 				justify-content: space-between;
 				align-items: center;
+				margin: 8px 0;
 			}
 
 			& .music-progress-bar {
 				height: 10px;
-				margin: 8px 0;
 				overflow: hidden;
 				@include border-radius(50px);
 				background-color: rgba($font-color, 0.24);
