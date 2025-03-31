@@ -31,10 +31,10 @@ export async function GetDataFromAppleMusic() {
         const artist = data.info?.artistName;
         const albumCover = GetAlbumCover(data.info?.artwork.url, (data.info?.artwork.width || 300));
         const duration = {
-            elapsed: parseInt(data.info?.currentPlaybackTime) || 0,
+            elapsed: (data.info?.currentPlaybackTime) || 0,
             percentage: (data.info?.currentPlaybackProgress * 100),
-            remaining: parseInt((data.info?.durationInMillis * 100) - data.info?.currentPlaybackTime),
-            total: parseInt(data.info?.durationInMillis / 1000) || 0
+            remaining: ((data.info?.durationInMillis * 100) - data.info?.currentPlaybackTime),
+            total: (data.info?.durationInMillis / 1000) || 0
         };
 
         return {isPlaying, title, artist, duration, albumCover}

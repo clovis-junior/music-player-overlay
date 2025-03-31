@@ -11,7 +11,7 @@ export function URLValidade(value) {
   
 export function ConvertTime(time = 0) {
   const minutes = Math.floor(time / 60),
-    seconds = (time % 60);
+    seconds = Math.floor(time % 60);
   
   return `${AddZero(minutes)}:${AddZero(seconds)}`
 }

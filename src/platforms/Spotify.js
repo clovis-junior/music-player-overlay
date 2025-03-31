@@ -92,10 +92,10 @@ export async function GetDataFromSpotify() {
         const artist = data.item?.artists.map((artist) => artist.name).join(', ');
         const albumCover = data.item?.album.images[data.item?.album.images.length - 1].url;
         const duration = {
-            elapsed: parseInt(data.progress_ms / 1000) || 0,
+            elapsed: (data.progress_ms / 1000) || 0,
             percentage: (data.progress_ms * 100) / data.item?.duration_ms || 0,
-            remaining: parseInt((data.item.duration_ms - data.progress_ms) / 1000) || 0,
-            total: parseInt(data.item?.duration_ms / 1000) || 0
+            remaining: ((data.item.duration_ms - data.progress_ms) / 1000) || 0,
+            total: (data.item?.duration_ms / 1000) || 0
         };
     
         return {isPlaying, title, artist, duration, albumCover}

@@ -4,7 +4,7 @@
 /* ********************************************************
     Variables
 ******************************************************** */
-$fonts: Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+$fonts: -apple-system, BlinkMacSystemFont, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 
 $light-color: #fafafa;
 $light-pallete-1st: #dfdfdf;
@@ -54,6 +54,11 @@ $border-radius: 10px;
     --warning-color: #f97316;
     --danger-color: #dc2626;
     --success-color: #16a34a;
+
+    --amazon-color: #0077C1;
+    --apple-color: #fc3c44;
+    --spotify-color: #1db954;
+    --youtube-color: #FF0033;
 }
 
 html {
@@ -91,21 +96,11 @@ body {
     padding-left: 1rem;
 }
 
-.middle-align {
-    width: 100%;
-    min-height: 100vh;
-    @include display-flex;
-    @include flex-direction(column);
-    @include flex-wrap(nowrap);
-    @include flex-justify(center);
-    @include flex-align(center);
-    padding: 1rem 0;
-}
-
-.main-box {
+.content {
     width: 100%;
     max-width: 600px;
     display: block;
+    margin: 0 auto;
     padding: 1rem;
     @include border-radius($border-radius);
     overflow: hidden;
@@ -114,4 +109,41 @@ body {
     word-wrap: break-word;
     color: var(--font-primary-color);
     @include box-shadow(0 0 4px rgba(0,0,0,.5));
+    @include transform(translateY(50%));
+
+    .btn {
+        @include display-flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        @include border-radius($border-radius);
+        background-color: var(--background-color);
+        letter-spacing: 1px;
+        font-weight: 600;
+        color: $light-color;
+        text-transform: uppercase;
+        @include user-select(none);
+
+        &.ytm { background-color: var(--youtube-color) }
+    }
 }
+
+.alert {
+    width: calc(100% - 4rem);
+    display: block;
+    margin: 1rem;
+    padding: 1rem 2rem;
+    @include border-radius($border-radius);
+    background-color: var(--info-color);
+    letter-spacing: 2px;
+    font-weight: 500;
+    font-size: 1rem;
+    color: $light-color;
+    text-align: center;
+    @include user-select(none);
+
+    &.warning { background-color: var(--warning-color) }
+    &.error { background-color: var(--danger-color) }
+}
+    

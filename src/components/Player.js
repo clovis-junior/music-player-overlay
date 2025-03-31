@@ -1,7 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { GetDataFromSpotify } from '../platforms/Spotify';
-import { GetDataFromAppleMusic } from '../platforms/AppleMusic';
-import { GetDataFromYouTubeMusic } from '../platforms/YouTubeMusic';
+import { GetDataFromYouTubeMusic, UpdatePlayerData } from '../platforms/YouTubeMusic';
 import { ConvertTime } from '../Utils';
 
 function WaveForms({ number = 8} ) {
@@ -19,11 +17,12 @@ function WaveForms({ number = 8} ) {
   )
 }
 
-export function PlayerComponent(props) {
-    const [result, setResult] = useState(null);
+export function Player(props) {
+    const [result, setResult] = useState({});
     const [loaded, setLoaded] = useState(false);
     const [sleeping, setSleeping] = useState(false);
     
+    const ws = useRef(null);
     const musicName = useRef(null);
     const artistName = useRef(null);
   
@@ -33,26 +32,24 @@ export function PlayerComponent(props) {
     const playerClasses = [];
   
     useEffect(()=> {
-      (async ()=> {
-        switch(props?.platform) {
-          case 'applemusic':
-          case 'apple':
-            setResult(await GetDataFromAppleMusic())
-            break;
-          case 'spotify':
-            setResult(await GetDataFromSpotify())
-            break;
-          case 'youtubemusic':
-          case 'youtube':
-          default:
-            setResult(await GetDataFromYouTubeMusic())
-        }
-      })()
-    });
+      ws.current = GetDataFromYouTubeMusic();
 
-    useLayoutEffect(()=> {
-      setLoaded(result || false);
+      const wsCurrent = ws.current;
+
+      return ()=> wsCurrent.close();
+    }, [setResult]);
+
+    useEffect(()=> {
+      if(!ws.current) return;
+
+      ws.current.on('state-update', state=> {
+        setResult(UpdatePlayerData(state));
+      });
     }, [result]);
+
+    useLayoutEffect(()=>{
+      setLoaded(result);
+    }, [setLoaded, result]);
     
     useLayoutEffect(()=> {
       if(!loaded)
@@ -80,8 +77,8 @@ export function PlayerComponent(props) {
     if(!loaded)
       return (<span className='loading'>Loading</span>);
 
-    if(result?.error)
-      return (<>{result?.error}</>);
+    if(result.error)
+      return (<>{result.error}</>);
 
     if(!sleeping || !result?.isPlaying) playerClasses.push('show');
     if(props?.noShadow) playerClasses.push('no-shadow');

@@ -1,34 +1,35 @@
 import { useSearchParams } from 'react-router-dom';
-import { GetAccessToken } from '../platforms/Spotify';
-import { PlayerComponent } from '../components/PlayerComponent';
-import '../player.css';
+// import { GetAccessToken } from '../platforms/Spotify';
+import { Player } from '../components/Player';
+import '../scss/player.scss';
 
-export default function PlayerPage() {
+export default function Plugin() {
     const [params] = useSearchParams();
 
-    if(params.has('code')) {
-        async function GetSpotifyAccess() {
-            const SpotifyAccess = await GetAccessToken(params.get('code'));
+    // if(params.has('code')) {
+    //     async function GetSpotifyAccess() {
+    //         const SpotifyAccess = await GetAccessToken(params.get('code'));
 
-            const redirectParams = [];
-            redirectParams.push(`platform=spotify`);
-            redirectParams.push(`refreshToken=${SpotifyAccess.refresh || ''}`);
-            redirectParams.push(`accessToken=${SpotifyAccess.access || ''}`);
+    //         const redirectParams = [];
+    //         redirectParams.push(`platform=spotify`);
+    //         redirectParams.push(`refreshToken=${SpotifyAccess.refresh || ''}`);
+    //         redirectParams.push(`accessToken=${SpotifyAccess.access || ''}`);
 
-            setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?${redirectParams.join('&')}`, 1000);
-        }
+    //         setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?${redirectParams.join('&')}`, 1000);
+    //     }
 
-        GetSpotifyAccess();
+    //     GetSpotifyAccess();
 
-        return (<span className='loading'>Connecting</span>)
-    }
+    //     return (<span className='loading'>Connecting</span>)
+    // }
 
     const options = new URLSearchParams(atob(params.get('options')));
 
     return (
         <div className='music-player-container'>
-            <PlayerComponent 
+            <Player 
                 platform={params.get('platform') || 'youtube'}
+                platformToken={params.get('token')}
                 compact={options.has('compact')}
                 noPulse={options.has('noPulse')}
                 textCentered={options.has('textCentered')}

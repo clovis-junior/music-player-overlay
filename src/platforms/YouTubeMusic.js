@@ -1,8 +1,10 @@
-const appID = 'music-player-overlay-by-clovis-junior';
+import { io } from 'socket.io-client';
+
+const appID = 'music-player-overlay-by';
 const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
-const baseURL = 'http://localhost:9863/api/v1';
+const baseURL = 'http://192.168.15.152:9863/api/v1';
 const params = new URLSearchParams(window.location.search);
 
 const token = localStorage.getItem('YouTubeMusicDesktopToken') || params.get('token');
@@ -21,7 +23,12 @@ async function RequestCode() {
       })
     });
 
-    return await response.json();
+    const data = await response.json();
+
+    if(data.statusCode)
+      return { statusCode: data.statusCode, message: data.message };
+
+    return data;
   } catch(e) {
     console.error(`Error on Request Code: ${e.message}`);
   }
@@ -29,7 +36,9 @@ async function RequestCode() {
 
 export async function RequestToken() {
   const request = await RequestCode();
-  const code = request.code || '';
+
+  if(request.statusCode)
+    return { statusCode: request.statusCode, message: request.message };
 
   try {
     const response = await fetch(`${baseURL}/auth/request`, {
@@ -39,45 +48,48 @@ export async function RequestToken() {
       },
       body: JSON.stringify({
         'appId': appID,
-        'code': code
+        'code': request.code
       })
     });
     
     const data = await response.json();
 
-    return await data;
+    if(data.statusCode)
+      return { statusCode: data.statusCode, message: data.message };
+
+    return data;
   } catch(e) {
     console.error(`Error on Request Token: ${e.message}`);
   }
 }
 
-export async function GetDataFromYouTubeMusic() {
-  try {
-    const response = await fetch(`${baseURL}/state`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+export  function UpdatePlayerData(data) {
+  const player = data?.player;
+  const song = data?.video;
 
-    if(response.status !== 200)
-        return { error: 'Access denied' };
+  const isPlaying = (player?.trackState === 1);
+  const title = song?.title;
+  const artist = song?.author;
+  const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
+  const duration = {
+      elapsed: player?.videoProgress || 0,
+      percentage: (player?.videoProgress * 100) / song?.durationSeconds || 0,
+      remaining: (song?.durationSeconds - player?.videoProgress) || 0,
+      total: song?.durationSeconds || 0
+  };
 
-    const data = await response.json();
+  return {isPlaying, title, artist, duration, albumCover};
+}
 
-    const isPlaying = (data.player?.trackState === 1);
-    const title = data.video?.title;
-    const artist = data.video?.author;
-    const albumCover = data.queue?.items.thumbnails[data.queue?.items.thumbnails.length - 1].url;
-    const duration = {
-        elapsed: parseInt(data.player?.videoProgress / 1000) || 0,
-        percentage: (data.player?.videoProgress * 100) / data.video?.durationSeconds || 0,
-        remaining: parseInt((data.video?.durationSeconds - data.player?.videoProgress) / 1000) || 0,
-        total: parseInt(data.video?.durationSeconds / 1000) || 0
-    };
+export function GetDataFromYouTubeMusic() {
+  const socket = io(`${baseURL}/realtime`, {
+		'transports': ['websocket'],
+		'auth': { 'token': token }
+	});
 
-    return {isPlaying, title, artist, duration, albumCover}
-  } catch(error) {
-      return { error: error.message.toString() };
-  }
+	socket.on('disconnect', ()=> {
+    setTimeout(GetDataFromYouTubeMusic(), 5000)
+  });
+
+  return socket
 }
