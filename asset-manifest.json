@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/music-player-overlay/static/css/main.cfc9a6c4.css",
-    "main.js": "/music-player-overlay/static/js/main.b65c7fe8.js",
-    "static/js/453.2e6aec64.chunk.js": "/music-player-overlay/static/js/453.2e6aec64.chunk.js",
-    "static/media/ytm-logo.png": "/music-player-overlay/static/media/ytm-logo.c3c83cb68d1e16f92cb5.png",
-    "index.html": "/music-player-overlay/index.html",
-    "main.cfc9a6c4.css.map": "/music-player-overlay/static/css/main.cfc9a6c4.css.map",
-    "main.b65c7fe8.js.map": "/music-player-overlay/static/js/main.b65c7fe8.js.map",
-    "453.2e6aec64.chunk.js.map": "/music-player-overlay/static/js/453.2e6aec64.chunk.js.map"
+    "main.css": "/static/css/main.cfc9a6c4.css",
+    "main.js": "/static/js/main.70445022.js",
+    "static/js/453.2e6aec64.chunk.js": "/static/js/453.2e6aec64.chunk.js",
+    "static/media/ytm-logo.png": "/static/media/ytm-logo.c3c83cb68d1e16f92cb5.png",
+    "index.html": "/index.html",
+    "main.cfc9a6c4.css.map": "/static/css/main.cfc9a6c4.css.map",
+    "main.70445022.js.map": "/static/js/main.70445022.js.map",
+    "453.2e6aec64.chunk.js.map": "/static/js/453.2e6aec64.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cfc9a6c4.css",
-    "static/js/main.b65c7fe8.js"
+    "static/js/main.70445022.js"
   ]
 }
