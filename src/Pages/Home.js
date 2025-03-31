@@ -14,25 +14,31 @@ export default function Home() {
 
     return (
         <div className='container'>
-            <main className='content'>
-                {output.statusCode ? (
-                    <div className='alert error'>
-                        <p><b>{output?.statusCode}</b> {output?.message}</p>
-                    </div>) : (<></>)}
-                {output.token ? (
-                    <>
-                        <input type='text' value={`${browserURL}/player?platform=youtube&token=${output.token}`} readOnly />
-                        <button type='button' className='btn success' onClick={()=> {
-                        navigator.clipboard.writeText(`${browserURL}/player?platform=youtube&token=${output.token}`)
-                        }}>Copy URL</button>
-                    </>
-                    ) : (
-                    <>
-                        <button type='button' className='btn ytm' onClick={()=> RequestAccess()}>Send Authorization Code</button>
-                        <button type='button' className='btn' onClick={null}>Back</button>
-                    </>
-                )}
-            </main>
+            <div className='middle'>
+                <main className='content'>
+                    {output.statusCode ? (
+                        <div className='alert error'>
+                            <p><b>{output?.statusCode}</b> {output?.message}</p>
+                        </div>) : (<></>)}
+                    {output.token ? (
+                        <>
+                            <input type='text' value={`${browserURL}/player?platform=youtube&token=${output.token}`} readOnly />
+                            <footer className='btns'>
+                                <button type='button' className='btn success' onClick={()=> {
+                                navigator.clipboard.writeText(`${browserURL}/player?platform=youtube&token=${output.token}`)
+                                }}>Copy URL</button>
+                            </footer>
+                        </>
+                        ) : (
+                        <>
+                            <input type='text' className='input-text' value={`${browserURL}/player?platform=youtube`} readOnly />
+                            <footer className='btns'>
+                                <button type='button' className='btn ytm' onClick={()=> RequestAccess()}>Send Authorization Code</button>
+                            </footer>
+                        </>
+                    )}
+                </main>
+            </div>
         </div>
     )
 }

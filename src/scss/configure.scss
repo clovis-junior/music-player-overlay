@@ -96,6 +96,16 @@ body {
     padding-left: 1rem;
 }
 
+.middle {
+    width: 100%;
+    min-height: 100vh;
+    @include display-flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .content {
     width: 100%;
     max-width: 600px;
@@ -109,7 +119,27 @@ body {
     word-wrap: break-word;
     color: var(--font-primary-color);
     @include box-shadow(0 0 4px rgba(0,0,0,.5));
-    @include transform(translateY(50%));
+
+    .input-text {
+        width: 100%;
+        display: block;
+        padding: 1rem;
+        border: 1px solid var(--font-tertiary-color);
+        @include border-radius($border-radius);
+        font-weight: 300;
+        color: var(--font-primary-color);
+        text-overflow: ellipsis;
+        @include border-radius($border-radius);
+    }
+
+    .btns {
+        @include display-flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
 
     .btn {
         @include display-flex;
