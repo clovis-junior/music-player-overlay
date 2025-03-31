@@ -1,6 +1,6 @@
 {
   "name": "stream-your-player",
-  "homepage": "https://clovis-junior.github.io/music-player-overlay/",
+  "homepage": "https://clovis-junior.github.io/music-player-overlay",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
