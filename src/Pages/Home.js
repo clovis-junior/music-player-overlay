@@ -36,12 +36,16 @@ export default function Home() {
                             <li>Click on the button below to connect.</li>
                         </ul>
                     </div>
+                    {!IsEmpty(authCode) ? (
+                        <div className='alert'>
+                            <p>Código de autenticação: <b>{authCode}</b></p>
+                        </div>) : (<></>)}
                     {output.token ? (
                         <>
                             <input type='text' className='input-text' value={`${browserURL}#player?platform=youtube&token=${output.token}`} readOnly />
                             <footer className='btns centered'>
                                 <button type='button' className='btn success' onClick={()=> {
-                                navigator.clipboard.writeText(`${browserURL}/player?platform=youtube&token=${output.token}`)
+                                navigator.clipboard.writeText(`${browserURL}#player?platform=youtube&token=${output.token}`)
                                 }}>Copy URL</button>
                             </footer>
                         </>
@@ -52,10 +56,6 @@ export default function Home() {
                             </footer>
                         </>
                     )}
-                    {!IsEmpty(authCode) ? (
-                        <div className='alert'>
-                            <p>Código de autenticação: <b>{authCode}</b></p>
-                        </div>) : (<></>)}
                     {output.statusCode ? (
                         <div className='alert error'>
                             <p><b>{output.statusCode}</b> {output?.message}</p>

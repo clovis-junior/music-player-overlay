@@ -4,7 +4,7 @@ const appID = 'music-player-overlay-by';
 const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
-const baseURL = 'http://192.168.15.152:9863/api/v1';
+const baseURL = 'http://localhost:9863/api/v1';
 const params = new URLSearchParams(window.location.search);
 
 const token = localStorage.getItem('YouTubeMusicDesktopToken') || params.get('token');
