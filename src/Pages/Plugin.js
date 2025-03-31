@@ -1,10 +1,9 @@
-import { useSearchParams } from 'react-router-dom';
 // import { GetAccessToken } from '../platforms/Spotify';
 import { Player } from '../components/Player';
 import '../scss/player.scss';
 
 export default function Plugin() {
-    const [params] = useSearchParams();
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
 
     // if(params.has('code')) {
     //     async function GetSpotifyAccess() {
@@ -29,13 +28,11 @@ export default function Plugin() {
         <div className='music-player-container'>
             <Player 
                 platform={params.get('platform') || 'youtube'}
-                platformToken={params.get('token')}
                 compact={options.has('compact')}
                 noPulse={options.has('noPulse')}
                 textCentered={options.has('textCentered')}
                 sleepAfter={options.get('sleepAfter') || 10}
                 showWaves={parseInt(options.get('showWaves')) || 0}
-                dinamicWaves={options.has('dinamicWaves')}
                 progressBarWithColor={options.has('progressBarWithColor')}
                 hideProgress={options.has('hideProgress')}
                 hideProgressBar={options.has('hideProgressBar')}

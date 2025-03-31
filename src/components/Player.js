@@ -22,7 +22,7 @@ export function Player(props) {
     const [loaded, setLoaded] = useState(false);
     const [sleeping, setSleeping] = useState(false);
     
-    const ws = useRef(null);
+    const webSocket = useRef(null);
     const musicName = useRef(null);
     const artistName = useRef(null);
   
@@ -32,17 +32,21 @@ export function Player(props) {
     const playerClasses = [];
   
     useEffect(()=> {
-      ws.current = GetDataFromYouTubeMusic();
+      if (!webSocket.current || !webSocket.current.connected)
+        webSocket.current = GetDataFromYouTubeMusic();
 
-      const wsCurrent = ws.current;
+      const webSocketCurrent = webSocket.current;
 
-      return ()=> wsCurrent.close();
+      return ()=> {
+        if (webSocketCurrent && webSocketCurrent.connected)
+          webSocketCurrent.close();
+      }
     }, [setResult]);
 
     useEffect(()=> {
-      if(!ws.current) return;
+      if(!webSocket.current) return;
 
-      ws.current.on('state-update', state=> {
+      webSocket.current.on('state-update', state=> {
         setResult(UpdatePlayerData(state));
       });
     }, [result]);

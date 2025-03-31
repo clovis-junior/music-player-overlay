@@ -5,9 +5,9 @@ const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
 const baseURL = 'http://localhost:9863/api/v1';
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.hash.split('?')[1]);
 
-const token = localStorage.getItem('YouTubeMusicDesktopToken') || params.get('token');
+const token = params.get('token');
 
 export var authCode;
 
@@ -91,7 +91,11 @@ export function GetDataFromYouTubeMusic() {
 		'auth': { 'token': token }
 	});
 
+  console.log(token);
+
+  socket.on('connect', ()=> console.debug('Connected to YTMDesktop'));
 	socket.on('disconnect', ()=> {
+    console.debug('Disconnected to YTMDesktop... Reconnecting...');
     setTimeout(GetDataFromYouTubeMusic(), 5000)
   });
 
