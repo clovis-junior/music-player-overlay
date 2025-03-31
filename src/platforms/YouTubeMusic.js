@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const appID = 'music-player-overlay-by';
+const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
