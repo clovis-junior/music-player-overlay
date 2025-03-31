@@ -1,4 +1,4 @@
-import { RequestToken } from '../Platforms/YouTubeMusic';
+import { RequestToken } from '../platforms/YouTubeMusic';
 
 export default function Home() {
     return (
