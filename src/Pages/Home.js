@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Auth from './Auth';
+import Auth from '../pages/Auth';
 import '../scss/configure.scss';
 
 export default function Home() {
