@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/music-player-overlay/static/css/main.40043501.css",
-    "main.js": "/music-player-overlay/static/js/main.0f7cefb4.js",
+    "main.css": "/music-player-overlay/static/css/main.5b18cca8.css",
+    "main.js": "/music-player-overlay/static/js/main.2c9a4953.js",
     "static/js/453.2e6aec64.chunk.js": "/music-player-overlay/static/js/453.2e6aec64.chunk.js",
     "static/media/ytm-logo.png": "/music-player-overlay/static/media/ytm-logo.c3c83cb68d1e16f92cb5.png",
     "static/media/spotify-logo.png": "/music-player-overlay/static/media/spotify-logo.ec4bfb0837a6d5f52869.png",
     "index.html": "/music-player-overlay/index.html",
-    "main.40043501.css.map": "/music-player-overlay/static/css/main.40043501.css.map",
-    "main.0f7cefb4.js.map": "/music-player-overlay/static/js/main.0f7cefb4.js.map",
+    "main.5b18cca8.css.map": "/music-player-overlay/static/css/main.5b18cca8.css.map",
+    "main.2c9a4953.js.map": "/music-player-overlay/static/js/main.2c9a4953.js.map",
     "453.2e6aec64.chunk.js.map": "/music-player-overlay/static/js/453.2e6aec64.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.40043501.css",
-    "static/js/main.0f7cefb4.js"
+    "static/css/main.5b18cca8.css",
+    "static/js/main.2c9a4953.js"
   ]
 }
