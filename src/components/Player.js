@@ -68,8 +68,8 @@ export function Player(props) {
       if(!result?.isPlaying && !sleeping) {
         const playerSleep = window.setInterval(()=> setSleeping(true), ((props?.sleepAfter || 0) * 1000));
   
-        return ()=> window.clearInterval(playerSleep)
-      } else if(result.isPlaying && sleeping)
+        return ()=> window.clearInterval(playerSleep);
+      } else if(result?.isPlaying && sleeping)
         setSleeping(false);
   
     }, [result, props, sleeping]);
