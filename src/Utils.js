@@ -8,6 +8,26 @@ export function IsEmpty(variable) {
   return (typeof variable === 'undefined' || variable === null || (typeof variable === 'string' && variable.length <= 0))
 }
 
+export function GenerateRandomString(length = 8, uppercase = true, numbers = true) {
+  let result = '';
+
+  let chars = 'abcdefghijklmnopqrstuvwxyz';
+
+  if(uppercase)
+    chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  if(numbers)
+    chars += '0123456789';
+
+  let counter = 0;
+  while (counter < length) {
+    result += chars.charAt(Math.floor(Math.random() * length));
+    counter += 1
+  }
+
+  return result
+}
+
 export function URLValidade(value) {
   let filter=/^(https?):\/\/(?:www\.)?([a-zA-Z0-9-]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&//=]*)$/is;
   return (filter.test(value)) ? true : false;

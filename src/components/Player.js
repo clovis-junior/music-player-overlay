@@ -52,30 +52,32 @@ export function Player(props) {
         setResult(UpdatePlayerData(state));
       });
     }, [result]);
-
-    useEffect(()=> {
-      if(!loaded) return;
-			
-      const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), (6 * 1000));
-      const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), (6 * 1000));
   
-      return ()=> {
-        clearInterval(musicNameScroll);
-        clearInterval(artistNameScroll)
-      }
-    }, [loaded, musicNameScrolled, artistNameScrolled]);
+    useLayoutEffect(()=> {
+      if(!result?.isPlaying && !sleeping) {
+        const playerSleep = window.setInterval(()=> setSleeping(true), ((props?.sleepAfter || 0) * 1000));
   
-    useEffect(()=> {
-      if(!result.isPlaying && !sleeping) {
-        const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000));
-  
-        return ()=> clearInterval(playerSleep)
+        return ()=> window.clearInterval(playerSleep)
       } else if(result.isPlaying && sleeping)
         setSleeping(false);
   
-    }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
+    }, [result, props, sleeping]);
 
-		useLayoutEffect(()=> setLoaded(result), [setLoaded, result]);
+    useLayoutEffect(()=> {
+      const musicNameScroll = window.setInterval(()=> setMusicNameScrolled(!musicNameScrolled), 6000);
+  
+      return ()=> window.clearInterval(musicNameScroll);
+    }, [musicNameScrolled]);
+
+    useLayoutEffect(()=> {
+      const artistNameScroll = window.setInterval(()=> setArtistNameScrolled(!artistNameScrolled), 8000);
+  
+      return ()=> window.clearInterval(artistNameScroll);
+    }, [artistNameScrolled]);
+
+		useLayoutEffect(()=> {
+      setLoaded(result)
+    }, [result]);
 
     if(!loaded)
       return (<span className='loading'>Loading</span>);

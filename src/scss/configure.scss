@@ -18,9 +18,10 @@ $dark-pallete-2nd: #202020;
 $dark-pallete-3rd: #313131;
 $dark-pallete-4th: #4f4f4f;
 
-$rate-good: #1daf4e;
-$rate-medium: #f6b828;
-$rate-bad: #ed213c;
+$info-color: #0284c7;
+$warning-color: #f97316;
+$danger-color: #dc2626;
+$success-color: #16a34a;
 
 $border-radius: 10px;
 
@@ -28,11 +29,6 @@ $border-radius: 10px;
     Base
 ******************************************************** */
 :root {
-    --info-color: #0284c7;
-    --warning-color: #f97316;
-    --danger-color: #dc2626;
-    --success-color: #16a34a;
-
     --amazon-color: #0077C1;
     --apple-color: #fc3c44;
     --spotify-color: #1db954;
@@ -120,6 +116,12 @@ body {
     & .panel-content {
         padding: 1rem 2rem;
 
+        & a {
+            font-weight: 700;
+            color: inherit;
+            text-decoration: none; 
+        }
+
         & ul {
             list-style-type: decimal;
         }
@@ -182,7 +184,7 @@ body {
         @include border-radius($border-radius);
         background-color: $dark-color;
         letter-spacing: 1px;
-        font-weight: 600;
+        font-weight: 700;
         color: $light-color;
         text-transform: uppercase;
         @include user-select(none);
@@ -202,6 +204,8 @@ body {
             @include transform(scale(.9));
         }
 
+        &.success:not(:disabled):hover { background-color: $success-color }
+
         &.ytm:not(:disabled):hover { background-color: var(--youtube-color) }
         &.spotify:not(:disabled):hover { background-color: var(--spotify-color) }
     }
@@ -213,15 +217,15 @@ body {
     margin: 0 auto;
     padding: 1rem 2rem;
     @include border-radius($border-radius);
-    background-color: var(--background-color);
+    background-color: rgba($info-color, .2);
     letter-spacing: 2px;
     font-weight: 600;
     font-size: 1.25rem;
-    color: var(--info-color);
+    color: $info-color;
     text-align: center;
     @include user-select(none);
 
-    &.warning { color: var(--warning-color) }
-    &.error { color: var(--danger-color) }
+    &.warning { background-color: rgba($warning-color, .2); color: $warning-color }
+    &.error { background-color: rgba($danger-color, .2); color: $danger-color }
 }
     

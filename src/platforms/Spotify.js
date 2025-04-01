@@ -8,17 +8,17 @@ const params = new URLSearchParams(window.location.search);
 const refreshToken = localStorage.getItem('SpotifyRefreshToken') || params.get('refreshToken');
 const accessToken = localStorage.getItem('SpotifyAccessToken') || params.get('accessToken');
 
-export function GetAuthURL(uri = '', scopes = []) {
+export function GetAuthURL(uri = '', scopes = '', state = '') {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
     const params = new URLSearchParams({
-        'client_id': clientID,
         'response_type': 'code',
+        'client_id': clientID,
         'redirect_uri': uri,
-        'show_dialog': true,
-        'scopes': scopes.join(' ')
+        'state': state,
+        'show_dialog': true
     });
 
-    return `${base}?${params}`;
+    return `${base}?${params}&scope=${encodeURIComponent(scopes)}`;
 }
 
 export async function GetAccessToken(code) {
@@ -31,28 +31,22 @@ export async function GetAccessToken(code) {
             },
             body: new URLSearchParams({
                 'grant_type': 'authorization_code',
-                'redirect_uri': 'http://localhost',
+                'redirect_uri': 'http://localhost/',
                 'code': code
             })
         });
     
-        if(response.status !== 200)
-            return {};
-    
         const data = await response.json();
 
-        localStorage.setItem('SpotifyAccessToken', data.access_token);
-        localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
+        if(response.status === 200) {
+            localStorage.setItem('SpotifyAccessToken', data.access_token);
+            localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
+        }
 
-        const tokens = {
-            'access': data.access_token, 
-            'refresh': data.refresh_token
-        };
-
-        return tokens
-    } catch(err) {
-        console.error(err.message.toString());
-        return {}
+        return data
+    } catch(e) {
+        console.error(e.message.toString());
+        return { error: '?', error_description: e.message.toString()}
     }
 }
 
@@ -76,8 +70,8 @@ async function RefreshAccessToken() {
         const data = await response.json();
     
         return await GetDataFromSpotify(data.access_token)
-    } catch(err) {
-        console.error(err.message.toString());
+    } catch(e) {
+        console.error(e.message.toString());
         return false
     }
 }

@@ -11,7 +11,7 @@ const token = params.get('token');
 
 export var authCode;
 
-async function RequestCode() {
+export async function RequestCode() {
   try {
     const response = await fetch(`${baseURL}/auth/requestcode`, {
       method: 'POST',
@@ -37,14 +37,7 @@ async function RequestCode() {
   }
 }
 
-export async function RequestToken() {
-  const request = await RequestCode();
-
-  if(request.statusCode)
-    return { statusCode: request.statusCode, message: request.message };
-
-  authCode = request?.code;
-
+export async function RequestToken(code) {
   try {
     const response = await fetch(`${baseURL}/auth/request`, {
       method: 'POST',
@@ -53,7 +46,7 @@ export async function RequestToken() {
       },
       body: JSON.stringify({
         'appId': appID,
-        'code': request?.code
+        'code': code
       })
     });
     
@@ -96,7 +89,7 @@ export function GetDataFromYouTubeMusic() {
   socket.on('connect', ()=> console.debug('Connected to YTMDesktop'));
 	socket.on('disconnect', ()=> {
     console.debug('Disconnected to YTMDesktop... Reconnecting...');
-    setTimeout(GetDataFromYouTubeMusic(), 5000)
+    setTimeout(()=> GetDataFromYouTubeMusic(), 5000)
   });
 
   return socket
