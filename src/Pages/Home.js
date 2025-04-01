@@ -5,6 +5,13 @@ import '../scss/configure.scss';
 export default function Home() {
     const [selected, setSelected] = useState(null);
 
+    const params = new URLSearchParams(window.location.search);
+
+    if(params.get('code')) {
+        if(!selected)
+            setSelected('spotify');
+    }
+        
     function choosePlatform(name) {
         setSelected(name)
     }

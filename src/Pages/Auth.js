@@ -274,12 +274,10 @@ function AppleMusic() {
 
 export default function Auth(props) {
     const params = new URLSearchParams(window.location.search);
-
-    if(params.has('code'))
-        props.platform = 'spotify';
+    const platform = params.has('code') ? 'spotify' : props?.platform;
 
     function Platform() {
-        switch(props.platform) {
+        switch(platform) {
             case 'apple':
                 return (<AppleMusic />)
             case 'spotify':
