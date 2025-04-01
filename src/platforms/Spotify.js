@@ -14,14 +14,14 @@ export function GetAuthURL(uri = '', scopes = '', state = '') {
         'response_type': 'code',
         'client_id': clientID,
         'redirect_uri': uri,
-        'state': state,
-        'show_dialog': true
+        'show_dialog': true,
+        //'state': state,
     });
 
     return `${base}?${params}&scope=${encodeURIComponent(scopes)}`;
 }
 
-export async function GetAccessToken(code) {
+export async function GetAccessToken(uri = '', code) {
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -31,8 +31,10 @@ export async function GetAccessToken(code) {
             },
             body: new URLSearchParams({
                 'grant_type': 'authorization_code',
-                'redirect_uri': 'http://localhost/',
-                'code': code
+                'code': code,
+                'redirect_uri': uri,
+                'client_id': clientID,
+                'client_secret': clientSecret
             })
         });
     
@@ -83,7 +85,6 @@ export function UpdatePlayerData(data) {
     const albumCover = data.item?.album.images[data.item?.album.images.length - 1].url;
     const duration = {
         elapsed: (data?.progress_ms / 1000) || 0,
-        percentage: (data?.progress_ms * 100) / data.item?.duration_ms || 0,
         remaining: ((data.item?.duration_ms - data?.progress_ms) / 1000) || 0,
         total: (data.item?.duration_ms / 1000) || 0
     };

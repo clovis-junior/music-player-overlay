@@ -1,27 +1,8 @@
-// import { GetAccessToken } from '../platforms/Spotify';
 import { Player } from '../components/Player';
 import '../scss/player.scss';
 
 export default function Plugin() {
     const params = new URLSearchParams(window.location.hash.split('?')[1]);
-
-    // if(params.has('code')) {
-    //     async function GetSpotifyAccess() {
-    //         const SpotifyAccess = await GetAccessToken(params.get('code'));
-
-    //         const redirectParams = [];
-    //         redirectParams.push(`platform=spotify`);
-    //         redirectParams.push(`refreshToken=${SpotifyAccess.refresh || ''}`);
-    //         redirectParams.push(`accessToken=${SpotifyAccess.access || ''}`);
-
-    //         setInterval(()=> window.location.href = `${window.location.protocol}//${window.location.host}/?${redirectParams.join('&')}`, 1000);
-    //     }
-
-    //     GetSpotifyAccess();
-
-    //     return (<span className='loading'>Connecting</span>)
-    // }
-
     const options = new URLSearchParams(atob(params.get('options')));
 
     return (

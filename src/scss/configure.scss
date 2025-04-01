@@ -42,16 +42,16 @@ $border-radius: 10px;
     --font-tertiary-color: #{$dark-pallete-3rd};
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: #{$dark-pallete-1st};
-        --foreground-color: #{$dark-pallete-2nd};
+// @media (prefers-color-scheme: dark) {
+//     :root {
+//         --background-color: #{$dark-pallete-1st};
+//         --foreground-color: #{$dark-pallete-2nd};
                     
-        --font-primary-color: #{$light-pallete-1st};
-        --font-secondary-color: #{$light-pallete-2nd};
-        --font-tertiary-color: #{$light-pallete-3rd};
-    }
-}
+//         --font-primary-color: #{$light-pallete-1st};
+//         --font-secondary-color: #{$light-pallete-2nd};
+//         --font-tertiary-color: #{$light-pallete-3rd};
+//     }
+// }
 
 html {
     -webkit-tap-highlight-color: transparent;
@@ -113,7 +113,7 @@ body {
     @include box-shadow(0 0 1rem rgba(0,0,0,.4));
     @include user-select(none);
 
-    & .panel-content {
+    & .panel_content {
         padding: 1rem 2rem;
 
         & a {
@@ -141,7 +141,7 @@ body {
         }
     }
 
-    .platform-logo {
+    .platform_logo {
         max-width: calc(100% - 10rem);
         display: block;
         margin: 0 auto;
@@ -149,7 +149,7 @@ body {
         -webkit-user-drag: none;
     }
 
-    .input-text {
+    .input_text {
         width: 100%;
         display: block;
         padding: 1rem;
@@ -164,12 +164,28 @@ body {
     }
 
     .btns {
+        width: 100%;
         @include display-flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         padding: 2rem;
+
+        &.column {
+            flex-wrap: nowrap;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            & .btn {
+                width: 100%;
+
+                &:not(:last-child) {
+                    margin-bottom: 1rem;
+                }
+            }
+        }
 
         &.centered {
             justify-content: center;

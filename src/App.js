@@ -6,7 +6,7 @@ export default function App() {
     return (
         <HashRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
             <Routes>
-                <Route path='/' element={<Home />} />
+                <Route index element={<Home />} />
                 <Route path='/player' element={<Plugin />} />
             </Routes>
         </HashRouter>

@@ -72,7 +72,6 @@ export function UpdatePlayerData(data) {
   const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
   const duration = {
       elapsed: player?.videoProgress || 0,
-      percentage: (player?.videoProgress * 100) / song?.durationSeconds || 0,
       remaining: (song?.durationSeconds - player?.videoProgress) || 0,
       total: song?.durationSeconds || 0
   };
