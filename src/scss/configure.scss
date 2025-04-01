@@ -42,16 +42,16 @@ $border-radius: 10px;
     --font-tertiary-color: #{$dark-pallete-3rd};
 }
 
-// @media (prefers-color-scheme: dark) {
-//     :root {
-//         --background-color: #{$dark-pallete-1st};
-//         --foreground-color: #{$dark-pallete-2nd};
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #{$dark-pallete-1st};
+        --foreground-color: #{$dark-pallete-2nd};
                     
-//         --font-primary-color: #{$light-pallete-1st};
-//         --font-secondary-color: #{$light-pallete-2nd};
-//         --font-tertiary-color: #{$light-pallete-3rd};
-//     }
-// }
+        --font-primary-color: #{$light-pallete-1st};
+        --font-secondary-color: #{$light-pallete-2nd};
+        --font-tertiary-color: #{$light-pallete-3rd};
+    }
+}
 
 html {
     -webkit-tap-highlight-color: transparent;
@@ -153,11 +153,12 @@ body {
         width: 100%;
         display: block;
         padding: 1rem;
-        margin-bottom: 1rem;
+        margin: 1rem 0;
         border: 1px solid var(--font-tertiary-color);
         @include border-radius($border-radius);
         font-weight: 300;
         color: var(--font-primary-color);
+        text-align: center;
         text-overflow: ellipsis;
         @include border-radius($border-radius);
     }
@@ -208,6 +209,7 @@ body {
 
         &.ytm:not(:disabled):hover { background-color: var(--youtube-color) }
         &.spotify:not(:disabled):hover { background-color: var(--spotify-color) }
+        &.apple:not(:disabled):hover { background-color: var(--apple-color) }
     }
 }
 

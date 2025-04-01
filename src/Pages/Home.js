@@ -1,8 +1,9 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { GenerateRandomString } from '../Utils';
 import { RequestCode, RequestToken } from '../platforms/YouTubeMusic';
 import { GetAuthURL, GetAccessToken } from '../platforms/Spotify';
 import AsyncImage from '../components/AsyncImage';
+import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 import '../scss/configure.scss';
@@ -16,6 +17,17 @@ function Alert(props) {
     return (
         <div className={`alert ${props?.type}`}>{props?.content}</div>
     )
+}
+
+function Clipboard(text, element) {
+    try {
+        window.navigator.clipboard?.writeText(text);
+    } catch {
+        element?.select();
+        document?.execCommand('copy');
+    }          
+
+    return false
 }
 
 function YouTubeMusic() {
@@ -97,17 +109,18 @@ function YouTubeMusic() {
     }
 
     function Success(props) {
+        const input = useRef(null);
         const playerURL = `${browserURL}#player?platform=youtube&token=${props?.token}`;
 
         return (
             <>
                 <div className='panel-content'>
-                    <input type='text' className='input-text' value={playerURL} readOnly />
+                    <p>Now, you need to copy this URL and use it on you streaming software:</p>
+                    <input ref={input} type='text' className='input-text' value={playerURL} readOnly />
+                    <b>Enjoy!</b>
                 </div>
                 <footer className='btns centered'>
-                <button type='button' className='btn success' onClick={()=> {
-                    navigator.clipboard?.writeText(playerURL)
-                }}>Copy URL</button>
+                <button type='button' className='btn success' onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -129,6 +142,7 @@ function YouTubeMusic() {
 }
 
 function Spotify() {
+    const input = useRef(null);
     const params = new URLSearchParams(window.location.search);
 
     function Success(props) {
@@ -137,12 +151,12 @@ function Spotify() {
         return (
             <>
                 <div className='panel-content'>
-                    <input type='text' className='input-text' value={playerURL} readOnly />
+                    <p>Now, you need to copy this URL and use it on you streaming software:</p>
+                    <input ref={input} type='text' className='input-text' value={playerURL} readOnly />
+                    <b>Enjoy!</b>
                 </div>
                 <footer className='btns centered'>
-                    <button type='button' className='btn success' onClick={()=> {
-                        navigator.clipboard?.writeText(playerURL)
-                    }}>Copy URL</button>
+                    <button type='button' className='btn success' onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -209,6 +223,56 @@ function Spotify() {
     )
 }
 
+function AppleMusic() {
+    const [session, setSession] = useState(null);
+
+    function Instructions() {
+        return (
+            <>
+                <div className='panel-content'>
+                    <p>You need download Cider (Version 2+), <a rel='noopener noreferrer' href='https://cider.sh/downloads/client' target='_blank'>clicking here</a>. <small>Which costs U$3,49</small></p>
+                    <p>After downloaded, follow the instructions:</p>
+                    <ul>
+                        <li>Open <b>Cider</b></li>
+                        <li>Go to <b>Settings &gt; Connectivity &gt; Websockets API</b> and activate it</li>
+                        <li>Click on the button below to generate a url.</li>
+                    </ul>
+                </div>
+                <footer className='btns centered'>
+                    <button type='button' className='btn apple' onClick={()=> setSession('url')}>Generate a Browser URL</button>
+                </footer>
+            </>
+        )
+    }
+
+    function Success() {
+        const input = useRef(null);
+        const playerURL = `${browserURL}#player?platform=apple`;
+
+        return (
+            <>
+                <div className='panel-content'>
+                    <p>Now, you need to copy this URL and use it on you streaming software:</p>
+                    <input ref={input} type='text' className='input-text' value={playerURL} readOnly />
+                    <b>Enjoy!</b>
+                </div>
+                <footer className='btns centered'>
+                    <button type='button' className='btn success' onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                </footer>
+            </>
+        )
+    }
+
+    return (
+        <main className='panel'>
+            <figure>
+                <AsyncImage className='platform-logo' src={appleIcon} alt={'Apple Music Icon'} />
+            </figure>
+            {session ? <Success /> : <Instructions />}
+        </main>
+    )
+}
+
 export default function Home() {
     const params = new URLSearchParams(window.location.search);
 
@@ -217,6 +281,8 @@ export default function Home() {
 
     function Platform() {
         switch(params.get('platform')) {
+            case 'apple':
+                return (<AppleMusic />)
             case 'spotify':
                 return (<Spotify />)
             case 'youtube':
