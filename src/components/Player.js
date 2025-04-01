@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { GetDataFromYouTubeMusic, UpdatePlayerData } from '../platforms/YouTubeMusic';
+import { GetData as YTMData, UpdatePlayerData as UpdatePlayerDataFromYTM } from '../platforms/YouTubeMusic';
+import { GetData as AppleData, UpdatePlayerData as UpdatePlayerDataFromApple } from '../platforms/AppleMusic';
 import { ConvertTime } from '../Utils';
 
 function WaveForms({ number = 8} ) {
@@ -18,7 +19,7 @@ function WaveForms({ number = 8} ) {
 }
 
 export function Player(props) {
-    const [result, setResult] = useState({});
+    const [result, setResult] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [sleeping, setSleeping] = useState(false);
     
@@ -32,10 +33,10 @@ export function Player(props) {
     const playerClasses = [];
   
     useEffect(()=> {
-      if(props.platform !== 'youtube') return;
+      if(props.platform !== 'youtube' || props.platform !== 'apple') return;
 
       if (!webSocket.current || !webSocket.current.connected)
-        webSocket.current = GetDataFromYouTubeMusic();
+        webSocket.current = props.platform === 'youtube' ? YTMData : AppleData;
 
       const webSocketCurrent = webSocket.current;
 
@@ -48,10 +49,20 @@ export function Player(props) {
     useEffect(()=> {
       if(!webSocket.current) return;
 
-      webSocket.current.on('state-update', state=> {
-        setResult(UpdatePlayerData(state));
-      });
-    }, [result]);
+      if(props.platform === 'youtube') {
+        webSocket.current.on('state-update', state=> {
+          setResult(UpdatePlayerDataFromYTM(state));
+        });
+      }
+
+      if(props.platform === 'apple') {
+        webSocket.current.on('API:Playback', ({ data, type })=> {
+          if(type === 'playbackStatus.playbackStateDidChange')
+            setResult(UpdatePlayerDataFromApple(data));
+        });
+      }
+      
+    }, [props.platform, result]);
   
     useLayoutEffect(()=> {
       if(!result?.isPlaying && !sleeping) {

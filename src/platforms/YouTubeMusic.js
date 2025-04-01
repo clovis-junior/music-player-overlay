@@ -80,7 +80,7 @@ export function UpdatePlayerData(data) {
   return {isPlaying, title, artist, duration, albumCover};
 }
 
-export function GetDataFromYouTubeMusic() {
+export function GetData() {
   const socket = io(`${baseURL}/realtime`, {
 		'transports': ['websocket'],
 		'auth': { 'token': token }
@@ -89,7 +89,7 @@ export function GetDataFromYouTubeMusic() {
   socket.on('connect', ()=> console.debug('Connected to YTMDesktop'));
 	socket.on('disconnect', ()=> {
     console.debug('Disconnected to YTMDesktop... Reconnecting...');
-    setTimeout(()=> GetDataFromYouTubeMusic(), 5000)
+    setTimeout(()=> GetData(), 5000)
   });
 
   return socket

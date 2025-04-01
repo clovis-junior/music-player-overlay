@@ -1,44 +1,44 @@
 // import songData from'../Apple.test.json';
+import { io } from 'socket.io-client';
 import { URLValidade } from '../Utils';
-const url = 'http://localhost:10767';
+
+const baseURL = 'http://localhost:10767';
 
 function GetAlbumCover(url, size) {
-    if(URLValidade(url))
+    if (URLValidade(url))
         return '';
 
     const cover = url.replace('{w}', size)
-    .replace('{h}', size);
+        .replace('{h}', size);
 
     return cover
 }
 
-export async function GetDataFromAppleMusic() {
-    try {
-        const response = await fetch(`${url}/currentPlayingSong`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+export function UpdatePlayerData(data) {
+    const isPlaying = !data.info?.isPlaying;
+    const title = data.info?.name;
+    const artist = data.info?.artistName;
+    const albumCover = GetAlbumCover(data.info?.artwork.url, (data.info?.artwork.width || 300));
+    const duration = {
+        elapsed: (data.info?.currentPlaybackTime) || 0,
+        percentage: (data.info?.currentPlaybackProgress * 100),
+        remaining: ((data.info?.durationInMillis * 100) - data.info?.currentPlaybackTime),
+        total: (data.info?.durationInMillis / 1000) || 0
+    };
 
-        if(response.status !== 200)
-            return { error: 'Access denied or invalid' };
+    return { isPlaying, title, artist, duration, albumCover }
+}
 
-        const data = await response.json() /*songData*/;
+export function GetData() {
+    const socket = io(`${baseURL}`, {
+        'transports': ['websocket']
+    });
 
-        const isPlaying = !data.info?.isPlaying;
-        const title = data.info?.name;
-        const artist = data.info?.artistName;
-        const albumCover = GetAlbumCover(data.info?.artwork.url, (data.info?.artwork.width || 300));
-        const duration = {
-            elapsed: (data.info?.currentPlaybackTime) || 0,
-            percentage: (data.info?.currentPlaybackProgress * 100),
-            remaining: ((data.info?.durationInMillis * 100) - data.info?.currentPlaybackTime),
-            total: (data.info?.durationInMillis / 1000) || 0
-        };
+    socket.on('connect', () => console.debug('Connected to Cider'));
+    socket.on('disconnect', () => {
+        console.debug('Disconnected to Cider... Reconnecting...');
+        setTimeout(() => GetData(), 5000)
+    });
 
-        return {isPlaying, title, artist, duration, albumCover}
-    } catch(error) {
-        return { error: error.message.toString() }
-    }
+    return socket
 }

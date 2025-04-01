@@ -69,7 +69,7 @@ async function RefreshAccessToken() {
     
         const data = await response.json();
     
-        return await GetDataFromSpotify(data.access_token)
+        return await GetData(data.access_token)
     } catch(e) {
         console.error(e.message.toString());
         return false
@@ -91,7 +91,7 @@ export function UpdatePlayerData(data) {
     return {isPlaying, title, artist, duration, albumCover};
 }
 
-export async function GetDataFromSpotify() {
+export async function GetData() {
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             method: 'GET',
@@ -105,7 +105,7 @@ export async function GetDataFromSpotify() {
             return await RefreshAccessToken();
     
         if(response.status === 429)
-            return setTimeout(GetDataFromSpotify(), 5000);
+            return setTimeout(GetData(), 5000);
 
         return await response.json()
     } catch(error) {
