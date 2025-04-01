@@ -32,6 +32,8 @@ export function Player(props) {
     const playerClasses = [];
   
     useEffect(()=> {
+      if(props.platform !== 'youtube') return;
+
       if (!webSocket.current || !webSocket.current.connected)
         webSocket.current = GetDataFromYouTubeMusic();
 
@@ -41,7 +43,7 @@ export function Player(props) {
         if (webSocketCurrent && webSocketCurrent.connected)
           webSocketCurrent.close();
       }
-    }, [setResult]);
+    }, [props, setResult]);
 
     useEffect(()=> {
       if(!webSocket.current) return;
@@ -52,8 +54,7 @@ export function Player(props) {
     }, [result]);
 
     useEffect(()=> {
-      if(!loaded)
-        return;
+      if(!loaded) return;
 			
       const musicNameScroll = setInterval(()=> setMusicNameScrolled(!musicNameScrolled), (6 * 1000));
       const artistNameScroll = setInterval(()=> setArtistNameScrolled(!artistNameScrolled), (6 * 1000));
@@ -65,18 +66,16 @@ export function Player(props) {
     }, [loaded, musicNameScrolled, artistNameScrolled]);
   
     useEffect(()=> {
-      if(!result?.isPlaying) {
+      if(!result.isPlaying && !sleeping) {
         const playerSleep = setInterval(()=> setSleeping(true), (props.sleepAfter * 1000));
   
         return ()=> clearInterval(playerSleep)
-      } else if(result?.isPlaying && sleeping)
+      } else if(result.isPlaying && sleeping)
         setSleeping(false);
   
     }, [result?.isPlaying, props?.sleepAfter, sleeping, setSleeping]);
 
-		useLayoutEffect(()=>{
-      setLoaded(result);
-    }, [setLoaded, result]);
+		useLayoutEffect(()=> setLoaded(result), [setLoaded, result]);
 
     if(!loaded)
       return (<span className='loading'>Loading</span>);

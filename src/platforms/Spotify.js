@@ -8,6 +8,19 @@ const params = new URLSearchParams(window.location.search);
 const refreshToken = localStorage.getItem('SpotifyRefreshToken') || params.get('refreshToken');
 const accessToken = localStorage.getItem('SpotifyAccessToken') || params.get('accessToken');
 
+export function GetAuthURL(uri = '', scopes = []) {
+    const base = 'https://accounts.spotify.com/pt-BR/authorize';
+    const params = new URLSearchParams({
+        'client_id': clientID,
+        'response_type': 'code',
+        'redirect_uri': uri,
+        'show_dialog': true,
+        'scopes': scopes.join(' ')
+    });
+
+    return `${base}?${params}`;
+}
+
 export async function GetAccessToken(code) {
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -58,7 +71,7 @@ async function RefreshAccessToken() {
         });
     
         if(response.status !== 200)
-            return;
+            return false;
     
         const data = await response.json();
     
@@ -67,6 +80,21 @@ async function RefreshAccessToken() {
         console.error(err.message.toString());
         return false
     }
+}
+
+export function UpdatePlayerData(data) {
+    const isPlaying = data?.is_playing;
+    const title = data.item?.name;
+    const artist = data.item?.artists.map((artist) => artist.name).join(', ');
+    const albumCover = data.item?.album.images[data.item?.album.images.length - 1].url;
+    const duration = {
+        elapsed: (data?.progress_ms / 1000) || 0,
+        percentage: (data?.progress_ms * 100) / data.item?.duration_ms || 0,
+        remaining: ((data.item?.duration_ms - data?.progress_ms) / 1000) || 0,
+        total: (data.item?.duration_ms / 1000) || 0
+    };
+  
+    return {isPlaying, title, artist, duration, albumCover};
 }
 
 export async function GetDataFromSpotify() {
@@ -82,24 +110,11 @@ export async function GetDataFromSpotify() {
         if(response.status === 401)
             return await RefreshAccessToken();
     
-        if(response.status !== 200)
-            return { error: 'Access denied' };
-    
-        const data = await response.json() /*songData*/;
-    
-        const isPlaying = data.is_playing;
-        const title = data.item?.name;
-        const artist = data.item?.artists.map((artist) => artist.name).join(', ');
-        const albumCover = data.item?.album.images[data.item?.album.images.length - 1].url;
-        const duration = {
-            elapsed: (data.progress_ms / 1000) || 0,
-            percentage: (data.progress_ms * 100) / data.item?.duration_ms || 0,
-            remaining: ((data.item.duration_ms - data.progress_ms) / 1000) || 0,
-            total: (data.item?.duration_ms / 1000) || 0
-        };
-    
-        return {isPlaying, title, artist, duration, albumCover}
+        if(response.status === 429)
+            return setTimeout(GetDataFromSpotify(), 5000);
+
+        return await response.json()
     } catch(error) {
-        return { error: error.message.toString() };
+        console.log(error.message.toString());
     }
 }

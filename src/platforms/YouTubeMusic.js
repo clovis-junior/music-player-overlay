@@ -28,11 +28,12 @@ async function RequestCode() {
     const data = await response.json();
 
     if(data.statusCode)
-      return { statusCode: data.statusCode, message: data?.message };
+      return { statusCode: data.statusCode, message: data.message };
 
     return data;
   } catch(e) {
     console.error(`Error on Request Code: ${e.message}`);
+    return { statusCode: '?', message: e.message };
   }
 }
 
@@ -59,11 +60,12 @@ export async function RequestToken() {
     const data = await response.json();
 
     if(data.statusCode)
-      return { statusCode: data.statusCode, message: data?.message };
+      return { statusCode: data.statusCode, message: data.message };
 
     return data;
   } catch(e) {
     console.error(`Error on Request Token: ${e.message}`);
+    return { statusCode: '?', message: e.message };
   }
 }
 
@@ -90,8 +92,6 @@ export function GetDataFromYouTubeMusic() {
 		'transports': ['websocket'],
 		'auth': { 'token': token }
 	});
-
-  console.log(token);
 
   socket.on('connect', ()=> console.debug('Connected to YTMDesktop'));
 	socket.on('disconnect', ()=> {

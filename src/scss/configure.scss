@@ -4,7 +4,7 @@
 /* ********************************************************
     Variables
 ******************************************************** */
-$fonts: -apple-system, BlinkMacSystemFont, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+$fonts: -apple-system, BlinkMacSystemFont, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif !default;
 
 $light-color: #fafafa;
 $light-pallete-1st: #dfdfdf;
@@ -40,11 +40,22 @@ $border-radius: 10px;
 
     --background-color: #{$light-pallete-1st};
     --foreground-color: #{$light-color};
-                
+                    
     --font-primary-color: #{$dark-pallete-1st};
     --font-secondary-color: #{$dark-pallete-2nd};
     --font-tertiary-color: #{$dark-pallete-3rd};
 }
+
+// @media (prefers-color-scheme: dark) {
+//     :root {
+//         --background-color: #{$dark-pallete-1st};
+//         --foreground-color: #{$dark-pallete-2nd};
+                    
+//         --font-primary-color: #{$light-pallete-1st};
+//         --font-secondary-color: #{$light-pallete-2nd};
+//         --font-tertiary-color: #{$light-pallete-3rd};
+//     }
+// }
 
 html {
     -webkit-tap-highlight-color: transparent;
@@ -54,12 +65,12 @@ html {
 body {
     overflow-y: auto;
     overflow-x: hidden;
+    background-color: var(--background-color);
     font-family: $fonts;
     color: var(--font-primary-color);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-
 
     &::-webkit-scrollbar {
         width: .5rem;
@@ -91,32 +102,49 @@ body {
 
 .panel {
     width: 100%;
-    max-width: 600px;
+    max-width: 560px;
     display: block;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem 0;
     @include border-radius($border-radius);
     overflow: hidden;
     background-color: var(--foreground-color);
     white-space: normal;
     word-wrap: break-word;
     line-height: 2rem;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     color: var(--font-primary-color);
-    @include box-shadow(0 0 4px rgba(0,0,0,.5));
+    @include box-shadow(0 0 1rem rgba(0,0,0,.4));
+    @include user-select(none);
 
     & .panel-content {
-        padding: 0 1rem 1rem;
+        padding: 1rem 2rem;
+
+        & ul {
+            list-style-type: decimal;
+        }
+
+        & ol {
+            list-style-type: disc;
+        }
 
         & ul, & ol {
-            padding-left: 1rem;
+            padding-right: 1rem;
+            margin-left: 2rem;
+            margin-top: 10px;
+
+            & li:not(:last-child) {
+                margin-bottom: 10px;
+            }
         }
     }
 
     .platform-logo {
-        width: 100%;
+        max-width: calc(100% - 10rem);
         display: block;
+        margin: 0 auto;
         @include object-fit(cover);
+        -webkit-user-drag: none;
     }
 
     .input-text {
@@ -138,6 +166,7 @@ body {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        padding: 2rem;
 
         &.centered {
             justify-content: center;
@@ -151,13 +180,19 @@ body {
         align-items: center;
         padding: 1rem;
         @include border-radius($border-radius);
-        background-color: var(--font-tertiary-color);
+        background-color: $dark-color;
         letter-spacing: 1px;
         font-weight: 600;
         color: $light-color;
         text-transform: uppercase;
         @include user-select(none);
         @include transition(all 100ms ease);
+
+        &:disabled {
+            pointer-events: none;
+            background-color: $dark-pallete-4th;
+            color: $light-pallete-4th;
+        }
 
         &:not(:disabled):hover {
             cursor: pointer;
@@ -167,26 +202,26 @@ body {
             @include transform(scale(.9));
         }
 
-        &.ytm { background-color: var(--youtube-color) }
-        &.spotify { background-color: var(--spotify-color) }
+        &.ytm:not(:disabled):hover { background-color: var(--youtube-color) }
+        &.spotify:not(:disabled):hover { background-color: var(--spotify-color) }
     }
 }
 
 .alert {
-    width: calc(100% - 4rem);
+    width: calc(100% - 3rem);
     display: block;
-    margin: 1rem;
+    margin: 0 auto;
     padding: 1rem 2rem;
     @include border-radius($border-radius);
-    background-color: var(--info-color);
+    background-color: var(--background-color);
     letter-spacing: 2px;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1.25rem;
-    color: $light-color;
+    color: var(--info-color);
     text-align: center;
     @include user-select(none);
 
-    &.warning { background-color: var(--warning-color) }
-    &.error { background-color: var(--danger-color) }
+    &.warning { color: var(--warning-color) }
+    &.error { color: var(--danger-color) }
 }
     
