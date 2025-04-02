@@ -48,7 +48,7 @@ export async function GetAccessToken(uri = '', code) {
         return data
     } catch(e) {
         console.error(e.message.toString());
-        return { error: '?', error_description: e.message.toString()}
+        return { error: '?', error_description: e.message.toString() }
     }
 }
 
@@ -70,6 +70,9 @@ async function RefreshAccessToken() {
             return false;
     
         const data = await response.json();
+
+        localStorage.setItem('SpotifyAccessToken', data.access_token);
+        localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
     
         return await GetData(data.access_token)
     } catch(e) {
