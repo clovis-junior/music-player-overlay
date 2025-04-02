@@ -122,7 +122,7 @@ export function Player(props) {
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!result?.isPlaying && !sleeping) {
       const playerSleep = window.setInterval(() => setSleeping(true), ((props?.sleepAfter || 0) * 1000));
 
@@ -145,8 +145,7 @@ export function Player(props) {
   }, [artistNameScrolled]);
 
   useLayoutEffect(() => {
-    if (result !== null)
-      setLoaded(true);
+    if (result !== null) setLoaded(true);
     else {
       const waiting = setTimeout(() => {
         setResult({ error: 'Too loading, please, try again later...' });
@@ -156,7 +155,6 @@ export function Player(props) {
 
       return () => clearTimeout(waiting);
     }
-
   }, [result]);
 
   if (!loaded)
