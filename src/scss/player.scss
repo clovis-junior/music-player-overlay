@@ -31,20 +31,6 @@
 	}
 }
 
-@include keyframes(waveform-dinamic) {
-	0%,
-	100% {
-		background-color: #2e1bd6;
-		box-shadow: 0 0 8px 0 #2e1bd6;
-		@include transform(scaleY(1.2));
-	}
-	50% {
-		background-color: #14d444;
-		box-shadow: 0 0 4px 0 #14d444;
-		@include transform(scaleY(0.4));
-	}
-}
-
 @include keyframes(pulse) {
 	0% {
 		@include box-shadow(0 0 0 0 rgba(0, 0, 0, 0.6));
@@ -212,7 +198,19 @@ body {
 	font-size: 1rem;
 	text-transform: initial;
 	@include user-select(none);
-	@include transition(filter 200ms);
+	@include transition(filter 200ms ease);
+
+	&:not(.show) {
+		@include filter(opacity(0));
+	}
+
+	&.show {
+		@include filter(opacity(1));
+
+		&.paused {
+			@include filter(opacity(.8) contrast(.6));
+		}
+	}
 }
 .music-player {
 	max-width: calc(#{$size} * 4);
@@ -222,20 +220,8 @@ body {
 	flex-direction: row;
 	align-items: center;
 
-	&:not(.show) {
-		@include filter(opacity(0));
-	}
-
-	&.show {
-		@include filter(opacity(1));
-	}
-
 	&:not(.paused) .waveform {
 		@include animation-name(waveform);
-	}
-
-	&.dinamic .waveform {
-		@include animation-name(waveform-dinamic);
 	}
 
 	&.no-shadow {

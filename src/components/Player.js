@@ -32,10 +32,19 @@ function UpdatePercentage(elapsed, total) {
   return (elapsed * 100) / total;
 }
 
+function addPlayerClass(name, classes) {
+  if(classes.indexOf(name) < 0)
+    classes.push(name);
+}
+
+function removePlayerClass(name, classes) {
+  if(classes.indexOf(name) > -1)
+    classes.splice(classes.indexOf(name), 1);
+}
+
 export function Player(props) {
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
-  const [sleeping, setSleeping] = useState(false);
   const [musicProgress, setMusicProgress] = useState(0);
 
   const webSocket = useRef(null);
@@ -45,38 +54,33 @@ export function Player(props) {
   const [musicNameScrolled, setMusicNameScrolled] = useState(false);
   const [artistNameScrolled, setArtistNameScrolled] = useState(false);
 
-  const playerClasses = [];
+  const [playerClasses] = useState([]);
 
   useEffect(() => {
     if(props.platform === 'spotify') return;
 
-    if (!webSocket.current || !webSocket.current?.connected)
-      webSocket.current = props.platform === 'youtube' ? YouTubeMusicData() : AppleMusicData();
+    switch(props?.platform) {
+      case 'apple':
+        webSocket.current = AppleMusicData();
 
-    const webSocketCurrent = webSocket.current;
+        webSocket.current.on('API:Playback', ({ data, type })=> {
+          if(type === 'playbackStatus.playbackStateDidChange')
+            setResult(UpdatePlayerDataFromApple(data));
+        });
+        break;
+      case 'youtube':
+      default:
+        webSocket.current = YouTubeMusicData();
+        webSocket.current.on('state-update', state=> {
+          setResult(UpdatePlayerDataFromYTM(state));
+        });
+    }
 
     return () => {
-      if (webSocketCurrent && webSocketCurrent.connected)
-        webSocketCurrent.close();
+      if(webSocket.current?.connected)
+        webSocket.current?.disconnect();
     }
-  });
-
-  useEffect(() => {
-    if (!webSocket.current) return;
-
-    if(props.platform === 'youtube') {
-      webSocket.current.on('state-update', state=> {
-        setResult(UpdatePlayerDataFromYTM(state));
-      });
-    }
-
-    if(props.platform === 'apple') {
-      webSocket.current.on('API:Playback', ({ data, type })=> {
-        if(type === 'playbackStatus.playbackStateDidChange')
-          setResult(UpdatePlayerDataFromApple(data));
-      });
-    }
-  });
+  }, [props]);
 
   useEffect(()=>{
     if(!result && props.platform === 'spotify') {
@@ -122,15 +126,27 @@ export function Player(props) {
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);
 
-  useEffect(() => {
-    if (!result?.isPlaying && !sleeping) {
-      const playerSleep = window.setInterval(() => setSleeping(true), ((props?.sleepAfter || 0) * 1000));
+  useLayoutEffect(() => {
+    if(!loaded) return;
 
-      return () => window.clearInterval(playerSleep);
-    } else if (result?.isPlaying && sleeping)
-      setSleeping(false);
+    if(!result?.isPlaying) {
+      const waiting = setTimeout(()=> {
+        removePlayerClass('show', playerClasses);
+      }, (props?.sleepAfter * 1000));
+  
+      return ()=> clearTimeout(waiting);
+    } else 
+      addPlayerClass('show', playerClasses);
 
-  }, [result, props, sleeping]);
+  }, [loaded, result, props, playerClasses]);
+
+  useLayoutEffect(() => {
+    if (!result?.isPlaying)
+      addPlayerClass('paused', playerClasses);
+    else if(result?.isPlaying)
+      removePlayerClass('paused', playerClasses);
+
+  }, [result, playerClasses]);
 
   useLayoutEffect(() => {
     const musicNameScroll = window.setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
@@ -163,12 +179,11 @@ export function Player(props) {
   if (result.error)
     return (<>{result.error}</>);
 
-  if (!sleeping || !result?.isPlaying) playerClasses.push('show');
-  if (props?.noShadow) playerClasses.push('no-shadow');
-  if (props?.squareLayout) playerClasses.push('square');
+  if (props?.noShadow) addPlayerClass('no-shadow', playerClasses);
+  if (props?.squareLayout) addPlayerClass('square', playerClasses);
 
   if (props.compact) {
-    playerClasses.push('music-player-compact');
+    addPlayerClass('music-player-compact', playerClasses);
 
     return (
       <main className={playerClasses.join(' ')}>
@@ -202,10 +217,7 @@ export function Player(props) {
     )
   }
 
-  playerClasses.push('music-player');
-
-  if (!result?.isPlaying) playerClasses.push('paused');
-  if (props?.dinamicWaves) playerClasses.push('dinamic');
+  addPlayerClass('music-player', playerClasses);
 
   return (
     <main className={playerClasses.join(' ')}>
