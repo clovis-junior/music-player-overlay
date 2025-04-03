@@ -12,7 +12,7 @@ export function GetURLParams() {
   const target = (window.location.search.length <= 1)
     ? window.location.hash.split('?')[1] : window.location.search.substring(1);
 
-  const search = target.split('&'), params = {};
+  const search = target?.split('&'), params = {};
 
   params.get = function(param) {
     return params[param]
@@ -22,7 +22,7 @@ export function GetURLParams() {
     return (param in params)
   }
 
-  search.forEach(param => params[param.split('=')[0]] = param.split('=')[1]);
+  search?.forEach(param => params[param.split('=')[0]] = param.split('=')[1]);
 
   return params
 }
