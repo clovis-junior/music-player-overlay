@@ -145,7 +145,7 @@ function Spotify() {
     const params = new URLSearchParams(window.location.search);
 
     function Success(props) {
-        const playerURL = `${browserURL}#player?platform=spotify&refreshToken=${props?.refreshToken}`;
+        const playerURL = `${browserURL}#player?platform=spotify&refreshToken=${props?.refreshToken}&accessToken=${props?.accessToken}`;
         
         return (
             <>
@@ -195,7 +195,7 @@ function Spotify() {
             );
         }
 
-        return (<Success refreshToken={response.refresh_token} />)
+        return (<Success refreshToken={response.refresh_token} accessToken={response.access_token} />)
     }
 
     function Auth() {
