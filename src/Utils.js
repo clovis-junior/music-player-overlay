@@ -8,12 +8,12 @@ export function IsEmpty(variable) {
   return (typeof variable === 'undefined' || variable === null || (typeof variable === 'string' && variable.length <= 0))
 }
 
-export function GetURLParams() {
-  const target = (window.location.search.length <= 1)
-    ? window.location.hash.split('?')[1] : window.location.search.substring(1);
+export function GetURLParams(path) {
+  path = path || window.location.href;
+  path = path.split('?')[1];
 
-  const search = target?.split('&'), params = {};
-
+  const search = path?.split('&'), params = {};
+  
   params.get = function(param) {
     return params[param]
   }
