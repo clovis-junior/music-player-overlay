@@ -29,15 +29,23 @@ export function UpdatePlayerData(data) {
 }
 
 export function GetData() {
-    const socket = io(`${baseURL}`, {
-        'transports': ['websocket']
-    });
+    try {
+        const socket = io(`${baseURL}`, {
+            'transports': ['websocket']
+        });
+    
+        socket.on('connect', () => console.debug('Connected to Cider'));
+        socket.on('disconnect', () => {
+            console.debug('Disconnected to Cider... Reconnecting...');
+            setTimeout(() => GetData(), 5000)
+        });
+    
+        return socket
+    } catch(e) {
+        console.error(e.message.toString());
 
-    socket.on('connect', () => console.debug('Connected to Cider'));
-    socket.on('disconnect', () => {
-        console.debug('Disconnected to Cider... Reconnecting...');
-        setTimeout(() => GetData(), 5000)
-    });
+        setTimeout(()=> GetData(), 3000);
 
-    return socket
+        return { error: e.message.toString() }
+    }
 }

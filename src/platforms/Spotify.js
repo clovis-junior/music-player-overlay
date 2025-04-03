@@ -5,9 +5,10 @@ const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
 const params = new URLSearchParams(window.location.search);
 
-const refreshToken = params.get('refreshToken');
+console.log(params);
 
-var accessToken = '';
+var refreshToken = params.get('refreshToken');
+var accessToken = null;
 
 export function GetAuthURL(uri = '', scopes = '', state = '') {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
@@ -41,6 +42,9 @@ export async function GetAccessToken(uri = '', code) {
     
         const data = await response.json();
 
+        if(!refreshToken)
+            refreshToken = data.refresh_token;
+
         return data
     } catch(e) {
         console.error(e.message.toString());
@@ -67,7 +71,10 @@ async function RefreshAccessToken() {
     
         const data = await response.json();
 
+        // refreshToken = data.refresh_token;
         accessToken = data.access_token;
+
+        console.log(accessToken);
     
         return await GetData()
     } catch(e) {
@@ -104,10 +111,14 @@ export async function GetData() {
             return await RefreshAccessToken();
     
         if(response.status === 429)
-            return setTimeout(GetData(), 5000);
+            return setTimeout(()=> GetData(), 5000);
 
         return await response.json()
-    } catch(error) {
-        console.log(error.message.toString());
+    } catch(e) {
+        console.error(e.message.toString());
+
+        setTimeout(()=> GetData(), 3000);
+
+        return { error: e.message.toString() }
     }
 }
