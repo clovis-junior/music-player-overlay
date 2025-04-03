@@ -8,24 +8,21 @@ export function IsEmpty(variable) {
   return (typeof variable === 'undefined' || variable === null || (typeof variable === 'string' && variable.length <= 0))
 }
 
-export function GenerateRandomString(length = 8, uppercase = true, numbers = true) {
-  let result = '';
+export function GenerateRandomString(length = 8, uppercase = true, numbers = true, special = false) {
+  let output;
 
-  let chars = 'abcdefghijklmnopqrstuvwxyz';
+  characters = 'abcdefghijklmnopqrstuvwxyz';
 
   if(uppercase)
-    chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-  if(numbers)
-    chars += '0123456789';
+  if(numbers) characters += '0123456789';
+  if(special) characters += '!@#$%&*';
 
-  let counter = 0;
-  while (counter < length) {
-    result += chars.charAt(Math.floor(Math.random() * length));
-    counter += 1
-  }
+  for(let i=0;i<length;i++)
+    output += characters.charAt(Math.floor(Math.random() * length));
 
-  return result
+  return output;
 }
 
 export function URLValidade(value) {
