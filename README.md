@@ -30,8 +30,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 [Click here to configure](https://clovis-junior.github.io/music-player-overlay/).
 
 > [!NOTE]
-> For now, only support a [YouTube Music Desktop](https://ytmdesktop.app/), soon i release a Spotify and Apple Music (Cider) support 😉
-> The options has not available for now
+> The players options has not available on GitHub Page for now
 
 > [!TIP]
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
