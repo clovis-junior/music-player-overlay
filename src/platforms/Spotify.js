@@ -1,16 +1,15 @@
 // import songData from'../Spotify.test.json';
+import { GetURLParams, GenerateRandomString } from "../Utils";
 
 const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
-const params = new URLSearchParams(window.location.search);
-
-console.log(params);
+const params = GetURLParams();
 
 var refreshToken = params.get('refreshToken');
 var accessToken = null;
 
-export function GetAuthURL(uri = '', scopes = '', state = '') {
+export function GetAuthURL(uri = '', scopes = '', state = GenerateRandomString()) {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
     const params = new URLSearchParams({
         'response_type': 'code',
