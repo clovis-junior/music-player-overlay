@@ -20,7 +20,7 @@ export function GenerateRandomString(length = 8, uppercase = true, numbers = tru
   if(special) characters += '!@#$%&*';
 
   for(let i=0;i<length;i++)
-    output += characters.charAt(Math.floor(Math.random() * length));
+    output += characters.charAt(Math.floor(Math.random() * characters.length));
 
   return output;
 }
