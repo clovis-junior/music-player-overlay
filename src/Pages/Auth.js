@@ -195,7 +195,7 @@ function Spotify() {
             );
         }
 
-        return (<Success refreshToken={response.refresh_token} accessToken={response.access_token} />)
+        return (<Success refreshToken={response.refresh_token} />)
     }
 
     function Auth() {
