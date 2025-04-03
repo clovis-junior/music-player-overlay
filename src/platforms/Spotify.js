@@ -8,6 +8,8 @@ const params = new URLSearchParams(window.location.search);
 const refreshToken = localStorage.getItem('SpotifyRefreshToken') || params.get('refreshToken');
 const accessToken = localStorage.getItem('SpotifyAccessToken') || '';
 
+console.log(refreshToken, accessToken);
+
 export function GetAuthURL(uri = '', scopes = '', state = '') {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
     const params = new URLSearchParams({
@@ -40,14 +42,6 @@ export async function GetAccessToken(uri = '', code) {
     
         const data = await response.json();
 
-        if(response.status === 200) {
-            if(!accessToken)
-                localStorage.setItem('SpotifyAccessToken', data.access_token);
-
-            if(!refreshToken)
-                localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
-        }
-
         return data
     } catch(e) {
         console.error(e.message.toString());
@@ -74,8 +68,11 @@ async function RefreshAccessToken() {
     
         const data = await response.json();
 
-        localStorage.setItem('SpotifyAccessToken', data.access_token);
-        localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
+        if(!accessToken)
+            localStorage.setItem('SpotifyAccessToken', data.access_token);
+
+        if(!refreshToken)
+            localStorage.setItem('SpotifyRefreshToken', data.refresh_token);
     
         return await GetData(data.access_token)
     } catch(e) {

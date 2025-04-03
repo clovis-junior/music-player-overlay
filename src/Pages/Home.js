@@ -13,6 +13,7 @@ export default function Home() {
     }
         
     function choosePlatform(name) {
+        window.history.pushState({title: document.title}, window.location.pathname, window.location.hash);
         setSelected(name)
     }
 

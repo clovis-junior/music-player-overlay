@@ -10,8 +10,7 @@ export function IsEmpty(variable) {
 
 export function GenerateRandomString(length = 8, uppercase = true, numbers = true, special = false) {
   let output = '';
-
-  characters = 'abcdefghijklmnopqrstuvwxyz';
+  let characters = 'abcdefghijklmnopqrstuvwxyz';
 
   if(uppercase)
     characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
