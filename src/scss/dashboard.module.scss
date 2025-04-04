@@ -37,21 +37,25 @@ $apple-color: #fc3c44;
 $spotify-color: #1db954;
 $youtube-color: #FF0033;
 
-$background-color: $light-pallete-1st !default;
-$foreground-color: $light-color !default;
-                    
-$font-primary-color: $dark-pallete-1st !default;
-$font-secondary-color: $dark-pallete-2nd !default;
-$font-tertiary-color: $dark-pallete-3rd !default;
 
+:root {
+    --background-color: #{$light-pallete-1st};
+    --foreground-color: #{$light-color};
+                        
+    --font-primary-color: #{$dark-pallete-1st};
+    --font-secondary-color: #{$dark-pallete-2nd};
+    --font-tertiary-color: #{$dark-pallete-3rd};
+}
 
-@if $dark-theme {
-    $background-color: $dark-pallete-1st;
-    $foreground-color: $dark-pallete-2nd;
-                    
-    $font-primary-color: $light-pallete-1st;
-    $font-secondary-color: $light-pallete-2nd;
-    $font-tertiary-color: $light-pallete-3rd;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #{$dark-pallete-1st};
+        --foreground-color: #{$dark-pallete-2nd};
+                            
+        --font-primary-color: #{$light-pallete-1st};
+        --font-secondary-color: #{$light-pallete-2nd};
+        --font-tertiary-color: #{$light-pallete-3rd};
+    }
 }
 
 html {
@@ -72,17 +76,17 @@ body {
     &.dashboard {
         overflow-y: auto;
         overflow-x: hidden;
-        background-color: $background-color;
+        background-color: var(--background-color);
         font-family: $fonts !important;
-        color: $font-primary-color;
+        color: var(--font-primary-color);
 
         &::-webkit-scrollbar {
             width: .5rem;
-            background-color: $background-color;
+            background-color: var(--background-color);
         }
     
         &::-webkit-scrollbar-thumb {
-            background-color: $font-primary-color;
+            background-color: var(--font-primary-color);
         }
     }
 }
@@ -113,12 +117,12 @@ body {
     padding: 2rem 0;
     @include border-radius($border-radius);
     overflow: hidden;
-    background-color: $foreground-color;
+    background-color: var(--foreground-color);
     white-space: normal;
     word-wrap: break-word;
     line-height: 2rem;
     font-size: 1.25rem;
-    color: $font-primary-color;
+    color: var(--font-primary-color);
     @include box-shadow(0 0 1rem rgba(0,0,0,.4));
     @include user-select(none);
 
@@ -169,10 +173,10 @@ body {
         display: block;
         padding: 1rem;
         margin: 1rem 0;
-        border: 1px solid $font-tertiary-color;
+        border: 1px solid var(--font-tertiary-color);
         @include border-radius($border-radius);
         font-weight: 300;
-        color: $font-primary-color;
+        color: var(--font-primary-color);
         text-align: center;
         text-overflow: ellipsis;
         @include border-radius($border-radius);
