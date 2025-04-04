@@ -63,6 +63,8 @@ export async function RequestToken(code) {
 }
 
 export function UpdatePlayerData(data) {
+  if(data.error) return data;
+
   const player = data?.player;
   const song = data?.video;
 

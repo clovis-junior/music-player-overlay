@@ -15,6 +15,8 @@ function GetAlbumCover(url, size) {
 }
 
 export function UpdatePlayerData(data) {
+    if(data.error) return data;
+    
     const isPlaying = !data.info?.isPlaying;
     const title = data.info?.name;
     const artist = data.info?.artistName;

@@ -82,6 +82,8 @@ async function RefreshAccessToken() {
 }
 
 export function UpdatePlayerData(data) {
+    if(data.error) return data;
+    
     const isPlaying = data?.is_playing;
     const title = data.item?.name;
     const artist = data.item?.artists.map((artist) => artist.name).join(', ');

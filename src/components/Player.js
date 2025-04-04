@@ -82,18 +82,6 @@ export function Player(props) {
     }
   }, [props]);
 
-  useEffect(()=>{
-    if(!result && props.platform === 'spotify') {
-      async function getDataFromSpotify() {
-        const data = await SpotiyData();
-
-        setResult(UpdatePlayerDataFromSpotify(data))
-      }
-
-      getDataFromSpotify()
-    }
-  });
-
   useEffect(() => {
     if (props.platform !== 'spotify') return;
 
@@ -125,6 +113,18 @@ export function Player(props) {
 
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);
+
+  useLayoutEffect(()=>{
+    if(!result.error && props.platform === 'spotify') {
+      async function getDataFromSpotify() {
+        const data = await SpotiyData();
+
+        setResult(UpdatePlayerDataFromSpotify(data))
+      }
+
+      getDataFromSpotify()
+    }
+  }, [result, props]);
 
   useLayoutEffect(() => {
     if(!loaded) return;
