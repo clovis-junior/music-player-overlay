@@ -6,8 +6,10 @@ const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
 const params = GetURLParams();
 
-const refreshToken = /*localStorage.getItem('refreshToken') || */params.get('refreshToken');
-const accessToken = localStorage.getItem('accessToken')/* || params.get('accessToken')*/;
+// const refreshToken = localStorage.getItem('refreshToken') || params.get('refreshToken');
+// const accessToken = localStorage.getItem('accessToken') || params.get('accessToken');
+const refreshToken = params.get('refreshToken');
+var accessToken;
 
 export function GetAuthURL(uri = '', scopes = '', state = GenerateRandomString()) {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
@@ -67,11 +69,10 @@ async function RefreshAccessToken() {
     
         const data = await response.json();
 
-        localStorage.setItem('accessToken', data.access_token);
-        /*
-        if (response.refresh_token)
-            localStorage.setItem('refreshToken', data.refresh_token);
-        */
+        // localStorage.setItem('accessToken', data.access_token);
+        // if (response.refresh_token)
+        //     localStorage.setItem('refreshToken', data.refresh_token);
+        accessToken = data.access_token;
     
         return await GetData()
     } catch(e) {
@@ -103,13 +104,18 @@ export async function GetData() {
                 'Content-Type': 'application/json'
             }
         });
-    
-        if(response.status === 401)
-            return await RefreshAccessToken();
-    
-        if(response.status === 429)
-            return setTimeout(async ()=> await GetData(), 5000);
 
+        if(!response.ok) {
+            switch(response.status) {
+                case 401:
+                    return await RefreshAccessToken();
+                case 429:
+                    return setTimeout(async ()=> await GetData(), 5000);
+                default:
+                    return {}
+            }
+        }
+            
         return await response.json()
     } catch(e) {
         console.error(e.message.toString());
