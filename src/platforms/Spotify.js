@@ -6,8 +6,8 @@ const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
 const params = GetURLParams();
 
-const refreshToken = localStorage.getItem('refreshToken') || params.get('refreshToken');
-const accessToken = localStorage.getItem('accessToken') || params.get('accessToken');
+const refreshToken = /*localStorage.getItem('refreshToken') || */params.get('refreshToken');
+const accessToken = localStorage.getItem('accessToken')/* || params.get('accessToken')*/;
 
 export function GetAuthURL(uri = '', scopes = '', state = GenerateRandomString()) {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
@@ -68,8 +68,10 @@ async function RefreshAccessToken() {
         const data = await response.json();
 
         localStorage.setItem('accessToken', data.access_token);
+        /*
         if (response.refresh_token)
             localStorage.setItem('refreshToken', data.refresh_token);
+        */
     
         return await GetData()
     } catch(e) {
