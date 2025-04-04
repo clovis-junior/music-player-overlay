@@ -115,7 +115,7 @@ export function Player(props) {
   }, [result]);
 
   useLayoutEffect(()=>{
-    if(!result.error && props.platform === 'spotify') {
+    if(!result?.error && props.platform === 'spotify') {
       async function getDataFromSpotify() {
         const data = await SpotiyData();
 

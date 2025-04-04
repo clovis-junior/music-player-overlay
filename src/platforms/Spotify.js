@@ -1,23 +1,21 @@
 // import songData from'../Spotify.test.json';
-import { GetURLParams, GenerateRandomString } from "../Utils";
+import { GetURLParams/*, GenerateRandomString */} from "../Utils";
 
 const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
 const params = GetURLParams();
 
-// const refreshToken = localStorage.getItem('refreshToken') || params.get('refreshToken');
-// const accessToken = localStorage.getItem('accessToken') || params.get('accessToken');
-const refreshToken = params.get('refreshToken');
-var accessToken;
+var refreshToken = params.get('refreshToken');
+var accessToken = params.get('accessToken');
 
-export function GetAuthURL(uri = '', scopes = '', state = GenerateRandomString()) {
+export function GetAuthURL(uri = '', scopes = ''/*, state = GenerateRandomString()*/) {
     const base = 'https://accounts.spotify.com/pt-BR/authorize';
     const params = new URLSearchParams({
         'response_type': 'code',
         'client_id': clientID,
         'redirect_uri': uri,
-        'show_dialog': true,
+        'show_dialog': true
         //'state': state,
     });
 
@@ -64,26 +62,23 @@ async function RefreshAccessToken() {
             })
         });
     
-        if(response.status !== 200)
-            return false;
-    
         const data = await response.json();
 
-        // localStorage.setItem('accessToken', data.access_token);
-        // if (response.refresh_token)
-        //     localStorage.setItem('refreshToken', data.refresh_token);
+        if(response.status !== 200)
+            return UpdatePlayerData(data);
+
         accessToken = data.access_token;
-    
-        return await GetData()
+        // refreshToken = data.refresh_token;
+        
+        return await GetData();
     } catch(e) {
         console.error(e.message.toString());
-        return false
     }
 }
 
-export function UpdatePlayerData(data) {
+export function UpdatePlayerData(data) {;
     if(data.error) return data;
-    
+
     const isPlaying = data?.is_playing;
     const title = data.item?.name;
     const artist = data.item?.artists.map((artist) => artist.name).join(', ');
@@ -98,6 +93,9 @@ export function UpdatePlayerData(data) {
 }
 
 export async function GetData() {
+    if(!accessToken)
+        return await RefreshAccessToken();
+
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             method: 'GET',
@@ -114,10 +112,10 @@ export async function GetData() {
                 case 429:
                     return setTimeout(async ()=> await GetData(), 5000);
                 default:
-                    return {}
+                    return UpdatePlayerData(response.json())
             }
         }
-            
+
         return await response.json()
     } catch(e) {
         console.error(e.message.toString());
