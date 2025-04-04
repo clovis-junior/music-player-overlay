@@ -22,14 +22,16 @@ function Alert(props) {
 }
 
 function Clipboard(text, element) {
+    element?.select();
+
     try {
         window.navigator.clipboard?.writeText(text);
-    } catch {
-        element?.select();
-        document?.execCommand('copy');
-    }          
 
-    return false
+    } catch { 
+        document?.execCommand('copy');
+    }
+
+    return setTimeout(()=> window.alert('URL has copied!'), 500)
 }
 
 function YouTubeMusic() {
