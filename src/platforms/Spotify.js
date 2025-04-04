@@ -67,8 +67,10 @@ async function RefreshAccessToken() {
         if(response.status !== 200)
             return UpdatePlayerData(data);
 
-        accessToken = data.access_token;
-        // refreshToken = data.refresh_token;
+        localStorage.setItem('spotifyAccessToken', data.access_token);
+        accessToken = localStorage.getItem('spotifyAccessToken');
+        localStorage.setItem('spotifyrefreshToken', data.refresh_token);
+        // refreshToken = localStorage.getItem('spotifyRefreshToken');
         
         return await GetData();
     } catch(e) {
