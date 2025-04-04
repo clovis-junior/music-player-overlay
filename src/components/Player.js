@@ -12,6 +12,7 @@ import {
   UpdatePlayerData as UpdatePlayerDataFromSpotify
 } from '../platforms/Spotify';
 import { ConvertTime } from '../Utils';
+import styles from '../scss/player.module.scss';
 
 function DrawWaveForms({ number = 8 }) {
   let waves = [];
@@ -20,9 +21,9 @@ function DrawWaveForms({ number = 8 }) {
     waves.push(i);
 
   return (
-    <div className='music-waveforms'>
+    <div className={styles.music_waveforms}>
       {waves.map(index => (
-        <div key={index} className='waveform' />
+        <div key={index} className={styles.waveform} />
       ))}
     </div>
   )
@@ -134,20 +135,20 @@ export function Player(props) {
 
     if(!result?.isPlaying) {
       const waiting = setTimeout(()=> {
-        removePlayerClass('show', playerClasses);
+        removePlayerClass(styles.show, playerClasses);
       }, (props?.sleepAfter * 1000));
   
       return ()=> clearTimeout(waiting);
     } else 
-      addPlayerClass('show', playerClasses);
+      addPlayerClass(styles.show, playerClasses);
 
   }, [loaded, result, props, playerClasses]);
 
   useLayoutEffect(() => {
     if (!result?.isPlaying)
-      addPlayerClass('paused', playerClasses);
+      addPlayerClass(styles.paused, playerClasses);
     else if(result?.isPlaying)
-      removePlayerClass('paused', playerClasses);
+      removePlayerClass(styles.paused, playerClasses);
 
   }, [result, playerClasses]);
 
@@ -177,39 +178,39 @@ export function Player(props) {
   }, [result]);
 
   if (!loaded)
-    return (<span className='loading'>Loading</span>);
+    return (<span className={styles.loading}>Loading</span>);
 
   if (result.error)
     return (<>{result.error}</>);
 
-  if (props?.noShadow) addPlayerClass('no-shadow', playerClasses);
-  if (props?.squareLayout) addPlayerClass('square', playerClasses);
+  if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
+  if (props?.squareLayout) addPlayerClass(styles.square, playerClasses);
 
   if (props.compact) {
-    addPlayerClass('music-player-compact', playerClasses);
+    addPlayerClass(styles.music_player_compact, playerClasses);
 
     return (
       <main className={playerClasses.join(' ')}>
         {(!props?.solidColor) ? (
-          <div className='music-album-blur-container'>
-            <div className='music-album-art' style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
+          <div className={styles.music_album_art_container}>
+            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
           </div>
         ) : (<></>)}
         {(!props?.hideProgress) ? (
-          <div className={props?.progressBarWithColor ? `music-progress-bar ${props?.platform}` : 'music-progress-bar'}>
+          <div className={styles.music_progress_bar}>
             <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
           </div>
         ) : (<></>)}
-        <div className={props?.textCentered ? 'music-infos centered' : 'music-infos'}>
-          <div className='music-info-mask'>
-            <span ref={musicName} id='music-title' style={{
+        <div className={props?.textCentered ? `${styles.music_infos} ${styles.centered}` : styles.music_infos}>
+          <div className={styles.music_info_mask}>
+            <span ref={musicName} id={styles.music_title} style={{
               'transform': (!musicNameScrolled)
                 ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
                 : `translateX(0)`
             }}>{result?.title}</span>
           </div>
-          <div className='music-info-mask'>
-            <span ref={artistName} id='music-artist' style={{
+          <div className={styles.music_info_mask}>
+            <span ref={artistName} id={styles.music_artist} style={{
               'transform': (!artistNameScrolled)
                 ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
                 : `translateX(0)`
@@ -220,32 +221,32 @@ export function Player(props) {
     )
   }
 
-  addPlayerClass('music-player', playerClasses);
+  addPlayerClass(styles.music_player, playerClasses);
 
   return (
     <main className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
-        <div className='music-album-art'>
+        <div className={styles.music_album_art}>
           <figure>
-            <img id='music-album-art' src={result?.albumCover} alt={result?.title} />
+            <img id={styles.music_album_art} src={result?.albumCover} alt={result?.title} />
           </figure>
         </div>
       ) : (<></>)}
-      <aside className='music-infos'>
+      <aside className={styles.music_infos}>
         {(!props?.solidColor) ? (
-          <div className='music-album-blur-container'>
-            <div className='music-album-art' style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
+          <div className={styles.music_album_blur_container}>
+            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
           </div>
         ) : (<></>)}
-        <div className='music-info-mask'>
-          <span ref={musicName} id='music-title' style={{
+        <div className={styles.music_info_mask}>
+          <span ref={musicName} id={styles.music_title} style={{
             'transform': (!musicNameScrolled)
               ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
               : `translateX(0)`
           }}>{result?.title}</span>
         </div>
-        <div className='music-info-mask'>
-          <span ref={artistName} id='music-artist' style={{
+        <div className={styles.music_info_mask}>
+          <span ref={artistName} id={styles.music_artist} style={{
             'transform': (!artistNameScrolled)
               ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
               : `translateX(0)`
@@ -253,15 +254,15 @@ export function Player(props) {
         </div>
         {(props?.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
         {(!props?.hideProgress) ? (
-          <footer className='music-progress'>
-            <div className='music-progress-values'>
-              <span id='music-time-elapsed'>{ConvertTime(result.duration?.elapsed)}</span>
+          <footer className={styles.music_progress}>
+            <div className={styles.music_progress_values}>
+              <span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>
               {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
-              <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
+              <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
             </div>
             {(!props?.hideProgressBar) ? (
-              <div className='music-progress-bar'>
-                <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
+              <div className={styles.music_progress_bar}>
+                <div style={{ 'width': `${musicProgress}%` }} />
               </div>
             ) : (<></>)}
           </footer>

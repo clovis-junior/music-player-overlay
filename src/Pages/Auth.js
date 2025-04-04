@@ -6,6 +6,7 @@ import AsyncImage from '../components/AsyncImage';
 import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
+import styles from'../scss/dashboard.module.scss';
 
 const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
@@ -13,8 +14,10 @@ function Alert(props) {
     if(!props.content)
         return;
 
+    const classType = props?.type;
+
     return (
-        <div className={`alert ${props?.type}`}>{props?.content}</div>
+        <div className={`${styles.alert} ${styles[classType]}`}>{props?.content}</div>
     )
 }
 
@@ -34,7 +37,7 @@ function YouTubeMusic() {
 
     function Instructions() {
         return (
-            <div className='panel_content'>
+            <div className={styles.panel_content}>
                 <p>You need download the YouTube Music Desktop, <a rel='noopener noreferrer' href='https://ytmdesktop.app/' target='_blank'>clicking here</a>.</p>
                 <p>After downloaded, follow the instructions:</p>
                 <ul>
@@ -96,11 +99,11 @@ function YouTubeMusic() {
         return (
             <>
                 <ShowAlert response={response} />
-                <footer className='btns centered'>
+                <footer className={`${styles.btns} ${styles.centered}`}>
                     {response?.code ? (
-                        <button type='button' className='btn success' onClick={(e)=> RequestAccessToken(e)}>Send the Notification</button>
+                        <button type='button' className={`${styles.btns} ${styles.success}`} onClick={(e)=> RequestAccessToken(e)}>Send the Notification</button>
                     ) : (
-                        <button type='button' className='btn ytm' onClick={(e)=> RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
+                        <button type='button' className={`${styles.btns} ${styles.ytm}`} onClick={(e)=> RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
                     )}
                 </footer>
             </>
@@ -113,22 +116,22 @@ function YouTubeMusic() {
 
         return (
             <>
-                <div className='panel_content'>
+                <div className={styles.panel_content}>
                     <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                    <input ref={input} type='text' className='input_text' value={playerURL} readOnly />
+                    <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
                     <b>Enjoy!</b>
                 </div>
-                <footer className='btns centered'>
-                <button type='button' className='btn success' onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                <footer className={`${styles.btns} ${styles.centered}`}>
+                <button type='button' className={`${styles.btns} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
     }
 
     return (
-        <main className='panel'>
+        <main className={styles.panel}>
             <figure>
-                <AsyncImage className='platform_logo' src={ytmLogo} alt={'YouTube Music Logo'} />
+                <AsyncImage className={styles.platform_logo} src={ytmLogo} alt={'YouTube Music Logo'} />
             </figure>
             {response?.token ? (<Success token={response?.token} />) : (
                 <>
@@ -149,13 +152,13 @@ function Spotify() {
         
         return (
             <>
-                <div className='panel_content'>
+                <div className={styles.panel_content}>
                     <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                    <input ref={input} type='text' className='input_text' value={playerURL} readOnly />
+                    <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
                     <b>Enjoy!</b>
                 </div>
-                <footer className='btns centered'>
-                    <button type='button' className='btn success' onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                <footer className={`${styles.btns} ${styles.centered}`}>
+                    <button type='button' className={`${styles.btns} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -176,7 +179,7 @@ function Spotify() {
 
         if(!response) {
             return (
-                <div className='panel_content'>
+                <div className={styles.panel_content}>
                     <Alert type='info' content={(
                     <p>Checking...</p>
                     )} />
@@ -186,7 +189,7 @@ function Spotify() {
 
         if(response?.error) {
             return (
-                <div className='panel_content'>
+                <div className={styles.panel_content}>
                 <Alert type='error' content={(
                     <p>{response.error_description}</p>
                 )} />
@@ -206,16 +209,16 @@ function Spotify() {
         }
 
         return (
-            <footer className='btns centered'>
-                <button type='button' className='btn spotify' onClick={(e)=> GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
+            <footer className={`${styles.btns} ${styles.centered}`}>
+                <button type='button' className={`${styles.btns} ${styles.spotify}`} onClick={(e)=> GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
             </footer>
         )
     }
 
     return (
-        <main className='panel'>
+        <main className={styles.panel}>
             <figure>
-                <AsyncImage className='platform_logo' src={spotifyLogo} alt={'Spotify Logo'} />
+                <AsyncImage className={styles.platform_logo} src={spotifyLogo} alt={'Spotify Logo'} />
             </figure>
             {params.has('code') ? (<Result />) : (<Auth />) }
         </main>
@@ -228,7 +231,7 @@ function AppleMusic() {
     function Instructions() {
         return (
             <>
-                <div className='panel_content'>
+                <div className={styles.panel_content}>
                     <p>You need download Cider (Version 2+), <a rel='noopener noreferrer' href='https://cider.sh/downloads/client' target='_blank'>clicking here</a>. <small>Which costs U$3,49</small></p>
                     <p>After downloaded, follow the instructions:</p>
                     <ul>
@@ -237,8 +240,8 @@ function AppleMusic() {
                         <li>Click on the button below to generate a url.</li>
                     </ul>
                 </div>
-                <footer className='btns centered'>
-                    <button type='button' className='btn apple' onClick={()=> setSession('url')}>Generate a Browser URL</button>
+                <footer className={`${styles.btns} ${styles.centered}`}>
+                    <button type='button' className={`${styles.btns} ${styles.apple}`} onClick={()=> setSession('url')}>Generate a Browser URL</button>
                 </footer>
             </>
         )
@@ -250,22 +253,22 @@ function AppleMusic() {
 
         return (
             <>
-                <div className='panel_content'>
+                <div className={styles.panel_content}>
                     <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                    <input ref={input} type='text' className='input_text' value={playerURL} readOnly />
+                    <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
                     <b>Enjoy!</b>
                 </div>
-                <footer className='btns centered'>
-                    <button type='button' className='btn success' onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                <footer className={`${styles.btns} ${styles.centered}`}>
+                    <button type='button' className={`${styles.btns} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
     }
 
     return (
-        <main className='panel'>
+        <main className={styles.panel}>
             <figure>
-                <AsyncImage className='platform_logo' src={appleIcon} alt={'Apple Music Icon'} />
+                <AsyncImage className={styles.platform_logo} src={appleIcon} alt={'Apple Music Icon'} />
             </figure>
             {session ? <Success /> : <Instructions />}
         </main>
@@ -289,8 +292,8 @@ export default function Auth(props) {
     }
 
     return (
-        <div className='container'>
-            <div className='middle'>
+        <div className={styles.container}>
+            <div className={styles.middle}>
                 <Platform />
             </div>
         </div>

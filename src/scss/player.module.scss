@@ -1,6 +1,8 @@
 @use "functions.scss" as *;
 @use "reset.scss" as *;
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Display:ital,wght@0,100..900;1,100..900&display=swap');
+
 /* ********************************************************
     Animations
 ******************************************************** */
@@ -31,15 +33,6 @@
 	}
 }
 
-@include keyframes(pulse) {
-	0% {
-		@include box-shadow(0 0 0 0 rgba(0, 0, 0, 0.6));
-	}
-	100% {
-		@include box-shadow(0 0 0 1rem rgba(0, 0, 0, 0));
-	}
-}
-
 @include keyframes(fade-in) {
 	0% {
 		@include filter(opacity(0.1));
@@ -52,6 +45,7 @@
 /* ********************************************************
     Variables
 ******************************************************** */
+$fonts: -apple-system, BlinkMacSystemFont, 'Noto Sans Display', system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
 $size: 8rem !default;
 $radius: 10px !default;
 $bg-color: #0d0d0f !default;
@@ -60,17 +54,6 @@ $font-color: #f1eaea !default;
 /* ********************************************************
     Base
 ******************************************************** */
-html {
-	@include text-size-adjust(100%);
-}
-body {
-	overflow: hidden;
-	background-color: transparent;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	text-rendering: optimizeLegibility;
-}
-
 .loading {
 	min-width: $size;
 	display: block;
@@ -83,7 +66,7 @@ body {
 	}
 }
 
-.music-player-container {
+.container {
 	width: 100vw;
 	min-height: 100vh;
 	max-height: 100vh;
@@ -91,7 +74,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	letter-spacing: 2px;
-	font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+	font-family: $fonts !important;
 	font-weight: 800;
 	font-size: 24px;
 	color: #0d0d0f;
@@ -100,12 +83,12 @@ body {
 	@include user-select(none);
 }
 
-.music-album-blur-container:not(.hidden) {
+.music_album_blur_container:not(.hidden) {
 	@include animation-name(fade-in);
 	@include animation-duration(300ms);
 	@include animation-iteration-count(1);
 
-	& .music-album-art {
+	& .music_album_art {
 		z-index: -1;
 		width: 100%;
 		height: 100%;
@@ -120,8 +103,8 @@ body {
 	}
 }
 
-#music-title,
-#music-artist {
+#music_title,
+#music_artist {
 	display: block;
 	line-height: 1;
 	white-space: nowrap !important;
@@ -131,7 +114,7 @@ body {
 	@include transition(transform 1s linear);
 }
 
-.music-info-mask {
+.music_info_mask {
 	width: 100%;
 	display: block;
 	padding: 4px 0;
@@ -140,7 +123,7 @@ body {
 	text-overflow: ellipsis;
 }
 
-.music-progress-bar {
+.music_progress_bar {
 	& > * {
 		width: 0%;
 		min-width: 0%;
@@ -152,7 +135,7 @@ body {
 	}
 }
 
-.music-waveforms {
+.music_waveforms {
 	width: 100%;
 	height: 1.25rem;
 	@include display-flex;
@@ -189,12 +172,11 @@ body {
 /* ********************************************************
     Player
 ******************************************************** */
-.music-player,
-.music-player-compact {
+.music_player,
+.music_player_compact {
 	pointer-events: none;
 	width: calc(100% - #{$size});
 	height: 100%;
-	font-family: -apple-system, BlinkMacSystemFont, "Roboto", system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 	font-size: 1rem;
 	text-transform: initial;
 	@include user-select(none);
@@ -212,7 +194,8 @@ body {
 		}
 	}
 }
-.music-player {
+
+.music_player {
 	max-width: calc(#{$size} * 4);
 	max-height: $size;
 	@include display-flex;
@@ -224,22 +207,22 @@ body {
 		@include animation-name(waveform);
 	}
 
-	&.no-shadow {
-		& .music-album-art,
-		& .music-infos {
+	&.no_shadow {
+		& .music_album_art,
+		& .music_infos {
 			@include box-shadow(0 0 0 0 transparent);
 		}
 	}
 
 	&.square {
-		& .music-cover,
-		& .music-infos {
+		& .music_cover,
+		& .music_infos {
 			@include border-radius(2px);
 		}
 	}
 
-	& .music-album-art,
-	& .music-infos {
+	& .music_album_art,
+	& .music_infos {
 		@include border-radius($radius);
 		background-color: rgba($bg-color, 0.9);
 		color: $font-color;
@@ -247,7 +230,7 @@ body {
 		@include box-shadow(6px 6px 2px 0 rgba(0, 0, 0, 0.6));
 	}
 
-	& .music-album-art {
+	& .music_album_art {
 		flex: 1 0 $size;
 		display: block;
 		overflow: hidden;
@@ -275,7 +258,7 @@ body {
 		}
 	}
 
-	& .music-infos {
+	& .music_infos {
 		flex: 2 0 calc(100% - (#{$size} - 1rem));
 		max-height: $size;
 		@include display-flex;
@@ -287,22 +270,22 @@ body {
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 		position: relative;
 
-		& #music-title {
+		& #music_title {
 			letter-spacing: 1px;
 			font-weight: 600;
 			font-size: 1.25rem;
 		}
 
-		& #music-artist {
+		& #music_artist {
 			font-weight: 500;
 			font-size: 1.2rem;
 		}
 
-		& .music-progress {
+		& .music_progress {
 			width: 100%;
 			display: block;
 
-			& .music-progress-values {
+			& .music_progress_values {
 				@include display-flex;
 				flex-direction: row;
 				flex-wrap: nowrap;
@@ -311,7 +294,7 @@ body {
 				margin: 8px 0;
 			}
 
-			& .music-progress-bar {
+			& .music_progress_bar {
 				height: 10px;
 				overflow: hidden;
 				@include border-radius(50px);
@@ -323,8 +306,8 @@ body {
 				}
 			}
 
-			& #music-time-elapsed,
-			& #music-time-total {
+			& #music_time_elapsed,
+			& #music_time_total {
 				flex: 1 0 3rem;
 				height: 1rem;
 				line-height: 1rem;
@@ -334,11 +317,11 @@ body {
 				font-size: 1rem;
 			}
 
-			& #music-time-elapsed {
+			& #music_time_elapsed {
 				text-align: left;
 				margin-right: 5px;
 			}
-			& #music-time-total {
+			& #music_time_total {
 				text-align: right;
 				margin-left: 5px;
 			}
@@ -349,7 +332,7 @@ body {
 /* ********************************************************
     Compact Player
 ******************************************************** */
-.music-player-compact {
+.music_player_compact {
 	max-width: calc(100% - (#{$size} * 2));
 	max-height: calc(#{$size} / 2);
 	overflow: hidden;
@@ -359,22 +342,17 @@ body {
 	@include backdrop-filter(blur(8px));
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 	@include box-shadow(6px 6px 2px 0 rgba(0, 0, 0, 0.6));
-	@include animation(pulse 1s infinite);
 	position: relative;
 
-	&.no-shadow {
+	&.no_shadow {
 		@include box-shadow(0 0 0 0 transparent);
-	}
-
-	&.no-pulse {
-		@include animation(unset);
 	}
 
 	&.square {
 		@include border-radius($radius);
 	}
 
-	& .music-progress-bar {
+	& .music_progress_bar {
 		z-index: 0;
 		width: 100%;
 		height: 100%;
@@ -391,7 +369,7 @@ body {
 		}
 	}
 
-	& .music-infos {
+	& .music_infos {
 		z-index: 2;
 		width: 100%;
 		height: 100%;
@@ -408,19 +386,19 @@ body {
 		top: 0;
 
 		&.centered {
-			& #music-title,
-			& #music-artist {
+			& #music_title,
+			& #music_artist {
 				text-align: center;
 			}
 		}
 
-		& #music-title {
+		& #music_title {
 			letter-spacing: 1px;
 			font-weight: 500;
 			font-size: 1.65rem;
 		}
 
-		& #music-artist {
+		& #music_artist {
 			font-weight: 300;
 			font-size: 1.25rem;
 		}
