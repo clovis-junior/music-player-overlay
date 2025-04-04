@@ -91,22 +91,25 @@ export function Player(props) {
       setResult(UpdatePlayerDataFromSpotify(data))
     }
 
-    if(result?.isPlaying) {
-      const check = setInterval(async () => await Update(), 10000);
-      const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
-
-      const update = setInterval(()=>{
-        result.duration.elapsed++;
-        result.duration.remaining--;
-      }, 1000);
+    if(loaded && result) {
+      if(result?.isPlaying) {
+        const check = setInterval(async () => await Update(), 10000);
+        const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
   
-      return () => {
-        clearInterval(update);
-        clearInterval(check);
-        clearTimeout(refresh);
+        const update = setInterval(()=>{
+          result.duration.elapsed++;
+          result.duration.remaining--;
+        }, 1000);
+    
+        return () => {
+          clearInterval(update);
+          clearInterval(check);
+          clearTimeout(refresh);
+        }
       }
     }
-  });
+    
+  }, [loaded, result, props]);
 
   useEffect(() => {
     if(!result) return;
@@ -114,17 +117,17 @@ export function Player(props) {
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);
 
-  useLayoutEffect(()=>{
-    if(!result?.error && props.platform === 'spotify') {
-      async function getDataFromSpotify() {
-        const data = await SpotiyData();
+  useLayoutEffect(() => {
+    if (props.platform !== 'spotify') return;
 
-        setResult(UpdatePlayerDataFromSpotify(data))
-      }
+    async function GetResult() {
+      const data = await SpotiyData();
 
-      getDataFromSpotify()
+      setResult(UpdatePlayerDataFromSpotify(data))
     }
-  }, [result, props]);
+
+    if(!loaded) return ()=> GetResult();
+  }, [loaded, result, props]);
 
   useLayoutEffect(() => {
     if(!loaded) return;
