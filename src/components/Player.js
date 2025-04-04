@@ -13,7 +13,7 @@ import {
 } from '../platforms/Spotify';
 import { ConvertTime } from '../Utils';
 
-function WaveForms({ number = 8 }) {
+function DrawWaveForms({ number = 8 }) {
   let waves = [];
 
   for (let i = 0; i < number; i++)
@@ -251,12 +251,12 @@ export function Player(props) {
               : `translateX(0)`
           }}>{result?.artist}</span>
         </div>
-        {(props?.hideProgress && props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
+        {(props?.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
         {(!props?.hideProgress) ? (
           <footer className='music-progress'>
             <div className='music-progress-values'>
               <span id='music-time-elapsed'>{ConvertTime(result.duration?.elapsed)}</span>
-              {(props?.showWaves > 0) ? (<WaveForms number={props?.showWaves} />) : (<></>)}
+              {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
               <span id='music-time-total'>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
             </div>
             {(!props?.hideProgressBar) ? (
