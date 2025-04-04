@@ -68,8 +68,9 @@ async function RefreshAccessToken() {
             return UpdatePlayerData(data);
 
         localStorage.setItem('spotifyAccessToken', data.access_token);
+        // localStorage.setItem('spotifyrefreshToken', data.refresh_token);
+
         accessToken = localStorage.getItem('spotifyAccessToken');
-        localStorage.setItem('spotifyrefreshToken', data.refresh_token);
         // refreshToken = localStorage.getItem('spotifyRefreshToken');
         
         return await GetData();
