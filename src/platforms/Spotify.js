@@ -108,13 +108,13 @@ export async function GetData() {
             return await RefreshAccessToken();
     
         if(response.status === 429)
-            return setTimeout(()=> GetData(), 5000);
+            return setTimeout(async ()=> await GetData(), 5000);
 
         return await response.json()
     } catch(e) {
         console.error(e.message.toString());
 
-        setTimeout(()=> GetData(), 3000);
+        setTimeout(async ()=> await GetData(), 3000);
 
         return { error: e.message.toString() }
     }
