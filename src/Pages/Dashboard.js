@@ -9,14 +9,20 @@ export default function Dashboard() {
     useLayoutEffect(() => {
         if(!document.body.classList.contains(styles.dashboard))
             document.body.classList.add(styles.dashboard);
+
+        window.addEventListener('popstate', function() {
+            window.history.pushState(null, document.title, window.location.pathname);
+            setSelected(null);
+        }, false);
     });
 
     if(params.get('code')) {
         if(!selected)
-            setSelected('spotify');
+            choosePlatform('spotify');
     }
         
     function choosePlatform(name) {
+        window.history.pushState(name, document.title, window.location.pathname);
         setSelected(name)
     }
 

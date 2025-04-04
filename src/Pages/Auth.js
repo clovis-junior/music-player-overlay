@@ -101,9 +101,9 @@ function YouTubeMusic() {
                 <ShowAlert response={response} />
                 <footer className={`${styles.btns} ${styles.centered}`}>
                     {response?.code ? (
-                        <button type='button' className={`${styles.btns} ${styles.success}`} onClick={(e)=> RequestAccessToken(e)}>Send the Notification</button>
+                        <button type='button' className={`${styles.btn} ${styles.success}`} onClick={(e)=> RequestAccessToken(e)}>Send the Notification</button>
                     ) : (
-                        <button type='button' className={`${styles.btns} ${styles.ytm}`} onClick={(e)=> RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
+                        <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={(e)=> RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
                     )}
                 </footer>
             </>
@@ -122,7 +122,7 @@ function YouTubeMusic() {
                     <b>Enjoy!</b>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                <button type='button' className={`${styles.btns} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                <button type='button' className={`${styles.btn} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -158,7 +158,7 @@ function Spotify() {
                     <b>Enjoy!</b>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btns} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -210,7 +210,7 @@ function Spotify() {
 
         return (
             <footer className={`${styles.btns} ${styles.centered}`}>
-                <button type='button' className={`${styles.btns} ${styles.spotify}`} onClick={(e)=> GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
+                <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e)=> GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
             </footer>
         )
     }
@@ -241,7 +241,7 @@ function AppleMusic() {
                     </ul>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btns} ${styles.apple}`} onClick={()=> setSession('url')}>Generate a Browser URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> setSession('url')}>Generate a Browser URL</button>
                 </footer>
             </>
         )
@@ -259,7 +259,7 @@ function AppleMusic() {
                     <b>Enjoy!</b>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btns} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )

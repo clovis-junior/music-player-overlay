@@ -30,6 +30,8 @@ $border-radius: 10px;
 /* ********************************************************
     Base
 ******************************************************** */
+$dark-theme: false !default;
+
 $amazon-color: #0077C1;
 $apple-color: #fc3c44;
 $spotify-color: #1db954;
@@ -43,7 +45,7 @@ $font-secondary-color: $dark-pallete-2nd !default;
 $font-tertiary-color: $dark-pallete-3rd !default;
 
 
-@media (prefers-color-scheme: dark) {
+@if $dark-theme {
     $background-color: $dark-pallete-1st;
     $foreground-color: $dark-pallete-2nd;
                     
