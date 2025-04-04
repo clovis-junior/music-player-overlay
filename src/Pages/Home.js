@@ -22,13 +22,14 @@ export default function Home() {
                 <div className='middle'>
                     <div className='panel'>
                         <div className='panel_content'>
+                            <h2>Welcome!</h2>
                             <p>Please, choose the platform for create the overlay.</p>
                         </div>
-                        <navbar className='btns column'>
-                            <button type='button' className='btn ytm' onClick={()=> choosePlatform('youtube')}>YouTube Music</button>
-                            <button type='button' className='btn apple' onClick={()=> choosePlatform('apple')}>Apple Music</button>
-                            <button type='button' className='btn spotify' onClick={()=> choosePlatform('spotify')}>Spotify</button>
-                        </navbar>
+                        <div className='btns column'>
+                            <button type='button' className='btn ytm' onClick={()=> choosePlatform('youtube')}>🎵 YouTube Music</button>
+                            <button type='button' className='btn apple' onClick={()=> choosePlatform('apple')}>🎵 Apple Music</button>
+                            <button type='button' className='btn spotify' onClick={()=> choosePlatform('spotify')}>🎵 Spotify</button>
+                        </div>
                     </div>
                 </div>
             </div>
