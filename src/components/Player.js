@@ -48,6 +48,7 @@ export function Player(props) {
   const [loaded, setLoaded] = useState(false);
 
   const [playerClasses] = useState([]);
+  const [albumArtImage, setAlbumArtImage] = useState(null);
   const [musicProgress, setMusicProgress] = useState(0);
 
   const webSocket = useRef(null);
@@ -58,29 +59,12 @@ export function Player(props) {
   const musicNameComponent = useRef(null);
   const artistNameComponent = useRef(null);
 
-  const albumArt = useMemo(() => {
-    return (
-        <div className={styles.music_album_art}>
-          <figure>
-            <img id={styles.music_album_art} src={result?.albumCover} alt={result?.title} />
-          </figure>
-        </div>
-    )
-  }, [result]);
-  const albumBg = useMemo(() => {
-    return (
-        <div className={styles.music_album_art_container}>
-            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
-        </div>
-    );
-  }, [result]);
   const musicName = useMemo(() => {
     return result?.title;
   }, [result]);
   const musicArtistName = useMemo(() => {
     return result?.artist;
   }, [result]);
-
 
   useEffect(() => {
     if(props.platform === 'spotify') return;
@@ -142,6 +126,12 @@ export function Player(props) {
 
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);
+  
+  useEffect(() => {
+    if (result?.albumCover !== albumArtImage)
+        setAlbumArtImage(result?.albumCover);  
+
+  }, [result, albumArtImage]);
 
   useLayoutEffect(() => {
     if (props.platform !== 'spotify') return;
@@ -216,7 +206,11 @@ export function Player(props) {
 
     return (
       <main className={playerClasses.join(' ')}>
-        {(!props?.solidColor) ? albumBg : null}
+         {(!props?.solidColor) ? (
+            <div className={styles.music_album_art_container}>
+                <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+            </div>
+        ) : (<></>)}
         {(!props?.hideProgress) ? (
           <div className={styles.music_progress_bar}>
             <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
@@ -246,9 +240,19 @@ export function Player(props) {
 
   return (
     <main className={playerClasses.join(' ')}>
-      {(props.showAlbum) ? albumArt : null}
+      {(props.showAlbum) ? (
+        <div className={styles.music_album_art}>
+          <figure>
+            <img id={styles.music_album_art} src={albumArtImage} alt={result?.title} />
+          </figure>
+        </div>
+        ) : (<></>)}
       <aside className={styles.music_infos}>
-        {(!props?.solidColor) ? albumBg : null}
+        {(!props?.solidColor) ? (
+            <div className={styles.music_album_art_container}>
+                <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+            </div>
+        ) : (<></>)}
         <div className={styles.music_info_mask}>
           <span ref={musicNameComponent} id={styles.music_title} style={{
             'transform': (!musicNameScrolled)
