@@ -59,11 +59,13 @@ export function Player(props) {
   const musicNameComponent = useRef(null);
   const artistNameComponent = useRef(null);
 
-  const musicName = useMemo(() => {
-    return result?.title;
-  }, [result]);
-  const musicArtistName = useMemo(() => {
-    return result?.artist;
+  const musicData = useMemo(() => {
+    if (!result) return;
+
+    const title = result?.title;
+    const artist = result?.author;
+
+    return {title, artist};
   }, [result]);
 
   useEffect(() => {
@@ -107,8 +109,8 @@ export function Player(props) {
         const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
   
         const update = setInterval(()=>{
-          result.duration.elapsed++;
-          result.duration.remaining--;
+            result.duration.elapsed++;
+            result.duration.remaining--;
         }, 1000);
     
         return () => {
@@ -157,7 +159,7 @@ export function Player(props) {
     } else 
       addPlayerClass(styles.show, playerClasses);
 
-  }, [loaded, result, props, playerClasses]);
+  }, [loaded, musicData, props, playerClasses]);
 
   useLayoutEffect(() => {
     if (!result?.isPlaying)
@@ -222,14 +224,14 @@ export function Player(props) {
               'transform': (!musicNameScrolled)
                 ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
                 : `translateX(0)`
-            }}>{result?.title}</span>
+            }}>{musicData?.title}</span>
           </div>
           <div className={styles.music_info_mask}>
             <span ref={artistNameComponent} id={styles.music_artist} style={{
               'transform': (!artistNameScrolled)
                 ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
                 : `translateX(0)`
-            }}>{result?.artist}</span>
+            }}>{musicData?.artist}</span>
           </div>
         </div>
       </main>
