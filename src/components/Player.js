@@ -159,7 +159,7 @@ export function Player(props) {
     } else 
       addPlayerClass(styles.show, playerClasses);
 
-  }, [loaded, musicData, props, playerClasses]);
+  }, [loaded, result, props, playerClasses]);
 
   useLayoutEffect(() => {
     if (!result?.isPlaying)
