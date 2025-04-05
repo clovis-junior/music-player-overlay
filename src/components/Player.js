@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import {
   GetData as YouTubeMusicData,
   UpdatePlayerData as UpdatePlayerDataFromYTM
@@ -46,16 +46,41 @@ function removePlayerClass(name, classes) {
 export function Player(props) {
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
+
+  const [playerClasses] = useState([]);
   const [musicProgress, setMusicProgress] = useState(0);
 
   const webSocket = useRef(null);
-  const musicName = useRef(null);
-  const artistName = useRef(null);
-
+  
   const [musicNameScrolled, setMusicNameScrolled] = useState(false);
   const [artistNameScrolled, setArtistNameScrolled] = useState(false);
 
-  const [playerClasses] = useState([]);
+  const musicNameComponent = useRef(null);
+  const artistNameComponent = useRef(null);
+
+  const albumArt = useMemo(() => {
+    return (
+        <div className={styles.music_album_art}>
+          <figure>
+            <img id={styles.music_album_art} src={result?.albumCover} alt={result?.title} />
+          </figure>
+        </div>
+    )
+  }, [result]);
+  const albumBg = useMemo(() => {
+    return (
+        <div className={styles.music_album_art_container}>
+            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
+        </div>
+    );
+  }, [result]);
+  const musicName = useMemo(() => {
+    return result?.title;
+  }, [result]);
+  const musicArtistName = useMemo(() => {
+    return result?.artist;
+  }, [result]);
+
 
   useEffect(() => {
     if(props.platform === 'spotify') return;
@@ -94,7 +119,7 @@ export function Player(props) {
 
     if(loaded && result) {
       if(result?.isPlaying) {
-        const check = setInterval(async () => await Update(), 10000);
+        const check = setInterval(async () => await Update(), 3000);
         const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
   
         const update = setInterval(()=>{
@@ -191,11 +216,7 @@ export function Player(props) {
 
     return (
       <main className={playerClasses.join(' ')}>
-        {(!props?.solidColor) ? (
-          <div className={styles.music_album_art_container}>
-            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
-          </div>
-        ) : (<></>)}
+        {(!props?.solidColor) ? albumBg : null}
         {(!props?.hideProgress) ? (
           <div className={styles.music_progress_bar}>
             <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
@@ -203,16 +224,16 @@ export function Player(props) {
         ) : (<></>)}
         <div className={props?.textCentered ? `${styles.music_infos} ${styles.centered}` : styles.music_infos}>
           <div className={styles.music_info_mask}>
-            <span ref={musicName} id={styles.music_title} style={{
+            <span ref={musicNameComponent} id={styles.music_title} style={{
               'transform': (!musicNameScrolled)
-                ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
+                ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
                 : `translateX(0)`
             }}>{result?.title}</span>
           </div>
           <div className={styles.music_info_mask}>
-            <span ref={artistName} id={styles.music_artist} style={{
+            <span ref={artistNameComponent} id={styles.music_artist} style={{
               'transform': (!artistNameScrolled)
-                ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
+                ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
                 : `translateX(0)`
             }}>{result?.artist}</span>
           </div>
@@ -225,32 +246,22 @@ export function Player(props) {
 
   return (
     <main className={playerClasses.join(' ')}>
-      {(props.showAlbum) ? (
-        <div className={styles.music_album_art}>
-          <figure>
-            <img id={styles.music_album_art} src={result?.albumCover} alt={result?.title} />
-          </figure>
-        </div>
-      ) : (<></>)}
+      {(props.showAlbum) ? albumArt : null}
       <aside className={styles.music_infos}>
-        {(!props?.solidColor) ? (
-          <div className={styles.music_album_blur_container}>
-            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${result?.albumCover})` }}></div>
-          </div>
-        ) : (<></>)}
+        {(!props?.solidColor) ? albumBg : null}
         <div className={styles.music_info_mask}>
-          <span ref={musicName} id={styles.music_title} style={{
+          <span ref={musicNameComponent} id={styles.music_title} style={{
             'transform': (!musicNameScrolled)
-              ? `translateX(-${(musicName.current?.scrollWidth - musicName.current?.offsetWidth)}px)`
+              ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
-          }}>{result?.title}</span>
+          }}>{musicName}</span>
         </div>
         <div className={styles.music_info_mask}>
-          <span ref={artistName} id={styles.music_artist} style={{
+          <span ref={artistNameComponent} id={styles.music_artist} style={{
             'transform': (!artistNameScrolled)
-              ? `translateX(-${(artistName.current?.scrollWidth - artistName.current?.offsetWidth)}px)`
+              ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
-          }}>{result?.artist}</span>
+          }}>{musicArtistName}</span>
         </div>
         {(props?.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
         {(!props?.hideProgress) ? (
