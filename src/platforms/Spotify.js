@@ -1,7 +1,8 @@
 // import songData from'../Spotify.test.json';
 const params = new URLSearchParams(window.location.hash.split('?')[1]);
 
-const baseURL = process.env.REACT_APP_ENV === 'development' ? 'http://localhost' : 'https://music-player-spotify-web-api.onrender.com';
+const baseURL = ((!process.env.NODE_ENV || process.env.REACT_APP_ENV === 'development') ? 
+'http://localhost' : 'https://music-player-spotify-web-api.onrender.com');
 const token = params.get('token');
 
 export function UpdatePlayerData(data) {
