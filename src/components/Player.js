@@ -69,6 +69,8 @@ export function Player(props) {
   }, [result]);
 
   useEffect(() => {
+    if (props.platform === 'spotify') return;
+
     switch (props?.platform) {
       case 'apple':
         webSocket.current = AppleMusicData();
