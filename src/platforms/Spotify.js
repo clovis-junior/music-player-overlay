@@ -1,5 +1,5 @@
 // import songData from'../Spotify.test.json';
-const inDevelopment = (/(localhost)||(127\.0\.0\.1)/i.test(window.location.hostname));
+const inDevelopment = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
 const params = new URLSearchParams(window.location.hash.split('?')[1]);
 
