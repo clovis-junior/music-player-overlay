@@ -10,17 +10,6 @@ import styles from '../scss/dashboard.module.scss';
 
 const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
-function Alert(props) {
-    if (!props.content)
-        return;
-
-    const classType = props?.type;
-
-    return (
-        <div className={`${styles.alert} ${styles[classType]}`}>{props?.content}</div>
-    )
-}
-
 function Clipboard(text, element) {
     element?.select();
 
@@ -32,6 +21,17 @@ function Clipboard(text, element) {
     }
 
     return setTimeout(() => window.alert('URL has copied!'), 500)
+}
+
+function Alert(props) {
+    if (!props.content)
+        return;
+
+    const classType = props?.type;
+
+    return (
+        <div className={`${styles.alert} ${styles[classType]}`}>{props?.content}</div>
+    )
 }
 
 function YouTubeMusic() {
@@ -77,11 +77,6 @@ function YouTubeMusic() {
 
         function ShowAlert(props) {
             if (props?.response?.code) {
-                // setTimeout(async ()=>{
-                //     const request = await RequestToken(props?.response?.code);
-
-                //     setResponse(await request); 
-                // }, 1000);
 
                 return (<Alert type='info' content={(
                     <>
@@ -101,11 +96,17 @@ function YouTubeMusic() {
         return (
             <>
                 <ShowAlert response={response} />
-                <footer className={`${styles.btns} ${styles.centered}`}>
+                <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
                     {response?.code ? (
-                        <button type='button' className={`${styles.btn} ${styles.success}`} onClick={(e) => RequestAccessToken(e)}>Send the Notification</button>
+                        <>
+                            <button type='button' className={`${styles.btn} ${styles.success}`} onClick={(e) => RequestAccessToken(e)}>Send the Notification</button>
+                            <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Cancel the Authentication</button>
+                        </>
                     ) : (
-                        <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={(e) => RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
+                        <>
+                            <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={(e) => RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
+                            <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
+                        </>
                     )}
                 </footer>
             </>
@@ -125,6 +126,8 @@ function YouTubeMusic() {
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
                     <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={styles.btn} disabled>Costumize Player</button>
+                    <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>
             </>
         )
@@ -159,8 +162,10 @@ function Spotify() {
                     <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
                     <b>Enjoy!</b>
                 </div>
-                <footer className={`${styles.btns} ${styles.centered}`}>
+                <footer className={styles.btns}>
                     <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={styles.btn} disabled>Costumize Player</button>
+                    <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>
             </>
         )
@@ -224,8 +229,10 @@ function AppleMusic() {
                     <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
                     <b>Enjoy!</b>
                 </div>
-                <footer className={`${styles.btns} ${styles.centered}`}>
+                <footer className={styles.btns}>
                     <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={styles.btn} disabled>Costumize Player</button>
+                    <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>
             </>
         )

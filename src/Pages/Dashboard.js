@@ -31,14 +31,14 @@ export default function Dashboard() {
             <div className={styles.container}>
                 <div className={styles.middle}>
                     <div className={styles.panel}>
-                        <div className={styles.panel_content}>
+                        <div className={`${styles.panel_content} ${styles.centered}`}>
                             <h2>Welcome!</h2>
                             <p>Please, choose the platform for create the overlay.</p>
                         </div>
                         <div className={`${styles.btns} ${styles.column}`}>
-                            <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={()=> choosePlatform('youtube')}>🎵 YouTube Music</button>
-                            <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> choosePlatform('apple')}>🎵 Apple Music</button>
-                            <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={()=> choosePlatform('spotify')}>🎵 Spotify</button>
+                            <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={()=> choosePlatform('youtube')}>YouTube Music</button>
+                            <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> choosePlatform('apple')}>Apple Music</button>
+                            <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={()=> choosePlatform('spotify')}>Spotify</button>
                         </div>
                     </div>
                 </div>

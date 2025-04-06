@@ -129,6 +129,10 @@ body {
     & .panel_content {
         padding: 1rem 2rem;
 
+        &.centered {
+            text-align: center;
+        }
+
         & h1, & h2, &h3 {
             margin-bottom: 1rem;
             letter-spacing: 1px;
@@ -226,6 +230,8 @@ body {
         text-transform: uppercase;
         @include user-select(none);
         @include transition(all 100ms ease);
+
+        &:hover { background-color: $info-color }
 
         &:disabled {
             pointer-events: none;
