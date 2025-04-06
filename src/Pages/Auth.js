@@ -6,6 +6,8 @@ import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 import styles from '../scss/dashboard.module.scss';
 
+const inDevelopment = (!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'development');
+
 const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
 function Alert(props) {
@@ -166,8 +168,7 @@ function Spotify() {
 
     function Auth() {
         function GetSpotifyAuthURL(e) {
-            const baseURL = ((!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'development') ? 
-            'http://localhost' : 'https://music-player-spotify-web-api.onrender.com');
+            const baseURL = inDevelopment ? 'http://localhost' : 'https://music-player-spotify-web-api.onrender.com';
             e.target.disabled = true;
 
             return window.location.href = `${baseURL}/login`

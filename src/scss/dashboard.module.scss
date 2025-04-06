@@ -162,6 +162,7 @@ body {
 
     .platform_logo {
         max-width: calc(100% - 10rem);
+        max-height: 6rem;
         display: block;
         margin: 0 auto;
         @include object-fit(cover);
