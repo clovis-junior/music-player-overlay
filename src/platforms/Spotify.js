@@ -6,7 +6,6 @@ const baseURL = ((!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'd
 const token = params.get('token');
 
 export function UpdatePlayerData(data) {
-    ;
     if (data.error) return data;
 
     const isPlaying = data?.is_playing;
