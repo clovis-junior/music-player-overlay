@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/music-player-overlay/static/css/main.d73b098a.css",
-    "main.js": "/music-player-overlay/static/js/main.3e5ef873.js",
+    "main.css": "/music-player-overlay/static/css/main.2b2f10ce.css",
+    "main.js": "/music-player-overlay/static/js/main.4b071b23.js",
     "static/js/453.2e6aec64.chunk.js": "/music-player-overlay/static/js/453.2e6aec64.chunk.js",
     "static/media/ytm-logo.png": "/music-player-overlay/static/media/ytm-logo.c3c83cb68d1e16f92cb5.png",
     "static/media/spotify-logo.png": "/music-player-overlay/static/media/spotify-logo.ec4bfb0837a6d5f52869.png",
     "static/media/apple-music-icon.svg": "/music-player-overlay/static/media/apple-music-icon.a7f982347fc3f7cfe747f9b311d9df66.svg",
     "index.html": "/music-player-overlay/index.html",
-    "main.d73b098a.css.map": "/music-player-overlay/static/css/main.d73b098a.css.map",
-    "main.3e5ef873.js.map": "/music-player-overlay/static/js/main.3e5ef873.js.map",
+    "main.2b2f10ce.css.map": "/music-player-overlay/static/css/main.2b2f10ce.css.map",
+    "main.4b071b23.js.map": "/music-player-overlay/static/js/main.4b071b23.js.map",
     "453.2e6aec64.chunk.js.map": "/music-player-overlay/static/js/453.2e6aec64.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d73b098a.css",
-    "static/js/main.3e5ef873.js"
+    "static/css/main.2b2f10ce.css",
+    "static/js/main.4b071b23.js"
   ]
 }
