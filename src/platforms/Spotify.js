@@ -1,5 +1,5 @@
 // import songData from'../Spotify.test.json';
-import { inDevelopment } from '../App';
+const inDevelopment = (!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'development');
 
 const params = new URLSearchParams(window.location.hash.split('?')[1]);
 
@@ -36,7 +36,6 @@ export async function GetData() {
         return await response.json()
     } catch (e) {
         console.error(e.message.toString());
-
         setTimeout(async () => await GetData(), 3000);
 
         return { error: e.message.toString() }
