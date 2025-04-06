@@ -166,7 +166,7 @@ function Spotify() {
 
     function Auth() {
         function GetSpotifyAuthURL(e) {
-            const baseURL = ((!process.env.NODE_ENV || process.env.REACT_APP_ENV === 'development') ? 
+            const baseURL = ((!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'development') ? 
             'http://localhost' : 'https://music-player-spotify-web-api.onrender.com');
             e.target.disabled = true;
 
