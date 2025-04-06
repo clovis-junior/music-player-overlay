@@ -1,6 +1,5 @@
 // import songData from'../Spotify.test.json';
-const inDevelopment = (window.location.host === 'localhost' || 
-    (!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'development'));
+const inDevelopment = (window.location.host === 'localhost');
 
 const params = new URLSearchParams(window.location.hash.split('?')[1]);
 
