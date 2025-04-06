@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
+import { inDevelopment } from '../App';
 import { RequestCode, RequestToken } from '../platforms/YouTubeMusic';
+
 import AsyncImage from '../components/AsyncImage';
 import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 import styles from '../scss/dashboard.module.scss';
-
-const inDevelopment = (!process.env.REACT_APP_ENV || process.env.REACT_APP_ENV === 'development');
 
 const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
