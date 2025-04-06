@@ -333,8 +333,9 @@ $font-color: #f1eaea !default;
     Compact Player
 ******************************************************** */
 .music_player_compact {
-	max-width: calc(100% - (#{$size} * 2));
-	max-height: calc(#{$size} / 2);
+	min-width: calc(#{$size} * 3);
+	max-width: calc(60% - (#{$size} * 2));
+	height: calc(1.25rem * 4 + 8px);
 	overflow: hidden;
 	@include border-radius(100px);
 	background-color: rgba($bg-color, 0.9);
@@ -379,7 +380,7 @@ $font-color: #f1eaea !default;
 		justify-content: space-around;
 		overflow: hidden;
 		padding: 1rem 2rem;
-		text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.9);
+		text-shadow: 1px 1px 1px rgba(0,0,0,.9);
 		@include transform(translateX(-50%));
 		position: absolute;
 		left: 50%;
@@ -394,13 +395,13 @@ $font-color: #f1eaea !default;
 
 		& #music_title {
 			letter-spacing: 1px;
-			font-weight: 500;
-			font-size: 1.65rem;
+			font-weight: 600;
+			font-size: 1.25rem;
 		}
 
 		& #music_artist {
-			font-weight: 300;
-			font-size: 1.25rem;
+			font-weight: 500;
+			font-size: 1rem;
 		}
 	}
 }

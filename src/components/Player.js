@@ -34,12 +34,12 @@ function UpdatePercentage(elapsed, total) {
 }
 
 function addPlayerClass(name, classes) {
-  if(classes.indexOf(name) < 0)
+  if (classes.indexOf(name) < 0)
     classes.push(name);
 }
 
 function removePlayerClass(name, classes) {
-  if(classes.indexOf(name) > -1)
+  if (classes.indexOf(name) > -1)
     classes.splice(classes.indexOf(name), 1);
 }
 
@@ -52,7 +52,7 @@ export function Player(props) {
   const [musicProgress, setMusicProgress] = useState(0);
 
   const webSocket = useRef(null);
-  
+
   const [musicNameScrolled, setMusicNameScrolled] = useState(false);
   const [artistNameScrolled, setArtistNameScrolled] = useState(false);
 
@@ -63,33 +63,33 @@ export function Player(props) {
     if (!result) return;
 
     const title = result?.title;
-    const artist = result?.author;
+    const artist = result?.artist;
 
-    return {title, artist};
+    return { title, artist };
   }, [result]);
 
   useEffect(() => {
-    if(props.platform === 'spotify') return;
+    if (props.platform === 'spotify') return;
 
-    switch(props?.platform) {
+    switch (props?.platform) {
       case 'apple':
         webSocket.current = AppleMusicData();
 
-        webSocket.current.on('API:Playback', ({ data, type })=> {
-          if(type === 'playbackStatus.playbackStateDidChange')
+        webSocket.current.on('API:Playback', ({ data, type }) => {
+          if (type === 'playbackStatus.playbackStateDidChange')
             setResult(UpdatePlayerDataFromApple(data));
         });
         break;
       case 'youtube':
       default:
         webSocket.current = YouTubeMusicData();
-        webSocket.current.on('state-update', state=> {
+        webSocket.current.on('state-update', state => {
           setResult(UpdatePlayerDataFromYTM(state));
         });
     }
 
     return () => {
-      if(webSocket.current?.connected)
+      if (webSocket.current?.connected)
         webSocket.current?.disconnect();
     }
   }, [props]);
@@ -103,16 +103,16 @@ export function Player(props) {
       setResult(UpdatePlayerDataFromSpotify(data))
     }
 
-    if(loaded && result) {
-      if(result?.isPlaying) {
+    if (loaded && result) {
+      if (result?.isPlaying) {
         const check = setInterval(async () => await Update(), 3000);
         const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
-  
-        const update = setInterval(()=>{
-            result.duration.elapsed++;
-            result.duration.remaining--;
+
+        const update = setInterval(() => {
+          result.duration.elapsed++;
+          result.duration.remaining--;
         }, 1000);
-    
+
         return () => {
           clearInterval(update);
           clearInterval(check);
@@ -120,18 +120,18 @@ export function Player(props) {
         }
       }
     }
-    
+
   }, [loaded, result, props]);
 
   useEffect(() => {
-    if(!result) return;
+    if (!result) return;
 
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);
-  
+
   useEffect(() => {
     if (result?.albumCover !== albumArtImage)
-        setAlbumArtImage(result?.albumCover);  
+      setAlbumArtImage(result?.albumCover);
 
   }, [result, albumArtImage]);
 
@@ -144,19 +144,19 @@ export function Player(props) {
       setResult(UpdatePlayerDataFromSpotify(data))
     }
 
-    if(!loaded) return ()=> GetResult();
+    if (!loaded) return () => GetResult();
   }, [loaded, result, props]);
 
   useLayoutEffect(() => {
-    if(!loaded) return;
+    if (!loaded) return;
 
-    if(!result?.isPlaying) {
-      const waiting = setTimeout(()=> {
+    if (!result?.isPlaying) {
+      const waiting = setTimeout(() => {
         removePlayerClass(styles.show, playerClasses);
       }, (props?.sleepAfter * 1000));
-  
-      return ()=> clearTimeout(waiting);
-    } else 
+
+      return () => clearTimeout(waiting);
+    } else
       addPlayerClass(styles.show, playerClasses);
 
   }, [loaded, result, props, playerClasses]);
@@ -164,7 +164,7 @@ export function Player(props) {
   useLayoutEffect(() => {
     if (!result?.isPlaying)
       addPlayerClass(styles.paused, playerClasses);
-    else if(result?.isPlaying)
+    else if (result?.isPlaying)
       removePlayerClass(styles.paused, playerClasses);
 
   }, [result, playerClasses]);
@@ -208,12 +208,12 @@ export function Player(props) {
 
     return (
       <main className={playerClasses.join(' ')}>
-         {(!props?.solidColor) ? (
-            <div className={styles.music_album_art_container}>
-                <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
-            </div>
+        {(!props.solidColor) ? (
+          <div className={styles.music_album_blur_container}>
+            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+          </div>
         ) : (<></>)}
-        {(!props?.hideProgress) ? (
+        {(!props.hideProgress) ? (
           <div className={styles.music_progress_bar}>
             <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
           </div>
@@ -248,36 +248,36 @@ export function Player(props) {
             <img id={styles.music_album_art} src={albumArtImage} alt={result?.title} />
           </figure>
         </div>
-        ) : (<></>)}
+      ) : (<></>)}
       <aside className={styles.music_infos}>
-        {(!props?.solidColor) ? (
-            <div className={styles.music_album_art_container}>
-                <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
-            </div>
+        {(!props.solidColor) ? (
+          <div className={styles.music_album_blur_container}>
+            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+          </div>
         ) : (<></>)}
         <div className={styles.music_info_mask}>
           <span ref={musicNameComponent} id={styles.music_title} style={{
             'transform': (!musicNameScrolled)
               ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
-          }}>{musicName}</span>
+          }}>{musicData.title}</span>
         </div>
         <div className={styles.music_info_mask}>
           <span ref={artistNameComponent} id={styles.music_artist} style={{
             'transform': (!artistNameScrolled)
               ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
-          }}>{musicArtistName}</span>
+          }}>{musicData.artist}</span>
         </div>
-        {(props?.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
-        {(!props?.hideProgress) ? (
+        {(props.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
+        {(!props.hideProgress) ? (
           <footer className={styles.music_progress}>
             <div className={styles.music_progress_values}>
               <span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>
               {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
               <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
             </div>
-            {(!props?.hideProgressBar) ? (
+            {(!props.hideProgressBar) ? (
               <div className={styles.music_progress_bar}>
                 <div style={{ 'width': `${musicProgress}%` }} />
               </div>

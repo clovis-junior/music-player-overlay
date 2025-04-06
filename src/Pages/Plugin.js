@@ -7,21 +7,19 @@ export default function Plugin() {
 
     return (
         <div className={styles.container}>
-            <Player 
+            <Player
                 platform={params.get('platform') || 'youtube'}
-                compact={options.has('compact')}
-                noPulse={options.has('noPulse')}
-                textCentered={options.has('textCentered')}
                 sleepAfter={options.get('sleepAfter') || 10}
-                showWaves={parseInt(options.get('showWaves')) || 0}
-                progressBarWithColor={options.has('progressBarWithColor')}
-                hideProgress={options.has('hideProgress')}
-                hideProgressBar={options.has('hideProgressBar')}
-                remainingTime={options.has('remainingTime')}
+                compact={options.has('compact')}
                 squareLayout={options.has('squareLayout')}
                 noShadow={options.has('noShadow')}
                 showAlbum={!options.has('hideAlbum')}
                 solidColor={options.has('solidColor')}
+                textCentered={options.has('textCentered')}
+                showWaves={parseInt(options.get('showWaves')) || 0}
+                hideProgress={options.has('hideProgress')}
+                hideProgressBar={options.has('hideProgressBar')}
+                remainingTime={options.has('remainingTime')}
             />
         </div>
     )
