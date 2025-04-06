@@ -2,7 +2,7 @@ import { HashRouter, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Plugin from './pages/Plugin';
 
-export const inDevelopment = (window.location.host === 'localhost');
+export const inDevelopment = (window.location.host === 'localhost' || window.location.host === '127.0.0.1');
 
 export default function App() {
     if(inDevelopment)
