@@ -1,17 +1,15 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import { GenerateRandomString } from '../Utils';
+import { useRef, useState } from 'react';
 import { RequestCode, RequestToken } from '../platforms/YouTubeMusic';
-import { GetAuthURL, GetAccessToken } from '../platforms/Spotify';
 import AsyncImage from '../components/AsyncImage';
 import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
-import styles from'../scss/dashboard.module.scss';
+import styles from '../scss/dashboard.module.scss';
 
 const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
 
 function Alert(props) {
-    if(!props.content)
+    if (!props.content)
         return;
 
     const classType = props?.type;
@@ -27,11 +25,11 @@ function Clipboard(text, element) {
     try {
         window.navigator.clipboard?.writeText(text);
 
-    } catch { 
+    } catch {
         document?.execCommand('copy');
     }
 
-    return setTimeout(()=> window.alert('URL has copied!'), 500)
+    return setTimeout(() => window.alert('URL has copied!'), 500)
 }
 
 function YouTubeMusic() {
@@ -63,7 +61,7 @@ function YouTubeMusic() {
             e.target.disabled = true;
 
             const request = await RequestCode();
-        
+
             setResponse(await request);
         }
 
@@ -71,15 +69,15 @@ function YouTubeMusic() {
             e.target.disabled = true;
 
             const request = await RequestToken(response?.code);
-        
+
             setResponse(await request);
         }
 
         function ShowAlert(props) {
-            if(props?.response?.code) {
+            if (props?.response?.code) {
                 // setTimeout(async ()=>{
                 //     const request = await RequestToken(props?.response?.code);
-        
+
                 //     setResponse(await request); 
                 // }, 1000);
 
@@ -91,7 +89,7 @@ function YouTubeMusic() {
                 )} />);
             }
 
-            if(props?.response?.statusCode)
+            if (props?.response?.statusCode)
                 return (<Alert type={props?.response?.statusCode ? 'error' : 'info'} content={props?.response?.message} />)
 
 
@@ -103,9 +101,9 @@ function YouTubeMusic() {
                 <ShowAlert response={response} />
                 <footer className={`${styles.btns} ${styles.centered}`}>
                     {response?.code ? (
-                        <button type='button' className={`${styles.btn} ${styles.success}`} onClick={(e)=> RequestAccessToken(e)}>Send the Notification</button>
+                        <button type='button' className={`${styles.btn} ${styles.success}`} onClick={(e) => RequestAccessToken(e)}>Send the Notification</button>
                     ) : (
-                        <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={(e)=> RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
+                        <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={(e) => RequestAccessCode(e)}>Connect to YouTube Music Desktop</button>
                     )}
                 </footer>
             </>
@@ -124,7 +122,7 @@ function YouTubeMusic() {
                     <b>Enjoy!</b>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                <button type='button' className={`${styles.btn} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -150,8 +148,8 @@ function Spotify() {
     const params = new URLSearchParams(window.location.search);
 
     function Success(props) {
-        const playerURL = `${browserURL}#player?platform=spotify&refreshToken=${props?.refreshToken}&accessToken=${props?.accessToken}`;
-        
+        const playerURL = `${browserURL}#player?platform=spotify&token=${props?.token}`;
+
         return (
             <>
                 <div className={styles.panel_content}>
@@ -160,59 +158,23 @@ function Spotify() {
                     <b>Enjoy!</b>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
     }
 
-    function Result() {
-        const [response, setResponse] = useState(null);
-
-        useLayoutEffect(()=>{
-            if(!response) {
-                async function GetAccess() {
-                    setResponse(await GetAccessToken(browserURL, params.get('code')));
-                }
-    
-                GetAccess()
-            }
-        });
-
-        if(!response) {
-            return (
-                <div className={styles.panel_content}>
-                    <Alert type='info' content={(
-                    <p>Checking...</p>
-                    )} />
-                </div>
-            )
-        }
-
-        if(response?.error) {
-            return (
-                <div className={styles.panel_content}>
-                <Alert type='error' content={(
-                    <p>{response.error_description}</p>
-                )} />
-                </div>
-                
-            );
-        }
-
-        return (<Success refreshToken={response.refresh_token} accessToken={response.access_token} />)
-    }
-
     function Auth() {
         function GetSpotifyAuthURL(e) {
+            const baseURL = process.env.REACT_APP_ENV === 'development' ? 'http://localhost' : 'https://music-player-spotify-web-api.onrender.com';
             e.target.disabled = true;
-    
-            return window.location.href = GetAuthURL(browserURL, 'user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private', GenerateRandomString(16))
+
+            return window.location.href = `${baseURL}/login`
         }
 
         return (
             <footer className={`${styles.btns} ${styles.centered}`}>
-                <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e)=> GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
+                <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
             </footer>
         )
     }
@@ -222,7 +184,7 @@ function Spotify() {
             <figure>
                 <AsyncImage className={styles.platform_logo} src={spotifyLogo} alt={'Spotify Logo'} />
             </figure>
-            {params.has('code') ? (<Result />) : (<Auth />) }
+            {params.has('spotifyToken') ? (<Success token={params.get('spotifyToken')} />) : (<Auth />)}
         </main>
     )
 }
@@ -243,7 +205,7 @@ function AppleMusic() {
                     </ul>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> setSession('url')}>Generate a Browser URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={() => setSession('url')}>Generate a Browser URL</button>
                 </footer>
             </>
         )
@@ -261,7 +223,7 @@ function AppleMusic() {
                     <b>Enjoy!</b>
                 </div>
                 <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={()=> Clipboard(playerURL, input?.current)}>Copy URL</button>
+                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
                 </footer>
             </>
         )
@@ -278,11 +240,10 @@ function AppleMusic() {
 }
 
 export default function Auth(props) {
-    const params = new URLSearchParams(window.location.search);
-    const platform = params.has('code') ? 'spotify' : props?.platform;
+    const platform = props?.platform;
 
     function Platform() {
-        switch(platform) {
+        switch (platform) {
             case 'apple':
                 return (<AppleMusic />)
             case 'spotify':

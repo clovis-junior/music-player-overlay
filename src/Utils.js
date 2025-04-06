@@ -8,41 +8,6 @@ export function IsEmpty(variable) {
   return (typeof variable === 'undefined' || variable === null || (typeof variable === 'string' && variable.length <= 0))
 }
 
-export function GetURLParams(path) {
-  path = path || window.location.href;
-  path = path.split('?')[1];
-
-  const search = path?.split('&'), params = {};
-  
-  params.get = function(param) {
-    return params[param]
-  }
-
-  params.has = function(param) {
-    return (param in params)
-  }
-
-  search?.forEach(param => params[param.split('=')[0]] = param.split('=')[1]);
-
-  return params
-}
-
-export function GenerateRandomString(length = 8, uppercase = true, numbers = true, special = false) {
-  let output = '';
-  let characters = 'abcdefghijklmnopqrstuvwxyz';
-
-  if(uppercase)
-    characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-  if(numbers) characters += '0123456789';
-  if(special) characters += '!@#$%&*';
-
-  for(let i=0;i<length;i++)
-    output += characters.charAt(Math.floor(Math.random() * characters.length));
-
-  return output;
-}
-
 export function URLValidade(value) {
   let filter=/^(https?):\/\/(?:www\.)?([a-zA-Z0-9-]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&//=]*)$/is;
   return (filter.test(value)) ? true : false;

@@ -69,13 +69,11 @@ export function Player(props) {
   }, [result]);
 
   useEffect(() => {
-    if (props.platform === 'spotify') return;
-
     switch (props?.platform) {
       case 'apple':
         webSocket.current = AppleMusicData();
 
-        webSocket.current.on('API:Playback', ({ data, type }) => {
+        webSocket.current?.on('API:Playback', ({ data, type }) => {
           if (type === 'playbackStatus.playbackStateDidChange')
             setResult(UpdatePlayerDataFromApple(data));
         });
@@ -83,7 +81,8 @@ export function Player(props) {
       case 'youtube':
       default:
         webSocket.current = YouTubeMusicData();
-        webSocket.current.on('state-update', state => {
+
+        webSocket.current?.on('state-update', state => {
           setResult(UpdatePlayerDataFromYTM(state));
         });
     }
@@ -124,7 +123,7 @@ export function Player(props) {
   }, [loaded, result, props]);
 
   useEffect(() => {
-    if (!result) return;
+    if (!result || !result?.isPlaying) return;
 
     setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
   }, [result]);

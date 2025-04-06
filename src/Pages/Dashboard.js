@@ -16,13 +16,13 @@ export default function Dashboard() {
         }, false);
     });
 
-    if(params.get('code')) {
+    if(params.has('spotifyToken')) {
         if(!selected)
             choosePlatform('spotify');
     }
         
     function choosePlatform(name) {
-        window.history.pushState(name, document.title, window.location.pathname);
+        window.history.pushState(name, document.title);
         setSelected(name)
     }
 
