@@ -16,23 +16,6 @@
 	}
 }
 
-@include keyframes(dots) {
-	0%,
-	20% {
-		content: ".";
-	}
-	40% {
-		content: "..";
-	}
-	60% {
-		content: "...";
-	}
-	90%,
-	100% {
-		content: "";
-	}
-}
-
 @include keyframes(fade-in) {
 	0% {
 		@include filter(opacity(0.1));
@@ -54,18 +37,6 @@ $font-color: #f1eaea !default;
 /* ********************************************************
     Base
 ******************************************************** */
-.loading {
-	min-width: $size;
-	display: block;
-
-	&::after {
-		content: "";
-		min-width: 3rem;
-		display: inline-block;
-		@include animation(dots 2s linear infinite);
-	}
-}
-
 .container {
 	width: 100vw;
 	min-height: 100vh;

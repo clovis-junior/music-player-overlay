@@ -182,24 +182,16 @@ export function Player(props) {
     return () => window.clearInterval(artistNameScroll);
   }, [artistNameScrolled]);
 
-  useLayoutEffect(() => {
-    if (result !== null) setLoaded(true);
-    else {
-      const waiting = setTimeout(() => {
-        setResult({ error: 'Too loading, please, try again later...' });
+  useLayoutEffect(() => setLoaded(result !== null), [result]);
 
-        setLoaded(true)
-      }, 15000)
-
-      return () => clearTimeout(waiting);
-    }
-  }, [result]);
+  if (!loaded || result.error)
+    return (<></>);
 
   if (!loaded)
-    return (<span className={styles.loading}>Loading</span>);
+    console.warn('Loading...');
 
-  if (result.error)
-    return (<>{result.error}</>);
+  if(result.error)
+    console.error(result.toString());
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
   if (props?.squareLayout) addPlayerClass(styles.square, playerClasses);
