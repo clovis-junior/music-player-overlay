@@ -184,11 +184,10 @@ export function Player(props) {
 
   useLayoutEffect(() => setLoaded(result !== null), [result]);
 
-  if (!loaded || result.error)
-    return (<></>);
-
-  if (!loaded)
+  if (!loaded) {
     console.warn('Loading...');
+    return (<></>);
+  }
 
   if(result.error)
     console.error(result.toString());
