@@ -105,12 +105,17 @@ export function Player(props) {
     if (!platformHasSpotify) return;
 
     async function Update() {
-      const data = (props.platform === 'spotify' ? await SpotifyData() : await SpotifyCustomData());
+      var data;
+
+      if(props.platform === 'spotify')
+        data = await SpotifyData();
+      else if (props.platform === 'spotify-custom')
+        data = await SpotifyCustomData();
 
       setResult(()=>{
         if(props.platform === 'spotify')
           UpdatePlayerDataFromSpotify(data)
-        else
+        else if (props.platform === 'spotify-custom')
           UpdatePlayerDataFromSpotifyCustom(data)
       })
     }
@@ -151,13 +156,23 @@ export function Player(props) {
     if (!platformHasSpotify) return;
 
     async function GetResult() {
-      const data = await SpotifyData();
+      var data;
 
-      setResult(UpdatePlayerDataFromSpotify(data))
+      if(props.platform === 'spotify')
+        data = await SpotifyData();
+      else if (props.platform === 'spotify-custom')
+        data = await SpotifyCustomData();
+
+      setResult(()=>{
+        if(props.platform === 'spotify')
+          UpdatePlayerDataFromSpotify(data)
+        else if (props.platform === 'spotify-custom')
+          UpdatePlayerDataFromSpotifyCustom(data)
+      })
     }
 
     if (!loaded) return () => GetResult();
-  }, [loaded, result, platformHasSpotify]);
+  }, [loaded, result, props, platformHasSpotify]);
 
   useLayoutEffect(() => {
     if (!loaded) return;
