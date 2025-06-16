@@ -16,7 +16,7 @@ export default function Dashboard() {
         }, false);
     });
 
-    if(params.has('spotifyToken')) {
+    if(params.has('spotifyToken') || params.has('code')) {
         if(!selected)
             choosePlatform('spotify');
     }

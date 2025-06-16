@@ -1,5 +1,7 @@
-import { useRef, useState } from 'react';
-import { inDevelopment } from '../App';
+import { useEffect, useRef, useState } from 'react';
+// import { inDevelopment } from '../App';
+import { GetAccessToken } from '../platforms/SpotifyCustom';
+import { IsEmpty } from '../Utils'
 import { RequestCode, RequestToken } from '../platforms/YouTubeMusic';
 
 import AsyncImage from '../components/AsyncImage';
@@ -31,6 +33,25 @@ function Alert(props) {
 
     return (
         <div className={`${styles.alert} ${styles[classType]}`}>{props?.content}</div>
+    )
+}
+
+function PlayerGenerated(props) {
+    const input = useRef(null);
+
+    return (
+        <>
+            <div className={styles.panel_content}>
+                <p>Now, you need to copy this URL and use it on you streaming software:</p>
+                <input ref={input} type='text' className={styles.input_text} value={props.playerURL} readOnly />
+                <b>Enjoy!</b>
+            </div>
+            <footer className={styles.btns}>
+                <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(props.playerURL, input?.current)}>Copy URL</button>
+                <button type='button' className={styles.btn} disabled>Costumize Player</button>
+                <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
+            </footer>
+        </>
     )
 }
 
@@ -114,23 +135,9 @@ function YouTubeMusic() {
     }
 
     function Success(props) {
-        const input = useRef(null);
         const playerURL = `${browserURL}#player?platform=youtube&token=${props?.token}`;
 
-        return (
-            <>
-                <div className={styles.panel_content}>
-                    <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                    <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
-                    <b>Enjoy!</b>
-                </div>
-                <footer className={`${styles.btns} ${styles.centered}`}>
-                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
-                    <button type='button' className={styles.btn} disabled>Costumize Player</button>
-                    <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
-                </footer>
-            </>
-        )
+        return (<PlayerGenerated playerURL={playerURL} />)
     }
 
     return (
@@ -149,49 +156,150 @@ function YouTubeMusic() {
 }
 
 function Spotify() {
-    const input = useRef(null);
-    const params = new URLSearchParams(window.location.search);
+    const [playerURLCreated, setPlayerURLCreated] = useState(false);
+    const [playerParams, setPlayerParams] = useState(null);
 
     function Success(props) {
-        const playerURL = `${browserURL}#player?platform=spotify&token=${props?.token}`;
+        // const playerURL = `${browserURL}#player?platform=spotify&token=${props?.token}`;
+        const playerURL = `${browserURL}#player?platform=spotify-custom&${props?.playerURLParams}`;
+
+        return (<PlayerGenerated playerURL={playerURL} />)
+    }
+
+    function YourOwnApp() {
+        const clientID = useRef(null);
+        const clientSecret = useRef(null);
+
+        function GetSpotifyAuthURL(e) {
+            e.target.disabled = true;
+
+            if(IsEmpty(clientID?.current.value) || IsEmpty(clientSecret?.current.value)) {
+                alert('Please, fill the Client ID and Cliend secret!');
+
+                clientID?.current.focus();
+
+                e.target.disabled = false;
+                return false
+            }
+
+            localStorage.setItem('spotifyAppClientID', clientID?.current.value);
+            localStorage.setItem('spotifyAppClientSecret', clientSecret?.current.value);
+
+            const baseURL = 'https://accounts.spotify.com/pt-BR/authorize';
+            const scopes = 'user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private';
+            const urlParams = new URLSearchParams({
+                'client_id': clientID?.current.value,
+                'response_type': 'code',
+                'redirect_uri': browserURL,
+                'show_dialog': true,
+                'scope': scopes
+            });
+            
+            return window.location.href = `${baseURL}?${urlParams}`
+        }
+
+        function Instructions() {
+            return (
+                <div className={styles.panel_content}>
+                    <p>You need to create an app in your Spotify dashboard, <a rel='noopener noreferrer' href='https://developer.spotify.com/dashboard' target='_blank'>clicking here</a>.</p>
+                    <p>Follow the instructions:</p>
+                    <ul>
+                        <li>Click in <b>Create App</b></li>
+                        <li>
+                            Fill in the following details:
+                            <ol>
+                                <li><b>Redirect URIs</b> - "{browserURL}"</li>
+                                <li><b>Which API/SDKs are you planning to use?</b> - Check Web API</li>
+                            </ol>
+                            The <b>App name</b> and <b>App description</b> can be whatever you want.
+                        </li>
+                        <li>
+                            Click in <b>Settings</b>.
+                            <ol>
+                                <li>Click in <b>View client secret</b></li>
+                                <li>Copy your <b>Client ID</b> and <b>Client secret</b></li>
+                            </ol>
+                        </li>
+                        <li>Fill your Client ID and Client Secret.</li>
+                    </ul>
+                    <p>After this, click on <b>Authenticate</b> button below!</p>
+                </div>
+            )
+        }
 
         return (
             <>
-                <div className={styles.panel_content}>
-                    <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                    <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
-                    <b>Enjoy!</b>
-                </div>
-                <footer className={styles.btns}>
-                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
-                    <button type='button' className={styles.btn} disabled>Costumize Player</button>
+                <Instructions />
+                <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
+                    <input ref={clientID} type='text' className={styles.input_text} placeholder='Your Client ID' />
+                    <input ref={clientSecret} type='text' className={styles.input_text} placeholder='Your Client secret' />
+                    <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate</button>
                     <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>
             </>
         )
     }
 
-    function Auth() {
-        function GetSpotifyAuthURL(e) {
-            const baseURL = inDevelopment ? 'http://localhost' : 'https://music-player-spotify-web-api.onrender.com';
-            e.target.disabled = true;
+    // function OurOwnApp() {
+    //     function GetSpotifyAuthURL(e) {
+    //         const baseURL = inDevelopment ? 'http://localhost' : 'https://music-player-spotify-web-api.onrender.com';
+    //         e.target.disabled = true;
 
-            return window.location.href = `${baseURL}/login`
+    //         return window.location.href = `${baseURL}/login`
+    //     }
+
+    //     return (
+    //         <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
+    //             <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
+    //             <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
+    //         </footer>
+    //     )
+    // }
+
+    // function Auth() {
+    //     return (
+    //         <></>
+    //     )
+    // }
+
+    useEffect(()=>{
+        const params = new URLSearchParams(window.location.search);
+
+        async function GetData() {
+            const data = await GetAccessToken(
+                browserURL,
+                localStorage.getItem('spotifyAppClientID'),
+                localStorage.getItem('spotifyAppClientSecret'),
+                params.get('code')
+            );
+
+            setPlayerParams(new URLSearchParams({
+                'clientID': localStorage.getItem('spotifyAppClientID'),
+                'accessToken': data.access_token,
+                'refreshToken': data.refresh_token
+            }));
+            setPlayerURLCreated(true)
         }
 
-        return (
-            <footer className={`${styles.btns} ${styles.centered}`}>
-                <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
-            </footer>
-        )
-    }
+        if(params.has('spotifyToken')) {
+            setPlayerParams(new URLSearchParams({
+                'token': params.get('spotifyToken')
+            }));
+
+            setPlayerURLCreated(true)
+        }
+        
+        if(params.has('code'))
+            GetData();
+
+    }, [setPlayerURLCreated])
 
     return (
         <main className={styles.panel}>
             <figure>
                 <AsyncImage className={styles.platform_logo} src={spotifyLogo} alt={'Spotify Logo'} />
             </figure>
-            {params.has('spotifyToken') ? (<Success token={params.get('spotifyToken')} />) : (<Auth />)}
+            {playerURLCreated ? (<Success params={playerParams} />) : (<YourOwnApp/>)}
         </main>
     )
 }
@@ -211,31 +319,18 @@ function AppleMusic() {
                         <li>Click on the button below to generate a url.</li>
                     </ul>
                 </div>
-                <footer className={`${styles.btns} ${styles.centered}`}>
+                <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
                     <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={() => setSession('url')}>Generate a Browser URL</button>
+                    <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>
             </>
         )
     }
 
     function Success() {
-        const input = useRef(null);
         const playerURL = `${browserURL}#player?platform=apple`;
 
-        return (
-            <>
-                <div className={styles.panel_content}>
-                    <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                    <input ref={input} type='text' className={styles.input_text} value={playerURL} readOnly />
-                    <b>Enjoy!</b>
-                </div>
-                <footer className={styles.btns}>
-                    <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(playerURL, input?.current)}>Copy URL</button>
-                    <button type='button' className={styles.btn} disabled>Costumize Player</button>
-                    <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
-                </footer>
-            </>
-        )
+        return (<PlayerGenerated playerURL={playerURL} />)
     }
 
     return (
@@ -256,6 +351,7 @@ export default function Auth(props) {
             case 'apple':
                 return (<AppleMusic />)
             case 'spotify':
+            case 'spotify-custom':
                 return (<Spotify />)
             case 'youtube':
             default:

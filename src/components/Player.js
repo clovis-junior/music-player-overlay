@@ -8,9 +8,13 @@ import {
   UpdatePlayerData as UpdatePlayerDataFromApple
 } from '../platforms/AppleMusic';
 import {
-  GetData as SpotiyData,
+  GetData as SpotifyData,
   UpdatePlayerData as UpdatePlayerDataFromSpotify
 } from '../platforms/Spotify';
+import {
+  GetData as SpotifyCustomData,
+  UpdatePlayerData as UpdatePlayerDataFromSpotifyCustom
+} from '../platforms/SpotifyCustom';
 import { ConvertTime } from '../Utils';
 import styles from '../scss/player.module.scss';
 
@@ -47,6 +51,8 @@ export function Player(props) {
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
+  const platformHasSpotify = (['spotify', 'spotify-custom'].includes(props.platform));
+
   const [playerClasses] = useState([]);
   const [albumArtImage, setAlbumArtImage] = useState(null);
   const [musicProgress, setMusicProgress] = useState(0);
@@ -69,7 +75,7 @@ export function Player(props) {
   }, [result]);
 
   useEffect(() => {
-    if (props.platform === 'spotify') return;
+    if (platformHasSpotify) return;
 
     switch (props?.platform) {
       case 'apple':
@@ -93,15 +99,20 @@ export function Player(props) {
       if (webSocket.current?.connected)
         webSocket.current?.disconnect();
     }
-  }, [props]);
+  }, [props, platformHasSpotify]);
 
   useEffect(() => {
-    if (props.platform !== 'spotify') return;
+    if (!platformHasSpotify) return;
 
     async function Update() {
-      const data = await SpotiyData();
+      const data = (props.platform === 'spotify' ? await SpotifyData() : await SpotifyCustomData());
 
-      setResult(UpdatePlayerDataFromSpotify(data))
+      setResult(()=>{
+        if(props.platform === 'spotify')
+          UpdatePlayerDataFromSpotify(data)
+        else
+          UpdatePlayerDataFromSpotifyCustom(data)
+      })
     }
 
     if (loaded && result) {
@@ -122,7 +133,7 @@ export function Player(props) {
       }
     }
 
-  }, [loaded, result, props]);
+  }, [loaded, result, props, platformHasSpotify]);
 
   useEffect(() => {
     if (!result || !result?.isPlaying) return;
@@ -137,16 +148,16 @@ export function Player(props) {
   }, [result, albumArtImage]);
 
   useLayoutEffect(() => {
-    if (props.platform !== 'spotify') return;
+    if (!platformHasSpotify) return;
 
     async function GetResult() {
-      const data = await SpotiyData();
+      const data = await SpotifyData();
 
       setResult(UpdatePlayerDataFromSpotify(data))
     }
 
     if (!loaded) return () => GetResult();
-  }, [loaded, result, props]);
+  }, [loaded, result, platformHasSpotify]);
 
   useLayoutEffect(() => {
     if (!loaded) return;
@@ -189,7 +200,7 @@ export function Player(props) {
     return (<></>);
   }
 
-  if(result.error)
+  if (result.error)
     console.error(result.toString());
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
