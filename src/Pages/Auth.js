@@ -161,7 +161,7 @@ function Spotify() {
 
     function Success(props) {
         // const playerURL = `${browserURL}#player?platform=spotify&token=${props?.token}`;
-        const playerURL = `${browserURL}#player?platform=spotify-custom&${props?.playerURLParams}`;
+        const playerURL = `${browserURL}#player?platform=spotify-custom&${props?.playerParams}`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
@@ -232,7 +232,7 @@ function Spotify() {
                 <Instructions />
                 <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
                     <input ref={clientID} type='text' className={styles.input_text} placeholder='Your Client ID' />
-                    <input ref={clientSecret} type='text' className={styles.input_text} placeholder='Your Client secret' />
+                    <input ref={clientSecret} type='password' className={styles.input_text} placeholder='Your Client secret' />
                     <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate</button>
                     <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>
@@ -299,7 +299,7 @@ function Spotify() {
             <figure>
                 <AsyncImage className={styles.platform_logo} src={spotifyLogo} alt={'Spotify Logo'} />
             </figure>
-            {playerURLCreated ? (<Success params={playerParams} />) : (<YourOwnApp/>)}
+            {playerURLCreated ? (<Success playerParams={playerParams} />) : (<YourOwnApp/>)}
         </main>
     )
 }
