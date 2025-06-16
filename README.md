@@ -11,7 +11,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 ### 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
 - [x] **Spotify (Our own app)** *(The Spotify App in "developer mode" for now)*
-- [ ] **Spotify (Your own app)** *(Necessary create a Spotify App, [click here for more instructions](https://developer.spotify.com/documentation/web-api/concepts/apps))*
+- [x] **Spotify (Your own app)** *(Necessary create a Spotify App, [click here for more instructions](https://developer.spotify.com/documentation/web-api/concepts/apps))*
 - [x] **Apple Music** *(Its Necessary [Cider](https://cider.sh/)) (Not tested for now)*
 - [ ] **Amazon Music** *(Amazon Music API is in beta for now)*
 
@@ -31,7 +31,10 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 [Click here to configure](https://clovis-junior.github.io/music-player-overlay/).
 
 > [!NOTE]
-> The players options has not available on GitHub Page for now
+> The players options has not available on GitHub Page for now... Ii hard work on player functionalities, soon i release then...
+
+> [!NOTE]
+> The our Spotify app has shutdown for tests (return soon)
 
 > [!TIP]
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
