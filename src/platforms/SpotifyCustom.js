@@ -1,9 +1,13 @@
-const params = new URLSearchParams(window.location.search);
+import { getURLParams } from '../Utils';
 
-var clientID = params.get('clientID');
+const params = getURLParams();
+const clientID = params.get('clientID');
 
-var refreshToken = params.get('refreshToken');
-var accessToken = params.get('accessToken');
+var refreshToken;
+var accessToken;
+
+refreshToken = refreshToken || params.get('refreshToken');
+accessToken =  accessToken || params.get('accessToken');
 
 export async function GetAccessToken(uri = '', id = '', secret = '', code = '') {
     try {
@@ -51,17 +55,18 @@ async function RefreshAccessToken() {
         });
     
         if(response.status !== 200)
-            return false;
+            return { error: '' }
     
         const data = await response.json();
 
         accessToken = data.access_token;
         refreshToken = data.refresh_token;
     
-        return await GetData(data.access_token)
+        return await GetData(accessToken)
     } catch(e) {
         console.error(e.message.toString());
-        return false
+
+        return { error: e.message.toString() }
     }
 }
 
@@ -98,5 +103,7 @@ export async function GetData() {
         return await response.json()
     } catch(error) {
         console.log(error.message.toString());
+
+        return { error: error.message.toString() }
     }
 }

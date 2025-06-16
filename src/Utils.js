@@ -19,3 +19,22 @@ export function ConvertTime(time = 0) {
   
   return `${AddZero(minutes)}:${AddZero(seconds)}`
 }
+
+export function getURLParams(path) {
+  path = path || window.location.href;
+  path = path.split('?')[1];
+
+  const search = path?.split('&'), params = {};
+
+  params.get = function (param) {
+    return params[param]
+  }
+
+  params.has = function (param) {
+    return (param in params)
+  }
+
+  search?.forEach(param => params[param.split('=')[0]] = param.split('=')[1]);
+
+  return params
+}

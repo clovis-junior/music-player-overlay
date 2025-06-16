@@ -107,17 +107,13 @@ export function Player(props) {
     async function Update() {
       var data;
 
-      if(props.platform === 'spotify')
+      if(props.platform === 'spotify') {
         data = await SpotifyData();
-      else if (props.platform === 'spotify-custom')
+        setResult(UpdatePlayerDataFromSpotify(data));
+      } else if (props.platform === 'spotify-custom') {
         data = await SpotifyCustomData();
-
-      setResult(()=>{
-        if(props.platform === 'spotify')
-          UpdatePlayerDataFromSpotify(data)
-        else if (props.platform === 'spotify-custom')
-          UpdatePlayerDataFromSpotifyCustom(data)
-      })
+        setResult(UpdatePlayerDataFromSpotifyCustom(data));
+      }   
     }
 
     if (loaded && result) {
@@ -158,17 +154,13 @@ export function Player(props) {
     async function GetResult() {
       var data;
 
-      if(props.platform === 'spotify')
+      if(props.platform === 'spotify') {
         data = await SpotifyData();
-      else if (props.platform === 'spotify-custom')
+        setResult(UpdatePlayerDataFromSpotify(data));
+      } else if (props.platform === 'spotify-custom') {
         data = await SpotifyCustomData();
-
-      setResult(()=>{
-        if(props.platform === 'spotify')
-          UpdatePlayerDataFromSpotify(data)
-        else if (props.platform === 'spotify-custom')
-          UpdatePlayerDataFromSpotifyCustom(data)
-      })
+        setResult(UpdatePlayerDataFromSpotifyCustom(data));
+      }
     }
 
     if (!loaded) return () => GetResult();
@@ -215,7 +207,7 @@ export function Player(props) {
     return (<></>);
   }
 
-  if (result.error)
+  if (result?.error)
     console.error(result.toString());
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
@@ -278,14 +270,14 @@ export function Player(props) {
             'transform': (!musicNameScrolled)
               ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
-          }}>{musicData.title}</span>
+          }}>{musicData?.title}</span>
         </div>
         <div className={styles.music_info_mask}>
           <span ref={artistNameComponent} id={styles.music_artist} style={{
             'transform': (!artistNameScrolled)
               ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
-          }}>{musicData.artist}</span>
+          }}>{musicData?.artist}</span>
         </div>
         {(props.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
         {(!props.hideProgress) ? (
