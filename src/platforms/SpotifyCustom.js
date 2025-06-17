@@ -1,13 +1,11 @@
 import { getURLParams } from '../Utils';
 
 const params = getURLParams();
-const clientID = params.get('clientID');
+const clientID = params.get('clientID') || '';
+const clientSecret = params.get('clientSecret') || '';
 
-var refreshToken;
-var accessToken;
-
-refreshToken = refreshToken || params.get('refreshToken');
-accessToken =  accessToken || params.get('accessToken');
+var refreshToken = params.get('refreshToken') || '';
+var accessToken = '';
 
 export async function GetAccessToken(uri = '', id = '', secret = '', code = '') {
     try {
@@ -28,10 +26,8 @@ export async function GetAccessToken(uri = '', id = '', secret = '', code = '') 
     
         const data = await response.json();
 
-        if(response.status === 200) {
-            accessToken = data.access_token;
-            refreshToken = data.refresh_token;
-        }
+        if(response.status !== 200)
+            return { error: '' }
 
         return data
     } catch(e) {
@@ -45,6 +41,7 @@ async function RefreshAccessToken() {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
+                'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
@@ -59,8 +56,10 @@ async function RefreshAccessToken() {
     
         const data = await response.json();
 
+        // if (data.refresh_token)
+        //     refreshToken = data.refresh_token;
+
         accessToken = data.access_token;
-        refreshToken = data.refresh_token;
     
         return await GetData(accessToken)
     } catch(e) {
@@ -94,7 +93,7 @@ export async function GetData() {
             }
         });
     
-        if(response.status === 401)
+        if(response.status === 400 || response.status === 401)
             return await RefreshAccessToken();
     
         if(response.status === 429)

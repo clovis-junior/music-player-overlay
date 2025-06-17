@@ -275,7 +275,7 @@ function Spotify() {
 
             setPlayerParams(new URLSearchParams({
                 'clientID': localStorage.getItem('spotifyAppClientID'),
-                'accessToken': data.access_token,
+                'clientSecret': localStorage.getItem('spotifyAppClientID'),
                 'refreshToken': data.refresh_token
             }));
             setPlayerURLCreated(true)
