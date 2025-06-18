@@ -27,7 +27,7 @@ export function GetURLParams(path) {
   const search = path?.split('&'), params = {};
 
   params.get = function (param) {
-    return params[param]
+    return params[param] || ''
   }
 
   params.has = function (param) {
