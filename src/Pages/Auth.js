@@ -173,7 +173,7 @@ function Spotify() {
         function GetSpotifyAuthURL(e) {
             e.target.disabled = true;
 
-            if(IsEmpty(clientID?.current.value) || IsEmpty(clientSecret?.current.value)) {
+            if (IsEmpty(clientID?.current.value) || IsEmpty(clientSecret?.current.value)) {
                 alert('Please, fill the Client ID and Cliend secret!');
 
                 clientID?.current.focus();
@@ -194,7 +194,7 @@ function Spotify() {
                 'show_dialog': true,
                 'scope': scopes
             });
-            
+
             return window.location.href = `${baseURL}?${urlParams}`
         }
 
@@ -262,34 +262,33 @@ function Spotify() {
     //     )
     // }
 
-    useEffect(()=>{
+    useEffect(() => {
         const params = new URLSearchParams(window.location.search);
+        const clientID = localStorage.getItem('spotifyAppClientID') || '';
+        const clientSecret = localStorage.getItem('spotifyAppClientSecret') || '';
 
         async function GetData() {
-            const data = await GetAccessToken(
-                browserURL,
-                localStorage.getItem('spotifyAppClientID'),
-                localStorage.getItem('spotifyAppClientSecret'),
-                params.get('code')
-            );
+            const data = await GetAccessToken();
 
-            setPlayerParams(new URLSearchParams({
-                'clientID': localStorage.getItem('spotifyAppClientID'),
-                'clientSecret': localStorage.getItem('spotifyAppClientID'),
-                'refreshToken': data.refresh_token
-            }));
-            setPlayerURLCreated(true)
+            if (data.refresh_token) {
+                setPlayerParams(new URLSearchParams({
+                    'clientID': clientID,
+                    'clientSecret': clientSecret,
+                    'refreshToken': data.refresh_token
+                }));
+                setPlayerURLCreated(true)
+            }
         }
 
-        if(params.has('spotifyToken')) {
+        if (params.has('spotifyToken') && (!IsEmpty(clientID) || !IsEmpty(clientSecret))) {
             setPlayerParams(new URLSearchParams({
                 'token': params.get('spotifyToken')
             }));
 
             setPlayerURLCreated(true)
         }
-        
-        if(params.has('code'))
+
+        if (params.has('code') && (!IsEmpty(clientID) || !IsEmpty(clientSecret)))
             GetData();
 
     }, [setPlayerURLCreated])
@@ -299,7 +298,7 @@ function Spotify() {
             <figure>
                 <AsyncImage className={styles.platform_logo} src={spotifyLogo} alt={'Spotify Logo'} />
             </figure>
-            {playerURLCreated ? (<Success playerParams={playerParams} />) : (<YourOwnApp/>)}
+            {playerURLCreated ? (<Success playerParams={playerParams} />) : (<YourOwnApp />)}
         </main>
     )
 }

@@ -1,38 +1,38 @@
-import { getURLParams } from '../Utils';
+import { GetURLParams, IsEmpty } from '../Utils';
 
-const params = getURLParams();
-const clientID = params.get('clientID') || '';
-const clientSecret = params.get('clientSecret') || '';
+const params = GetURLParams();
+const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clientID') || '';
+const clientSecret = localStorage.getItem('spotifyAppClientSecret') || params.get('clientSecret') || '';
 
 var refreshToken = params.get('refreshToken') || '';
-var accessToken = '';
+var accessToken;
 
-export async function GetAccessToken(uri = '', id = '', secret = '', code = '') {
+export async function GetAccessToken() {
     try {
+        const redirectURI = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
-                'Authorization': `Basic ${btoa(`${id}:${secret}`)}`,
+                'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({
                 'grant_type': 'authorization_code',
-                'code': code,
-                'redirect_uri': uri,
-                'client_id': id,
-                'client_secret': secret
+                'code': params.get('code') || '',
+                'redirect_uri': encodeURI(redirectURI),
+                'client_id': clientID,
+                'client_secret': clientSecret
             })
         });
-    
-        const data = await response.json();
 
         if(response.status !== 200)
             return { error: '' }
-
-        return data
+    
+        return await response.json();
     } catch(e) {
         console.error(e.message.toString());
-        return { error: '?', error_description: e.message.toString() }
+        return { error: e.message.toString() }
     }
 }
 
@@ -46,13 +46,12 @@ async function RefreshAccessToken() {
             },
             body: new URLSearchParams({
                 'grant_type': 'refresh_token',
-                'refresh_token': refreshToken,
-                'client_id': clientID
+                'refresh_token': refreshToken
             })
         });
     
         if(response.status !== 200)
-            return { error: '' }
+            return { error: response.text }
     
         const data = await response.json();
 
@@ -61,7 +60,7 @@ async function RefreshAccessToken() {
 
         accessToken = data.access_token;
     
-        return await GetData(accessToken)
+        return await GetData()
     } catch(e) {
         console.error(e.message.toString());
 
@@ -84,6 +83,9 @@ export function UpdatePlayerData(data) {
 }
 
 export async function GetData() {
+    if(IsEmpty(accessToken))
+        return await RefreshAccessToken();
+    
     try {
         const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
             method: 'GET',

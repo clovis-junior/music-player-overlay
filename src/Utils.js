@@ -20,7 +20,7 @@ export function ConvertTime(time = 0) {
   return `${AddZero(minutes)}:${AddZero(seconds)}`
 }
 
-export function getURLParams(path) {
+export function GetURLParams(path) {
   path = path || window.location.href;
   path = path.split('?')[1];
 
