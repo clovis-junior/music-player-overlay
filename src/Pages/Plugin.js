@@ -1,8 +1,9 @@
 import { Player } from '../components/Player';
 import styles from '../scss/player.module.scss';
+import { GetURLParams } from '../Utils';
 
 export default function Plugin() {
-    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const params = GetURLParams();
     const options = new URLSearchParams(atob(params.get('options')));
 
     return (
