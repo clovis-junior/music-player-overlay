@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/music-player-overlay/static/css/main.1ee36187.css",
-    "main.js": "/music-player-overlay/static/js/main.aad21734.js",
+    "main.js": "/music-player-overlay/static/js/main.e6346a77.js",
     "static/js/453.2e6aec64.chunk.js": "/music-player-overlay/static/js/453.2e6aec64.chunk.js",
     "static/media/spotify-logo.png": "/music-player-overlay/static/media/spotify-logo.ec4bfb0837a6d5f52869.png",
     "static/media/ytm-logo.png": "/music-player-overlay/static/media/ytm-logo.68af4653c76739876f44.png",
     "static/media/apple-music-icon.svg": "/music-player-overlay/static/media/apple-music-icon.a7f982347fc3f7cfe747f9b311d9df66.svg",
     "index.html": "/music-player-overlay/index.html",
     "main.1ee36187.css.map": "/music-player-overlay/static/css/main.1ee36187.css.map",
-    "main.aad21734.js.map": "/music-player-overlay/static/js/main.aad21734.js.map",
+    "main.e6346a77.js.map": "/music-player-overlay/static/js/main.e6346a77.js.map",
     "453.2e6aec64.chunk.js.map": "/music-player-overlay/static/js/453.2e6aec64.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1ee36187.css",
-    "static/js/main.aad21734.js"
+    "static/js/main.e6346a77.js"
   ]
 }
