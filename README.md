@@ -31,10 +31,10 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 [Click here to configure](https://clovis-junior.github.io/music-player-overlay/).
 
 > [!NOTE]
-> The players options has not available on GitHub Page for now... Ii hard work on player functionalities, soon i release then...
+> The player options has not available on GitHub Page for now.
 
-> [!NOTE]
-> The our Spotify app has shutdown for tests (return soon)
+> [!CAUTION]
+> The Spotify functionality not work on GitHub Page
 
 > [!TIP]
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
