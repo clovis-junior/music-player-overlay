@@ -1,6 +1,9 @@
 [build]
-  publish = "/music-widget"
   command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
