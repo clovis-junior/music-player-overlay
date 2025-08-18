@@ -10,7 +10,7 @@ import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 import styles from '../scss/dashboard.module.scss';
 
-const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname || ''}`;
 
 function Clipboard(text, element) {
     element?.select();
@@ -176,26 +176,24 @@ function Spotify() {
             if (IsEmpty(clientID?.current.value) || IsEmpty(clientSecret?.current.value)) {
                 alert('Please, fill the Client ID and Cliend secret!');
 
-                clientID?.current.focus();
+                clientID?.current?.focus();
 
                 e.target.disabled = false;
                 return false
             }
 
-            localStorage.setItem('spotifyAppClientID', clientID?.current.value);
-            localStorage.setItem('spotifyAppClientSecret', clientSecret?.current.value);
+            localStorage.setItem('spotifyAppClientID', clientID?.current?.value);
+            localStorage.setItem('spotifyAppClientSecret', clientSecret?.current?.value);
 
             const baseURL = 'https://accounts.spotify.com/pt-BR/authorize';
             const scopes = 'user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private';
             const urlParams = new URLSearchParams({
-                'client_id': clientID?.current.value,
+                'client_id': clientID?.current?.value,
                 'response_type': 'code',
-                'redirect_uri': browserURL,
-                'show_dialog': true,
-                'scope': scopes
+                'show_dialog': true
             });
 
-            return window.location.href = `${baseURL}?${urlParams}`
+            return window.location.href = `${baseURL}?${urlParams}&redirect_uri=${browserURL}&scopes=${scopes.replace(/\s/g, '%20')}`
         }
 
         function Instructions() {
@@ -269,6 +267,8 @@ function Spotify() {
 
         async function GetData() {
             const data = await GetAccessToken();
+
+            console.log(data);
 
             if (data.refresh_token) {
                 setPlayerParams(new URLSearchParams({

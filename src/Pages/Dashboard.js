@@ -38,7 +38,7 @@ export default function Dashboard() {
                         <div className={`${styles.btns} ${styles.column}`}>
                             <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={()=> choosePlatform('youtube')}>YouTube Music</button>
                             <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> choosePlatform('apple')}>Apple Music</button>
-                            {/* <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={()=> choosePlatform('spotify')}>Spotify</button> */}
+                            <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={()=> choosePlatform('spotify')}>Spotify</button>
                         </div>
                     </div>
                 </div>
