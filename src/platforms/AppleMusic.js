@@ -1,6 +1,6 @@
 // import songData from'../Apple.test.json';
 import { io } from 'socket.io-client';
-import { URLValidade } from '../Utils';
+import { URLValidade } from '../Utils.js';
 
 const baseURL = 'http://localhost:10767';
 

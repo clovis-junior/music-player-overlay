@@ -1,4 +1,4 @@
-import { GetURLParams, IsEmpty } from '../Utils';
+import { GetURLParams, IsEmpty } from '../Utils.js';
 
 const params = GetURLParams();
 const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clientID') || '';

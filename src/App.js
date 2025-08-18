@@ -1,6 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-import Plugin from './pages/Plugin';
+import Dashboard from './pages/Dashboard.js';
+import Plugin from './pages/Plugin.js';
 
 export const inDevelopment = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 

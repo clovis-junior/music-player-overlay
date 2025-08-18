@@ -2,20 +2,20 @@ import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import {
   GetData as YouTubeMusicData,
   UpdatePlayerData as UpdatePlayerDataFromYTM
-} from '../platforms/YouTubeMusic';
+} from '../platforms/YouTubeMusic.js';
 import {
   GetData as AppleMusicData,
   UpdatePlayerData as UpdatePlayerDataFromApple
-} from '../platforms/AppleMusic';
+} from '../platforms/AppleMusic.js';
 import {
   GetData as SpotifyData,
   UpdatePlayerData as UpdatePlayerDataFromSpotify
-} from '../platforms/Spotify';
+} from '../platforms/Spotify.js';
 import {
   GetData as SpotifyCustomData,
   UpdatePlayerData as UpdatePlayerDataFromSpotifyCustom
-} from '../platforms/SpotifyCustom';
-import { ConvertTime } from '../Utils';
+} from '../platforms/SpotifyCustom.js';
+import { ConvertTime } from '../Utils.js';
 import styles from '../scss/player.module.scss';
 
 function DrawWaveForms({ number = 8 }) {

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 // import { inDevelopment } from '../App';
-import { GetAccessToken } from '../platforms/SpotifyCustom';
+import { GetAccessToken } from '../platforms/SpotifyCustom.js';
 import { IsEmpty } from '../Utils'
-import { RequestCode, RequestToken } from '../platforms/YouTubeMusic';
+import { RequestCode, RequestToken } from '../platforms/YouTubeMusic.js';
 
-import AsyncImage from '../components/AsyncImage';
+import AsyncImage from '../components/AsyncImage.js';
 import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
