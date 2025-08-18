@@ -1,8 +1,8 @@
 [build]
   command = "npm run build"
-  base = "." # Change to this directory before building
-  publish = "music-widget" # Deploy this directory
-  command = "npm run build" # Run this command to build the React app
+  base = "music-widget"
+  publish = "build"
+  command = "npm run build"
 
 [[redirects]]
   from = "/*"
