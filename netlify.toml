@@ -1,5 +1,10 @@
 [build]
   command = "npm run build"
+  base = "." # Change to this directory before building
+  publish = "music-widget" # Deploy this directory
+  command = "npm run build" # Run this command to build the React app
 
-[build.environment]
-  NODE_VERSION = "20"
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
