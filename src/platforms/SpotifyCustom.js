@@ -94,17 +94,17 @@ export async function GetData() {
                 'Content-Type': 'application/json'
             }
         });
+
+        if(!response || response.status === 429)
+            return setTimeout(GetData(), 5000);
     
         if(response.status === 400 || response.status === 401)
             return await RefreshAccessToken();
     
-        if(response.status === 429)
-            return setTimeout(GetData(), 5000);
-
         return await response.json()
     } catch(error) {
-        console.log(error.message.toString());
+        console.log(error?.message?.toString());
 
-        return { error: error.message.toString() }
+        return { error: 'An error ocurred on trying to get player data.' }
     }
 }
