@@ -7,7 +7,11 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router-dom": "^6.30.0",
-    "react-scripts": "^0.0.0"
+    "react-scripts": "^5.0.1",
+    "socket.io-client": "^4.8.1"
+  },
+  "overrides": {
+    "rimraf": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -34,6 +38,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.7.0",
+    "@testing-library/react": "^16.3.0",
+    "jest": "^27.5.1",
     "sass": "^1.86.0"
   }
 }
