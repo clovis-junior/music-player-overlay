@@ -1,5 +1,4 @@
 [build]
-  publish = "music-widget"
   command = "npm run build"
 
 [[redirects]]
