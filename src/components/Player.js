@@ -113,14 +113,14 @@ export function Player(props) {
       } else if (props.platform === 'spotify-custom') {
         data = await SpotifyCustomData();
         setResult(UpdatePlayerDataFromSpotifyCustom(data));
-      }   
+      }
     }
 
     if (loaded && result) {
-      if (result?.isPlaying) {
-        const check = setInterval(async () => await Update(), 3000);
-        const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
+      const check = setInterval(async () => await Update(), 3000);
 
+      if (result?.isPlaying) {
+        const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
         const update = setInterval(() => {
           result.duration.elapsed++;
           result.duration.remaining--;
