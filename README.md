@@ -34,7 +34,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 > The player options has not available on GitHub Page for now.
 
 > [!CAUTION]
-> The Spotify functionality not work on GitHub Page
+> The Our own Spotify app functionality not available on public for now.
 
 > [!TIP]
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
