@@ -83,7 +83,9 @@ export function UpdatePlayerData(data) {
         };
 
         return { isPlaying, title, artist, duration, albumCover };
-    } else return null;
+    }
+
+    return data;
 }
 
 export async function GetData() {
@@ -99,8 +101,11 @@ export async function GetData() {
             }
         });
 
-        if(!response || response.status === 429)
-            return setTimeout(GetData(), 5000);
+        if(!response || !response.status)
+            return setTimeout(()=> GetData(), 60000);
+
+        if(response.status >= 429)
+            return setTimeout(()=> GetData(), 5000);
     
         if(response.status === 400 || response.status === 401)
             return await RefreshAccessToken();

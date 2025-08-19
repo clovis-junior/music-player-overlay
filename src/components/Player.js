@@ -169,7 +169,7 @@ export function Player(props) {
     }
 
     if (!loaded) {
-      const check = setInterval(async () => await GetResult(), 1000);
+      const check =  setInterval(async () => await GetResult(), (result?.error) ? 5000 : 2000);
       return () => clearInterval(check);
     }
   }, [loaded, result, props, platformHasSpotify]);
@@ -215,8 +215,10 @@ export function Player(props) {
     return (<></>);
   }
 
-  if (result?.error)
-    console.error(result.toString());
+  if (result?.error) {
+    console.error(result?.error?.toString());
+    setLoaded(false);
+  }
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
   if (props?.squareLayout) addPlayerClass(styles.square, playerClasses);
