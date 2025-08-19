@@ -132,6 +132,8 @@ export function Player(props) {
           clearTimeout(refresh);
         }
       }
+
+      return () => clearInterval(check);
     }
   }, [loaded, result, props, platformHasSpotify]);
 
