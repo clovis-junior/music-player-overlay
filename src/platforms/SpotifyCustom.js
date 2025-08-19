@@ -69,10 +69,10 @@ async function RefreshAccessToken() {
 }
 
 export function UpdatePlayerData(data) {
-    const isPlaying = data?.is_playing;
-    const title = data.item?.name;
-    const artist = data.item?.artists.map((artist) => artist.name).join(', ');
-    const albumCover = data.item?.album.images[0].url;
+    const isPlaying = data?.is_playing || false;
+    const title = data.currently_playing_type !== 'unknown' ? data.item?.name : '';
+    const artist = data.currently_playing_type !== 'unknown' ? data.item?.artists.map((artist) => artist.name).join(', ') : '';
+    const albumCover = data.currently_playing_type !== 'unknown' ? data.item?.album.images[0].url : '';
     const duration = {
         elapsed: (data?.progress_ms / 1000) || 0,
         remaining: ((data.item?.duration_ms - data?.progress_ms) / 1000) || 0,
