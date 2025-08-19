@@ -119,6 +119,10 @@ export function Player(props) {
     if (loaded) {
       const check = setInterval(async () => await Update(), 3000);
 
+      if (!result || result?.title === '') {
+        removePlayerClass(styles.show, playerClasses);
+      } else addPlayerClass(styles.show, playerClasses);
+
       if (result?.isPlaying) {
         const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
         const update = setInterval(() => {
@@ -135,7 +139,7 @@ export function Player(props) {
 
       return () => clearInterval(check);
     }
-  }, [loaded, result, props, platformHasSpotify]);
+  }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   useEffect(() => {
     if (!result || !result?.isPlaying) return;
