@@ -116,7 +116,7 @@ export function Player(props) {
       }
     }
 
-    if (loaded || result) {
+    if (loaded) {
       const check = setInterval(async () => await Update(), 3000);
 
       if (result?.isPlaying) {
