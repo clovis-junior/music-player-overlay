@@ -5,6 +5,11 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    access-control-allow-origin = "*"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

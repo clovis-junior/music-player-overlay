@@ -133,7 +133,6 @@ export function Player(props) {
         }
       }
     }
-
   }, [loaded, result, props, platformHasSpotify]);
 
   useEffect(() => {
@@ -163,7 +162,10 @@ export function Player(props) {
       }
     }
 
-    if (!loaded) return () => GetResult();
+    if (!loaded) {
+      const check = setInterval(async () => await GetResult(), 3000);
+      return () => clearInterval(check);
+    }
   }, [loaded, result, props, platformHasSpotify]);
 
   useLayoutEffect(() => {
