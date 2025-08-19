@@ -163,7 +163,7 @@ export function Player(props) {
     }
 
     if (!loaded) {
-      const check = setInterval(async () => await GetResult(), 3000);
+      const check = setInterval(async () => await GetResult(), 1000);
       return () => clearInterval(check);
     }
   }, [loaded, result, props, platformHasSpotify]);
