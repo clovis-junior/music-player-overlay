@@ -130,7 +130,6 @@ export function Player(props) {
       } else addPlayerClass(styles.show, playerClasses);
 
       if (result?.isPlaying) {
-        const refresh = setTimeout(async () => await Update(), (result.duration?.remaining || 0));
         const update = setInterval(() => {
           result.duration.elapsed++;
           result.duration.remaining--;
@@ -139,12 +138,11 @@ export function Player(props) {
         return () => {
           clearInterval(update);
           clearInterval(check);
-          clearTimeout(refresh);
         }
       }
 
       return () => clearInterval(check);
-    } else return async () => await Update();
+    }
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   useEffect(() => {
@@ -174,8 +172,13 @@ export function Player(props) {
       }
     }
 
-    if (!loaded)
+    if (!loaded && !result)
       return async () => await GetResult();
+
+    if(result?.error) {
+      const check = setInterval(async () => await GetResult(), 5000);
+      return () => clearInterval(check);
+    }
   }, [loaded, result, props, platformHasSpotify]);
 
   useLayoutEffect(() => {

@@ -5,11 +5,11 @@ const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clien
 const clientSecret = localStorage.getItem('spotifyAppClientSecret') || params.get('clientSecret') || '';
 
 var refreshToken = params.get('refreshToken') || '';
-var accessToken;
+var accessToken = params.get('accessToken') || '';
 
 export async function GetAccessToken() {
     try {
-        const redirectURI = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+        const redirectURI = `${window.location.protocol}//${window.location.host}/`;
 
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -27,12 +27,12 @@ export async function GetAccessToken() {
         });
 
         if(response.status !== 200)
-            return { error: '' }
+            return { error: response?.text }
     
         return await response.json();
-    } catch(e) {
-        console.error(e.message.toString());
-        return { error: e.message.toString() }
+    } catch(ex) {
+        console.error(ex?.message.toString());
+        return { error: ex?.message.toString() }
     }
 }
 
@@ -51,7 +51,7 @@ async function RefreshAccessToken() {
         });
     
         if(response.status !== 200)
-            return { error: response.text }
+            return { error: response?.text }
     
         const data = await response.json();
 
@@ -71,7 +71,7 @@ async function RefreshAccessToken() {
 export function UpdatePlayerData(data) {
     if (data?.error) return data;
 
-    if(data.currently_playing_type !== 'unknown') {
+    if(data?.currently_playing_type !== 'unknown') {
         const isPlaying = data?.is_playing || false;
         const title = data.item?.name || '';
         const artist = data.item?.artists.map((artist) => artist.name).join(', ') || '';
@@ -101,15 +101,22 @@ export async function GetData() {
             }
         });
 
-        if(response.status >= 429)
-            return setTimeout(()=> GetData(), 5000);
-    
-        if(response.status === 400 || response.status === 401)
+        if(response.status >= 429) {
+            console.warn(`${response.status}: ${response.text}`);
+            return setTimeout(async () => await GetData(), 5000);
+        }
+
+        if(response.status === 400 || response.status === 401) {
+            console.warn(`${response.status}: ${response.text}`);
             return await RefreshAccessToken();
+        }
     
-        return await response.json()
-    } catch(error) {
-        console.log(error?.message?.toString());
+        if(response.status === 200)
+            return await response.json();
+
+        return { error: 'An error ocurred on trying to get player data.' }
+    } catch(ex) {
+        console.log(ex?.message?.toString());
 
         return { error: 'An error ocurred on trying to get player data.' }
     }
