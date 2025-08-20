@@ -1,8 +1,8 @@
 import { GetURLParams } from '../Utils.js';
 
 const params = GetURLParams();
-const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clientID');
-const clientSecret = localStorage.getItem('spotifyAppClientSecret') || params.get('clientSecret');
+const clientID = params.get('clientID');
+const clientSecret = params.get('clientSecret');
 
 var refreshToken = params.get('refreshToken');
 
