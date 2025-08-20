@@ -206,7 +206,7 @@ function Spotify() {
                         <li>
                             Fill in the following details:
                             <ol>
-                                <li><b>Redirect URIs</b> - "{browserURL}"</li>
+                                <li><b>Redirect URIs</b> - "<span className={styles.user_select_valid}>{browserURL}</span>"</li>
                                 <li><b>Which API/SDKs are you planning to use?</b> - Check Web API</li>
                             </ol>
                             The <b>App name</b> and <b>App description</b> can be whatever you want.

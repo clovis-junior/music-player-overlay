@@ -17,6 +17,10 @@ import {
 } from '../platforms/SpotifyCustom.js';
 import { ConvertTime } from '../Utils.js';
 import styles from '../scss/player.module.scss';
+// import AsyncImage from '../components/AsyncImage.js';
+// import appleIcon from '../images/apple-music-icon.svg';
+// import spotifyLogo from '../images/spotify-logo.png';
+// import ytmLogo from '../images/ytm-logo.png';
 
 function DrawWaveForms({ number = 8 }) {
   let waves = [];
@@ -33,18 +37,18 @@ function DrawWaveForms({ number = 8 }) {
   )
 }
 
-function UpdatePercentage(elapsed, total) {
+function UpdatePercentage(elapsed = 0, total = 0) {
   return (elapsed * 100) / total;
 }
 
-function addPlayerClass(name, classes) {
-  if (classes.indexOf(name) < 0)
-    classes.push(name);
+function addPlayerClass(name = '', classes = []) {
+  if (classes?.indexOf(name) < 0)
+    classes?.push(name);
 }
 
 function removePlayerClass(name, classes) {
-  if (classes.indexOf(name) > -1)
-    classes.splice(classes.indexOf(name), 1);
+  if (classes?.indexOf(name) > -1)
+    classes?.splice(classes?.indexOf(name), 1);
 }
 
 export function Player(props) {
@@ -70,6 +74,8 @@ export function Player(props) {
 
     const title = result?.title;
     const artist = result?.artist;
+
+    document.title = title ? `${title} - ${artist}` : 'Paused';
 
     return { title, artist };
   }, [result]);
@@ -138,7 +144,7 @@ export function Player(props) {
       }
 
       return () => clearInterval(check);
-    }
+    } else return async () => await Update();
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   useEffect(() => {
@@ -168,10 +174,8 @@ export function Player(props) {
       }
     }
 
-    if (!loaded) {
-      const check =  setInterval(async () => await GetResult(), (result?.error) ? 5000 : 2000);
-      return () => clearInterval(check);
-    }
+    if (!loaded)
+      return async () => await GetResult();
   }, [loaded, result, props, platformHasSpotify]);
 
   useLayoutEffect(() => {
@@ -218,6 +222,8 @@ export function Player(props) {
   if (result?.error) {
     console.error(result?.error?.toString());
     setLoaded(false);
+
+    return (<>{result?.error?.toString()}</>);
   }
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
@@ -264,6 +270,11 @@ export function Player(props) {
     <main className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
         <div className={styles.music_album_art}>
+          {/* <div className={styles.music_platform_icon}>
+            <figure>
+              <AsyncImage src={spotifyLogo} alt={'Spotify Logo'} />
+            </figure>
+          </div> */}
           <figure>
             <img id={styles.music_album_art} src={albumArtImage} alt={result?.title} />
           </figure>

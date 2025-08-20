@@ -37,6 +37,11 @@ $font-color: #f1eaea !default;
 /* ********************************************************
     Base
 ******************************************************** */
+body {
+    overflow: hidden;
+    background-color: transparent;
+}
+
 .container {
 	width: 100vw;
 	min-height: 100vh;
@@ -206,8 +211,18 @@ $font-color: #f1eaea !default;
 		display: block;
 		overflow: hidden;
 		margin-right: 1rem;
+		position: relative;
 
-		& > figure {
+		& .music_platform_icon {
+			z-index: 1;
+			width: 20px;
+			overflow: hidden;
+			position: absolute;
+			bottom: 5px;
+			left: 5px;
+		}
+
+		& figure {
 			height: 0;
 			padding-top: 100%;
 			overflow: hidden;

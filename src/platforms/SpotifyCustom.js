@@ -101,9 +101,6 @@ export async function GetData() {
             }
         });
 
-        if(!response || !response.status)
-            return setTimeout(()=> GetData(), 60000);
-
         if(response.status >= 429)
             return setTimeout(()=> GetData(), 5000);
     

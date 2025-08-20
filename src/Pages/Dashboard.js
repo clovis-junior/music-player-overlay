@@ -7,11 +7,11 @@ export default function Dashboard() {
     const params = new URLSearchParams(window.location.search);
 
     useLayoutEffect(() => {
-        if(!document.body.classList.contains(styles.dashboard))
-            document.body.classList.add(styles.dashboard);
+        if(!document.body?.classList?.contains(styles?.dashboard))
+            document.body?.classList?.add(styles?.dashboard);
 
         window.addEventListener('popstate', function() {
-            window.history.pushState(null, document.title, window.location.pathname);
+            window.history?.pushState(null, document.title, window.location.pathname);
             setSelected(null);
         }, false);
     });

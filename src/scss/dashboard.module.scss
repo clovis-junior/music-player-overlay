@@ -14,11 +14,10 @@ $light-pallete-2nd: #c9c9c9;
 $light-pallete-3rd: #b1b1b1;
 $light-pallete-4th: #9f9f9f;
 
-$dark-color: #0a0a0a;
-$dark-pallete-1st: #131313;
-$dark-pallete-2nd: #202020;
-$dark-pallete-3rd: #313131;
-$dark-pallete-4th: #4f4f4f;
+$dark-pallete-1st: #030712;
+$dark-pallete-2nd: #111827;
+$dark-pallete-3rd: #1f2937;
+$dark-pallete-4th: #374151;
 
 $info-color: #0284c7;
 $warning-color: #f97316;
@@ -49,8 +48,8 @@ $youtube-color: #FF0033;
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #{$dark-pallete-1st};
-        --foreground-color: #{$dark-pallete-2nd};
+        --background-color: #{$dark-pallete-2nd};
+        --foreground-color: #{$dark-pallete-3rd};
                             
         --font-primary-color: #{$light-pallete-1st};
         --font-secondary-color: #{$light-pallete-2nd};
@@ -68,11 +67,6 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
 
-    &:not(.dashboard) {
-        overflow: hidden;
-        background-color: transparent;
-    }
-
     &.dashboard {
         overflow-y: auto;
         overflow-x: hidden;
@@ -84,7 +78,7 @@ body {
             width: .5rem;
             background-color: var(--background-color);
         }
-    
+        
         &::-webkit-scrollbar-thumb {
             background-color: var(--font-primary-color);
         }
@@ -113,7 +107,7 @@ body {
     width: 100%;
     max-width: 560px;
     display: block;
-    margin: 0 auto;
+    margin: 2rem auto;
     padding: 2rem 0;
     @include border-radius($border-radius);
     overflow: hidden;
@@ -128,6 +122,11 @@ body {
 
     & .panel_content {
         padding: 1rem 2rem;
+
+        & .user_select_valid {
+            cursor: text;
+            @include user-select(text);
+        }
 
         &.centered {
             text-align: center;
@@ -223,7 +222,7 @@ body {
         align-items: center;
         padding: 1rem;
         @include border-radius($border-radius);
-        background-color: $dark-color;
+        background-color: $dark-pallete-1st;
         letter-spacing: 1px;
         font-weight: 700;
         color: $light-color;
