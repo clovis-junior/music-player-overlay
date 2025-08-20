@@ -8,6 +8,7 @@
 [[headers]]
   for = "/*"
   [headers.values]
+    connection = "keep-alive"
     Cache-Control = "no-cache, no-store, must-revalidate"
     x-powered-by = "Clovis Junior"
 
