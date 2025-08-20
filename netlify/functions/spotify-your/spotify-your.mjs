@@ -1,6 +1,9 @@
-//import fetch from 'node-fetch';
+import fetch from 'node-fetch';
 
 export async function handler(event) {
+  if(!event?.body)
+    return { statusCode: 404, body: 'Not found'};
+
   const { clientID, clientSecret, refreshToken } = JSON.parse(event.body);
 
   if (!clientID || !clientSecret || !refreshToken)
@@ -20,9 +23,10 @@ export async function handler(event) {
     });
 
     if (!token_response)
-      return { statusCode: 401, body: `Response status: ${token_response?.status}` };
+      return { statusCode: 401, body: JSON.stringify(`An error ocurred trying to get token. Status Code: ${token_response?.status}`) };
 
     const token_data = await token_response.json();
+
     const accessToken = token_data?.access_token;
 
     const playing_response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -37,6 +41,6 @@ export async function handler(event) {
 
     return { statusCode: 200, body: JSON.stringify(data) }
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify(err?.message?.toString()) }
+    return { statusCode: 500, body: JSON.stringify(err?.message) }
   }
 }
