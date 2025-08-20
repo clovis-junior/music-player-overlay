@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client';
 import { URLValidade } from '../Utils.js';
 
-const baseURL = 'http://localhost:10767';
+const baseURL = 'http://127.0.0.1:10767';
 
 function GetAlbumCover(url, size) {
     if (URLValidade(url))
@@ -36,9 +36,9 @@ export function GetData() {
             'transports': ['websocket']
         });
     
-        socket.on('connect', () => console.debug('Connected to Cider'));
+        socket.on('connect', () => console.log('Connected to Cider'));
         socket.on('disconnect', () => {
-            console.debug('Disconnected to Cider... Reconnecting...');
+            console.log('Disconnected to Cider... Reconnecting...');
             setTimeout(() => GetData(), 5000)
         });
     

@@ -9,9 +9,9 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "Content-Type"
-    Access-Control-Allow-Methods = "GET, HEAD"
+    # Access-Control-Allow-Origin = "*"
+    # Access-Control-Allow-Headers = "Content-Type"
+    # Access-Control-Allow-Methods = "GET, HEAD"
     Cache-Control = "no-cache, no-store, must-revalidate"
     x-powered-by = "Clovis Junior"
 

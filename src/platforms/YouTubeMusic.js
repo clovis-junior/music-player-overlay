@@ -1,11 +1,12 @@
+import { GetURLParams } from '../Utils.js';
 import { io } from 'socket.io-client';
 
 const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
-const baseURL = 'http://localhost:9863/api/v1';
-const params = new URLSearchParams(window.location.hash.split('?')[1]);
+const baseURL = 'http://127.0.0.1:9863/api/v1';
+const params = GetURLParams();
 
 const token = params.get('token');
 
@@ -88,9 +89,9 @@ export function GetData() {
       'auth': { 'token': token }
     });
   
-    socket.on('connect', ()=> console.debug('Connected to YTMDesktop'));
+    socket.on('connect', ()=> console.log('Connected to YTMDesktop'));
     socket.on('disconnect', ()=> {
-      console.debug('Disconnected to YTMDesktop... Reconnecting...');
+      console.log('Disconnected to YTMDesktop... Reconnecting...');
       setTimeout(()=> GetData(), 5000)
     });
   
