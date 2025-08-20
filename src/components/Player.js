@@ -15,7 +15,7 @@ import {
   GetData as SpotifyCustomData,
   UpdatePlayerData as UpdatePlayerDataFromSpotifyCustom
 } from '../platforms/SpotifyCustom.js';
-import { ConvertTime } from '../Utils.js';
+import { ConvertTime, IsEmpty } from '../Utils.js';
 import styles from '../scss/player.module.scss';
 // import AsyncImage from '../components/AsyncImage.js';
 // import appleIcon from '../images/apple-music-icon.svg';
@@ -130,6 +130,7 @@ export function Player(props) {
       } else addPlayerClass(styles.show, playerClasses);
 
       if (result?.isPlaying) {
+        const refresh = setTimeout(async () => await Update(), result?.duration?.remaining);
         const update = setInterval(() => {
           result.duration.elapsed++;
           result.duration.remaining--;
@@ -137,6 +138,7 @@ export function Player(props) {
 
         return () => {
           clearInterval(update);
+          clearTimeout(refresh);
           clearInterval(check);
         }
       }
@@ -157,7 +159,7 @@ export function Player(props) {
 
   }, [result, albumArtImage]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!platformHasSpotify) return;
 
     async function GetResult() {
@@ -172,13 +174,15 @@ export function Player(props) {
       }
     }
 
-    if (!loaded && !result)
-      return async () => await GetResult();
-
-    if(result?.error) {
-      const check = setInterval(async () => await GetResult(), 5000);
-      return () => clearInterval(check);
+    if (!loaded) {
+      console.log('Trying to get Spotify data...');
+      return async ()=> await GetResult();
+    } else if(result?.error) {
+      console.log('Trying to get Spotify data again...');
+      const check = setTimeout(async () => await GetResult(), 5000);
+      return () => clearTimeout(check);
     }
+
   }, [loaded, result, props, platformHasSpotify]);
 
   useLayoutEffect(() => {
@@ -204,29 +208,29 @@ export function Player(props) {
   }, [result, playerClasses]);
 
   useLayoutEffect(() => {
-    const musicNameScroll = window.setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
+    const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
 
-    return () => window.clearInterval(musicNameScroll);
+    return () => clearInterval(musicNameScroll);
   }, [musicNameScrolled]);
 
   useLayoutEffect(() => {
-    const artistNameScroll = window.setInterval(() => setArtistNameScrolled(!artistNameScrolled), 8000);
+    const artistNameScroll = setInterval(() => setArtistNameScrolled(!artistNameScrolled), 8000);
 
-    return () => window.clearInterval(artistNameScroll);
+    return () => clearInterval(artistNameScroll);
   }, [artistNameScrolled]);
 
-  useLayoutEffect(() => setLoaded(result !== null), [result]);
+  useLayoutEffect(() => setLoaded(!IsEmpty(result)), [result]);
 
   if (!loaded) {
-    console.warn('Loading...');
+    console.log('Loading...');
     return (<></>);
   }
 
   if (result?.error) {
-    console.error(result?.error?.toString());
+    console.error(result?.error);
     setLoaded(false);
 
-    return (<>{result?.error?.toString()}</>);
+    return (<>{result?.error}</>);
   }
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);

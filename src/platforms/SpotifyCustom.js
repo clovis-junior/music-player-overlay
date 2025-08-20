@@ -1,11 +1,11 @@
 import { GetURLParams, IsEmpty } from '../Utils.js';
 
 const params = GetURLParams();
-const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clientID') || '';
-const clientSecret = localStorage.getItem('spotifyAppClientSecret') || params.get('clientSecret') || '';
+const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clientID');
+const clientSecret = localStorage.getItem('spotifyAppClientSecret') || params.get('clientSecret');
 
-var refreshToken = params.get('refreshToken') || '';
-var accessToken = params.get('accessToken') || '';
+var refreshToken = params.get('refreshToken');
+var accessToken;
 
 export async function GetAccessToken() {
     try {
@@ -37,6 +37,16 @@ export async function GetAccessToken() {
 }
 
 async function RefreshAccessToken() {
+    if (IsEmpty(clientID) || IsEmpty(clientSecret)) {
+        console.error('The client ID or Secret has empty.');
+        return { error: 'The client ID or Secret has empty.' };
+    }
+
+    if (IsEmpty(refreshToken)) {
+        console.error('The API Refresh Token has empty.');
+        return { error: 'The API Refresh Token has empty.' };
+    }
+
     try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -49,16 +59,16 @@ async function RefreshAccessToken() {
                 'refresh_token': refreshToken
             })
         });
-    
-        if(response.status !== 200)
-            return { error: response?.text }
-    
+
+        if (!response.ok)
+            return { error: `Response status: ${response.status}` };
+
         const data = await response.json();
 
         // if (data.refresh_token)
         //     refreshToken = data.refresh_token;
 
-        accessToken = data.access_token;
+        accessToken = data?.access_token;
     
         return await GetData()
     } catch(e) {
@@ -101,23 +111,19 @@ export async function GetData() {
             }
         });
 
-        if(response.status >= 429) {
-            console.warn(`${response.status}: ${response.text}`);
+        if(response?.status >= 429)
             return setTimeout(async () => await GetData(), 5000);
-        }
 
-        if(response.status === 400 || response.status === 401) {
-            console.warn(`${response.status}: ${response.text}`);
-            return await RefreshAccessToken();
-        }
+        if(response?.status === 400 || response?.status === 401)
+            return setTimeout(async () => await RefreshAccessToken(), 3000);
     
-        if(response.status === 200)
+        if(response?.status === 200)
             return await response.json();
 
         return { error: 'An error ocurred on trying to get player data.' }
     } catch(ex) {
-        console.log(ex?.message?.toString());
+        console.error(ex?.message);
 
-        return { error: 'An error ocurred on trying to get player data.' }
+        return { error: ex?.message }
     }
 }

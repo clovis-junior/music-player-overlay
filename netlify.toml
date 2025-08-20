@@ -8,6 +8,14 @@
 [[headers]]
   for = "/*"
   [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    x-powered-by = "Clovis Junior"
+
+[[headers]]
+  for = "/player/*"
+  [headers.values]
+    access-control-allow-headers = "*"
+    access-control-allow-methods = "*"
     access-control-allow-origin = "*"
 
 [[redirects]]

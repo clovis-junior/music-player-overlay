@@ -10,7 +10,7 @@ import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 import styles from '../scss/dashboard.module.scss';
 
-const browserURL = `${window.location.protocol}//${window.location.host}${window.location.pathname || ''}`;
+const browserURL = `${window.location.protocol}//${window.location.host}${window.location?.pathname || '/'}`;
 
 function Clipboard(text, element) {
     element?.select();
@@ -135,7 +135,7 @@ function YouTubeMusic() {
     }
 
     function Success(props) {
-        const playerURL = `${browserURL}#player?platform=youtube&token=${props?.token}`;
+        const playerURL = `${browserURL}player?platform=youtube&token=${props?.token}`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
@@ -161,7 +161,7 @@ function Spotify() {
 
     function Success(props) {
         // const playerURL = `${browserURL}#player?platform=spotify&token=${props?.token}`;
-        const playerURL = `${browserURL}#player?platform=spotify-custom&${props?.playerParams}`;
+        const playerURL = `${browserURL}player?platform=spotify-custom&${props?.playerParams}`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
@@ -189,11 +189,13 @@ function Spotify() {
             const scopes = 'user-read-private user-read-email user-modify-playback-state user-read-playback-position user-library-read streaming user-read-playback-state user-read-recently-played playlist-read-private';
             const urlParams = new URLSearchParams({
                 'client_id': clientID?.current?.value,
+                'scope': scopes,
+                'redirect_uri': browserURL,
                 'response_type': 'code',
                 'show_dialog': true
             });
 
-            return window.location.href = `${baseURL}?${urlParams}&redirect_uri=${browserURL}&scopes=${scopes.replace(/\s/g, '%20')}`
+            return window.location.href = `${baseURL}?${urlParams.toString()}`
         }
 
         function Instructions() {
@@ -327,7 +329,7 @@ function AppleMusic() {
     }
 
     function Success() {
-        const playerURL = `${browserURL}#player?platform=apple`;
+        const playerURL = `${browserURL}player?platform=apple`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
