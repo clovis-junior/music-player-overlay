@@ -7,10 +7,10 @@ import {
   GetData as AppleMusicData,
   UpdatePlayerData as UpdatePlayerDataFromApple
 } from '../platforms/AppleMusic.js';
-import {
-  GetData as SpotifyData,
-  UpdatePlayerData as UpdatePlayerDataFromSpotify
-} from '../platforms/Spotify.js';
+// import {
+//   GetData as SpotifyData,
+//   UpdatePlayerData as UpdatePlayerDataFromSpotify
+// } from '../platforms/Spotify.js';
 import {
   GetData as SpotifyCustomData,
   UpdatePlayerData as UpdatePlayerDataFromSpotifyCustom
@@ -55,7 +55,7 @@ export function Player(props) {
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
-  const platformHasSpotify = (['spotify', 'spotify-custom'].includes(props.platform));
+  const platformHasSpotify = props?.platform.includes('spotify');
 
   const [playerClasses] = useState([]);
   const [albumArtImage, setAlbumArtImage] = useState(null);
@@ -113,13 +113,13 @@ export function Player(props) {
     async function Update() {
       var data;
 
-      if(props.platform === 'spotify') {
-        data = await SpotifyData();
-        setResult(UpdatePlayerDataFromSpotify(data));
-      } else if (props.platform === 'spotify-custom') {
+      // if(props.platform === 'spotify') {
+      //   data = await SpotifyData();
+      //   setResult(UpdatePlayerDataFromSpotify(data));
+      // } else if (props.platform === 'spotify-custom') {
         data = await SpotifyCustomData();
         setResult(UpdatePlayerDataFromSpotifyCustom(data));
-      }
+      // }
     }
 
     if (loaded) {
@@ -165,20 +165,21 @@ export function Player(props) {
     async function GetResult() {
       var data;
 
-      if(props.platform === 'spotify') {
-        data = await SpotifyData();
-        setResult(UpdatePlayerDataFromSpotify(data));
-      } else if (props.platform === 'spotify-custom') {
+      // if(props.platform === 'spotify') {
+      //   data = await SpotifyData();
+      //   setResult(UpdatePlayerDataFromSpotify(data));
+      // } else if (props.platform === 'spotify-custom') {
         data = await SpotifyCustomData();
         setResult(UpdatePlayerDataFromSpotifyCustom(data));
-      }
+      // }
     }
 
     if (!loaded) {
       console.log('Trying to get Spotify data...');
-      return async ()=> await GetResult();
-    } else if(result?.error) {
-      console.log('Trying to get Spotify data again...');
+      const check = setInterval(async () => await GetResult(), 3000);
+      return () => clearInterval(check);
+    } else if(loaded && result?.error) {
+      console.log('Trying to get Spotify data... Again...');
       const check = setTimeout(async () => await GetResult(), 5000);
       return () => clearTimeout(check);
     }

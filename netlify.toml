@@ -9,13 +9,11 @@
 [[headers]]
   for = "/*"
   [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, HEAD"
     Cache-Control = "no-cache, no-store, must-revalidate"
     x-powered-by = "Clovis Junior"
-
-[[headers]]
-  for = "/player/*"
-  [headers.values]
-    connection = "keep-alive"
 
 [[redirects]]
   from = "/*"

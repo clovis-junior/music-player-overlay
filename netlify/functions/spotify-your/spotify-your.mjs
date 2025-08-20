@@ -1,10 +1,19 @@
 import fetch from 'node-fetch';
 
-export async function handler(event) {
-  if(!event?.body)
-    return { statusCode: 404, body: 'Not found'};
+export async function handler(request) {
 
-  const { clientID, clientSecret, refreshToken } = JSON.parse(event.body);
+  if(!request?.body)
+    return { 
+      statusCode: 404,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: JSON.stringify('Not found')
+    };
+
+  const { clientID, clientSecret, refreshToken } = JSON.parse(request.body);
 
   if (!clientID || !clientSecret || !refreshToken)
     return { statusCode: 400, body: 'Missing the client credencials or refresh token.' };
@@ -23,7 +32,15 @@ export async function handler(event) {
     });
 
     if (!token_response)
-      return { statusCode: 401, body: JSON.stringify(`An error ocurred trying to get token. Status Code: ${token_response?.status}`) };
+      return { 
+        statusCode: 401,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+        body: JSON.stringify(`An error ocurred trying to get token. Status Code: ${token_response?.status}`)
+      };
 
     const token_data = await token_response.json();
 
@@ -39,8 +56,24 @@ export async function handler(event) {
 
     const data = await playing_response.json();
 
-    return { statusCode: 200, body: JSON.stringify(data) }
+    return { 
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: JSON.stringify(data)
+    }
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify(err?.message) }
+    return { 
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: JSON.stringify(err?.message)
+    }
   }
 }

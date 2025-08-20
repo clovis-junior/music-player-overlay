@@ -270,8 +270,6 @@ function Spotify() {
         async function GetData() {
             const data = await GetAccessToken();
 
-            console.log(data);
-
             if (data.refresh_token) {
                 setPlayerParams(new URLSearchParams({
                     'clientID': clientID,

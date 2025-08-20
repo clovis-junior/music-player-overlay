@@ -1,10 +1,9 @@
 import { GetURLParams } from '../Utils.js';
 
 const params = GetURLParams();
-const clientID = params.get('clientID');
-const clientSecret = params.get('clientSecret');
-
-var refreshToken = params.get('refreshToken');
+const clientID = localStorage?.getItem('spotifyAppClientID') || params.get('clientID');
+const clientSecret = localStorage?.getItem('spotifyAppClientSecret') || params.get('clientSecret');
+const refreshToken = params.get('refreshToken');
 
 export async function GetAccessToken() {
     try {
@@ -59,7 +58,7 @@ export async function GetData() {
   const response = await fetch('/.netlify/functions/spotify-your', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ clientID: clientID, clientSecret: clientSecret, refreshToken: refreshToken }),
+    body: JSON.stringify({ clientID, clientSecret, refreshToken }),
   });
 
   return await response.json();
