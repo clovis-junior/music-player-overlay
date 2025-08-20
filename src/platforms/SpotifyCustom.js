@@ -1,11 +1,10 @@
-import { GetURLParams, IsEmpty } from '../Utils.js';
+import { GetURLParams } from '../Utils.js';
 
 const params = GetURLParams();
 const clientID = localStorage.getItem('spotifyAppClientID') || params.get('clientID');
 const clientSecret = localStorage.getItem('spotifyAppClientSecret') || params.get('clientSecret');
 
 var refreshToken = params.get('refreshToken');
-var accessToken;
 
 export async function GetAccessToken() {
     try {
@@ -36,48 +35,6 @@ export async function GetAccessToken() {
     }
 }
 
-async function RefreshAccessToken() {
-    if (IsEmpty(clientID) || IsEmpty(clientSecret)) {
-        console.error('The client ID or Secret has empty.');
-        return { error: 'The client ID or Secret has empty.' };
-    }
-
-    if (IsEmpty(refreshToken)) {
-        console.error('The API Refresh Token has empty.');
-        return { error: 'The API Refresh Token has empty.' };
-    }
-
-    try {
-        const response = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                'grant_type': 'refresh_token',
-                'refresh_token': refreshToken
-            })
-        });
-
-        if (!response.ok)
-            return { error: `Response status: ${response.status}` };
-
-        const data = await response.json();
-
-        // if (data.refresh_token)
-        //     refreshToken = data.refresh_token;
-
-        accessToken = data?.access_token;
-    
-        return await GetData()
-    } catch(e) {
-        console.error(e.message.toString());
-
-        return { error: e.message.toString() }
-    }
-}
-
 export function UpdatePlayerData(data) {
     if (data?.error) return data;
 
@@ -99,31 +56,11 @@ export function UpdatePlayerData(data) {
 }
 
 export async function GetData() {
-    if(IsEmpty(accessToken))
-        return await RefreshAccessToken();
-    
-    try {
-        const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        });
+  const response = await fetch('/.netlify/functions/spotify-your', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ clientID: clientID, clientSecret: clientSecret, refreshToken: refreshToken }),
+  });
 
-        if(response?.status >= 429)
-            return setTimeout(async () => await GetData(), 5000);
-
-        if(response?.status === 400 || response?.status === 401)
-            return setTimeout(async () => await RefreshAccessToken(), 3000);
-    
-        if(response?.status === 200)
-            return await response.json();
-
-        return { error: 'An error ocurred on trying to get player data.' }
-    } catch(ex) {
-        console.error(ex?.message);
-
-        return { error: ex?.message }
-    }
+  return await response.json();
 }
