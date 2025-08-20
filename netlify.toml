@@ -8,13 +8,13 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    connection = "keep-alive"
     Cache-Control = "no-cache, no-store, must-revalidate"
     x-powered-by = "Clovis Junior"
 
 [[headers]]
   for = "/player/*"
   [headers.values]
+    connection = "keep-alive"
     access-control-allow-headers = "*"
     access-control-allow-methods = "*"
     access-control-allow-origin = "*"
