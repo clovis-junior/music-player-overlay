@@ -136,6 +136,8 @@ export default function CustomURL() {
 
         let name = e.target?.name;
         let value = e.target?.value;
+        let checked = e.target?.checked || null;
+        let type = e.target?.type || 'text';
         let urlBase = url?.current?.value?.split('?')[0];
         let params = GetURLParams(url?.current?.value);
 
@@ -144,7 +146,7 @@ export default function CustomURL() {
         if (name in playerOptions)
             delete playerOptions[name];
         
-        if(!IsEmpty(value))
+        if((type === 'text' && !IsEmpty(value)) || (type === 'checkbox' && !IsEmpty(checked)))
             playerOptions[name] = value;
 
         result.current.value = `${urlBase}${URIDecodeOptions(params.list())}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
