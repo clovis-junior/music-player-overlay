@@ -143,10 +143,9 @@ export default function CustomURL() {
 
         if (name in playerOptions)
             delete playerOptions[name];
-        else if(!IsEmpty(value))
+        
+        if(!IsEmpty(value))
             playerOptions[name] = value;
-
-        console.log(playerOptions);
 
         result.current.value = `${urlBase}${URIDecodeOptions(params.list())}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
 
@@ -179,7 +178,6 @@ export default function CustomURL() {
                                 </div>
                             </div>
                         ) : (<></>)}
-
                         <p>Copy this URL and use it on you streaming software:</p>
                         <input ref={result} type='text' className={styles.input_text} defaultValue={urlValue} readOnly />
                         <b>Enjoy!</b>
