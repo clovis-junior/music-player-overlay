@@ -141,10 +141,12 @@ export default function CustomURL() {
 
         params.delete('options');
 
-        if(name in playerOptions)
+        if (name in playerOptions)
             delete playerOptions[name];
+        else if(!IsEmpty(value))
+            playerOptions[name] = value;
 
-        playerOptions[name] = value;
+        console.log(playerOptions);
 
         result.current.value = `${urlBase}${URIDecodeOptions(params.list())}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
 
