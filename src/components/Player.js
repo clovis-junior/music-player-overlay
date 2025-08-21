@@ -46,7 +46,7 @@ function addPlayerClass(name = '', classes = []) {
     classes?.push(name);
 }
 
-function removePlayerClass(name, classes) {
+function removePlayerClass(name = '', classes = []) {
   if (classes?.indexOf(name) > -1)
     classes?.splice(classes?.indexOf(name), 1);
 }
@@ -117,8 +117,8 @@ export function Player(props) {
       //   data = await SpotifyData();
       //   setResult(UpdatePlayerDataFromSpotify(data));
       // } else if (props.platform === 'spotify-custom') {
-        data = await SpotifyCustomData();
-        setResult(UpdatePlayerDataFromSpotifyCustom(data));
+      data = await SpotifyCustomData();
+      setResult(UpdatePlayerDataFromSpotifyCustom(data));
       // }
     }
 
@@ -169,8 +169,8 @@ export function Player(props) {
       //   data = await SpotifyData();
       //   setResult(UpdatePlayerDataFromSpotify(data));
       // } else if (props.platform === 'spotify-custom') {
-        data = await SpotifyCustomData();
-        setResult(UpdatePlayerDataFromSpotifyCustom(data));
+      data = await SpotifyCustomData();
+      setResult(UpdatePlayerDataFromSpotifyCustom(data));
       // }
     }
 
@@ -178,7 +178,7 @@ export function Player(props) {
       console.log('Trying to get Spotify data...');
       const check = setInterval(async () => await GetResult(), 3000);
       return () => clearInterval(check);
-    } else if(loaded && result?.error) {
+    } else if (loaded && result?.error) {
       console.log('Trying to get Spotify data... Again...');
       const check = setTimeout(async () => await GetResult(), 5000);
       return () => clearTimeout(check);
@@ -247,7 +247,7 @@ export function Player(props) {
             <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
           </div>
         ) : (<></>)}
-        {(!props.hideProgress) ? (
+        {(!props.hideProgressBar) ? (
           <div className={styles.music_progress_bar}>
             <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
           </div>
@@ -308,21 +308,20 @@ export function Player(props) {
               : `translateX(0)`
           }}>{musicData?.artist}</span>
         </div>
-        {(props.hideProgress && props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
-        {(!props.hideProgress) ? (
-          <footer className={styles.music_progress}>
-            <div className={styles.music_progress_values}>
-              <span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>
-              {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
-              <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>
+        <footer className={styles.music_progress}>
+          <div className={styles.music_progress_values}>
+            {!props.hideProgress ? (<span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
+            {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
+            {!props.hideProgress ? (
+              <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
+              : (<></>)}
+          </div>
+          {(!props.hideProgressBar) ? (
+            <div className={styles.music_progress_bar}>
+              <div style={{ 'width': `${musicProgress}%` }} />
             </div>
-            {(!props.hideProgressBar) ? (
-              <div className={styles.music_progress_bar}>
-                <div style={{ 'width': `${musicProgress}%` }} />
-              </div>
-            ) : (<></>)}
-          </footer>
-        ) : (<></>)}
+          ) : (<></>)}
+        </footer>
       </aside>
     </main>
   )

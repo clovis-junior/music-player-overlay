@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 // import { inDevelopment } from '../App';
 import { GetAccessToken } from '../platforms/SpotifyCustom.js';
-import { IsEmpty } from '../Utils'
+import { IsEmpty } from '../Utils.js';
 import { RequestCode, RequestToken } from '../platforms/YouTubeMusic.js';
+import { useNavigate } from 'react-router-dom';
 
 import AsyncImage from '../components/AsyncImage.js';
 import appleIcon from '../images/apple-music-icon.svg';
@@ -10,13 +11,13 @@ import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 import styles from '../scss/dashboard.module.scss';
 
-const browserURL = `${window.location.protocol}//${window.location.host}${window.location?.pathname || '/'}`;
+const browserURL = `${window.location.protocol}//${window.location.host}/`;
 
 function Clipboard(text, element) {
     element?.select();
 
     try {
-        window.navigator.clipboard?.writeText(text);
+        window.navigator?.clipboard?.writeText(text);
 
     } catch {
         document?.execCommand('copy');
@@ -37,6 +38,7 @@ function Alert(props) {
 }
 
 function PlayerGenerated(props) {
+    const navigate = useNavigate();
     const input = useRef(null);
 
     return (
@@ -48,7 +50,7 @@ function PlayerGenerated(props) {
             </div>
             <footer className={styles.btns}>
                 <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => Clipboard(props.playerURL, input?.current)}>Copy URL</button>
-                <button type='button' className={styles.btn} disabled>Costumize Player</button>
+                <button type='button' className={styles.btn} onClick={() => navigate(`/customize-url-player?url=${encodeURIComponent(props.playerURL)}`)}>Costumize Player</button>
                 <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
             </footer>
         </>

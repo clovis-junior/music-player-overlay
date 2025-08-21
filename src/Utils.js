@@ -26,12 +26,41 @@ export function GetURLParams(path) {
 
   const search = path?.split('&'), params = {};
 
+  params.list = function () {
+    const result = {};
+
+    Object.entries(params).forEach(function([key, value]) {
+      if(typeof value !== 'function')
+        result[key] = value;
+    });
+
+    return result
+  }
+
+  params.url = function () {
+    let result = '';
+
+    Object.entries(params).forEach(function([key, value]) {
+      if(typeof value !== 'function') {
+        result += (result.length <= 0) ? '?' : '&';
+        result += `${key}=${value}`;
+      }
+    });
+
+    return result
+  }
+
   params.get = function (param) {
     return params[param] || ''
   }
 
   params.has = function (param) {
     return (param in params)
+  }
+
+  params.delete = function (param) {
+    if (param in params)
+      return delete params[param];
   }
 
   search?.forEach(param => params[param.split('=')[0]] = param.split('=')[1]);

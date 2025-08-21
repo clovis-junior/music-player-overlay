@@ -85,6 +85,11 @@ body {
     }
 }
 
+@include selection {
+    background-color: $dark-pallete-1st;
+    color: $info-color;
+}
+
 .container {
     width: 100%;
     max-width: 1600px;
@@ -122,11 +127,6 @@ body {
 
     & .panel_content {
         padding: 1rem 2rem;
-
-        & .user_select_valid {
-            cursor: text;
-            @include user-select(text);
-        }
 
         &.centered {
             text-align: center;
@@ -170,6 +170,92 @@ body {
         margin: 0 auto;
         @include object-fit(cover);
         -webkit-user-drag: none;
+    }
+
+    .user_select_valid {
+        cursor: text;
+        @include user-select(text);
+    }
+
+    .player_customize_options {
+        @include display-flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+        margin: 1rem 0;
+
+        & .player_customize_option {
+            cursor: pointer;
+            flex: 0 0 50%;
+            @include display-flex;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            align-items: center;
+            padding: 10px;
+            @include transition(all 120ms);
+
+            &.full {
+                flex-wrap: nowrap;
+                flex-direction: column;
+                align-items: initial;
+            }
+
+            & input[type="checkbox"], & input[type="radio"] {
+                pointer-events: none;
+                width: 0;
+                height: 0;
+            }
+
+            & input:checked ~ .player_customize_option_check {
+                background-color: $info-color;
+            }
+
+            & input:checked ~ .player_customize_option_check:after {
+                @include filter(opacity(1));
+            }
+
+            & input:checked ~ .player_customize_option_name {
+                color: $info-color;
+            }
+
+            & .player_customize_option_check {
+                flex: 0 0 1rem;
+                height: 1rem;
+                display: block;
+                @include border-radius(2px);
+                background-color: var(--font-primary-color);
+                position: relative;
+
+                &:after {
+                    content: '';
+                    width: 5px;
+                    height: 10px;
+                    border: solid $light-color;
+                    border-width: 0 2px 2px 0;
+                    @include filter(opacity(0));
+                    @include transform(rotate(45deg));
+                    @include transition(filter 180ms);
+                    position: absolute;
+                    bottom: 3px;
+                    right: 1px;
+                    left: 6px;
+                    top: 2px; 
+                }
+            }
+
+            & .player_customize_option_name {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                padding: 5px 0;
+                margin-left: 10px;
+                line-height: 1.1rem;
+                font-weight: 600;
+                font-size: 1.1rem;
+                text-align: left;
+                text-overflow: ellipsis;
+            }
+        }
     }
 
     .input_text {
