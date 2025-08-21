@@ -10,31 +10,25 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 
 ### 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
-- [x] **Spotify (Our own app)** *(The Spotify App in "developer mode" for now)*
+- [ ] **Spotify (Our own app)** *(The Spotify App in "developer mode" for now)*
 - [x] **Spotify (Your own app)** *(Necessary create a Spotify App, [click here for more instructions](https://developer.spotify.com/documentation/web-api/concepts/apps))*
 - [x] **Apple Music** *(Its Necessary [Cider](https://cider.sh/)) (Not tested for now)*
 - [ ] **Amazon Music** *(Amazon Music API is in beta for now)*
 
 ### 🎛️ Player Options
 - Compact Mode
-- Progress bar colored (platform color) or a white color
+- ~Progress bar colored (platform color) or a white color~
 - Rounded or square design
 - **Show/Hide** background shadow
-- **Show/Hide** album image
-- **Show/Hide** a blur on background
+- **Show/Hide** album art image - _(Not available on Compact Mode)_
+- **Show/Hide** a blur on background - _(Named "Solid Color")_
 - **Show/Hide** a music player progress
-- **Show/Hide** sound waves on player
-- **Show** a *remaining time or a music duration*
+- **Show/Hide** sound waves on player - _(Not available on Compact Mode)_
+- **Show** a *remaining time or a music duration* - _(Not available on Compact Mode)_
 - **Hide** player after determinate seconds of music paused
 
 ## 💾 How to use
 [Click here to configure](https://music-widget.netlify.app/).
-
-> [!NOTE]
-> The player options has not available on GitHub Page for now.
-
-> [!CAUTION]
-> The Our own Spotify app functionality not available on public for now.
 
 > [!TIP]
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
