@@ -28,7 +28,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - **Hide** player after determinate seconds of music paused
 
 ## 💾 How to use
-[Click here to configure](https://clovis-junior.github.io/music-player-overlay/).
+[Click here to configure](https://music-widget.netlify.app/).
 
 > [!NOTE]
 > The player options has not available on GitHub Page for now.
