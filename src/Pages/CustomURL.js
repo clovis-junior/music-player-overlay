@@ -122,7 +122,7 @@ export default function CustomURL() {
 
         Object.entries(object).forEach(function([key, value]) {
             result += (result.length <= 0) ? '?' : '&';
-            result += `${key}=${value}`;
+            result += (IsEmpty(value)) ? `${key}` : `${key}=${value}`
         });
 
         return result
@@ -146,8 +146,10 @@ export default function CustomURL() {
         if (name in playerOptions)
             delete playerOptions[name];
         
-        if((type === 'text' && !IsEmpty(value)) || (type === 'checkbox' && !IsEmpty(checked)))
+        if((type === 'text' || type === 'number') && !IsEmpty(value))
             playerOptions[name] = value;
+        else if((type === 'checkbox' || type === 'radio') && !IsEmpty(checked))
+            playerOptions[name] = '';
 
         result.current.value = `${urlBase}${URIDecodeOptions(params.list())}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
 
