@@ -97,8 +97,6 @@ export default function CustomURL() {
 
     const urlValue = decodeURIComponent(params.get('url'));
 
-    console.log(params.get('url'));
-
     useLayoutEffect(() => {
         if (!document.body?.classList?.contains(styles?.dashboard))
             document.body?.classList?.add(styles?.dashboard);
