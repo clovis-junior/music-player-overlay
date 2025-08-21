@@ -117,10 +117,10 @@ export default function CustomURL() {
         return string;
     }
 
-    function URIDecodeOptions() {
+    function URIDecodeOptions(object) {
         let result = '';
 
-        Object.entries(playerOptions.list).forEach(function([key, value]) {
+        Object.entries(object).forEach(function([key, value]) {
             result += (result.length <= 0) ? '?' : '&';
             result += `${key}=${value}`;
         });
@@ -146,7 +146,7 @@ export default function CustomURL() {
 
         playerOptions[name] = value;
 
-        result.current.value = `${urlBase}${params.url()}&options=${encodeOptions(URIDecodeOptions())}`;
+        result.current.value = `${urlBase}${params.list()}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
 
         return false;
     }
