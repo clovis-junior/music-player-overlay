@@ -308,20 +308,23 @@ export function Player(props) {
               : `translateX(0)`
           }}>{musicData?.artist}</span>
         </div>
-        <footer className={styles.music_progress}>
-          <div className={styles.music_progress_values}>
-            {!props.hideProgress ? (<span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
-            {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
-            {!props.hideProgress ? (
-              <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
-              : (<></>)}
-          </div>
-          {(!props.hideProgressBar) ? (
-            <div className={styles.music_progress_bar}>
-              <div style={{ 'width': `${musicProgress}%` }} />
-            </div>
-          ) : (<></>)}
-        </footer>
+        {(props.hideProgressBar && props.hideProgress) ?
+          (props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>) : (
+            <footer className={styles.music_progress}>
+              <div className={styles.music_progress_values}>
+                {!props.hideProgress ? (<span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
+                {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
+                {!props.hideProgress ? (
+                  <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
+                  : (<></>)}
+              </div>
+              {(!props.hideProgressBar) ? (
+                <div className={styles.music_progress_bar}>
+                  <div style={{ 'width': `${musicProgress}%` }} />
+                </div>
+              ) : (<></>)}
+            </footer>
+          )}
       </aside>
     </main>
   )

@@ -140,6 +140,9 @@ export default function CustomURL() {
 
         params.delete('options');
 
+        if(name in playerOptions)
+            delete playerOptions[name];
+
         playerOptions[name] = value;
 
         result.current.value = `${urlBase}${params.url()}&options=${encodeOptions(URIDecodeOptions())}`;
@@ -153,7 +156,7 @@ export default function CustomURL() {
                 <div className={styles.panel}>
                     <div className={`${styles.panel_content} ${styles.centered}`}>
                         <h2>Costumize your player</h2>
-                        <input ref={url} type='text' className={styles.input_text} defaultValue={decodeURIComponent(params.get('url'))} placeholder='Your Player URL' />
+                        <input ref={url} type='text' className={styles.input_text} defaultValue={decodeURIComponent(params?.get('url') || '')} placeholder='Your Player URL' />
                         <div className={styles.player_customize_options}>
                             <PlayerOption id='compact' onChange={changeCompactOptions}>
                                 <span className={styles.player_customize_option_name}>Compact Player</span>
@@ -175,7 +178,7 @@ export default function CustomURL() {
                         ) : (<></>)}
 
                         <p>Copy this URL and use it on you streaming software:</p>
-                        <input ref={result} type='text' className={styles.input_text} defaultValue={decodeURIComponent(params.get('url'))} readOnly />
+                        <input ref={result} type='text' className={styles.input_text} defaultValue={decodeURIComponent(params?.get('url') || '')} readOnly />
                         <b>Enjoy!</b>
                         <footer className={styles.btns}>
                             <button type='button' className={styles.btn} onClick={() => Clipboard(result?.current?.value, result?.current)}>Copy New URL</button>
