@@ -21,7 +21,7 @@ export function ConvertTime(time = 0) {
 }
 
 export function GetURLParams(path) {
-  path = path || window.location.href;
+  path = path || window?.location?.href;
   path = path.split('?')[1];
 
   const search = path?.split('&'), params = {};
@@ -32,19 +32,6 @@ export function GetURLParams(path) {
     Object.entries(params).forEach(function([key, value]) {
       if(typeof value !== 'function')
         result[key] = value;
-    });
-
-    return result
-  }
-
-  params.url = function () {
-    let result = '';
-
-    Object.entries(params).forEach(function([key, value]) {
-      if(typeof value !== 'function') {
-        result += (result.length <= 0) ? '?' : '&';
-        result += `${key}=${value}`;
-      }
     });
 
     return result

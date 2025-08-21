@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GetURLParams, IsEmpty } from '../Utils.js';
 import styles from '../scss/dashboard.module.scss';
 
@@ -86,11 +87,17 @@ function PlayerOptions(props) {
 export default function CustomURL() {
     const params = GetURLParams();
 
+    const navigate = useNavigate();
+
     const [compactChecked, setCompactChecked] = useState(false);
     const [playerOptions] = useState({});
 
     const url = useRef(null);
     const result = useRef(null);
+
+    const urlValue = decodeURIComponent(params.get('url'));
+
+    console.log(params.get('url'));
 
     useLayoutEffect(() => {
         if (!document.body?.classList?.contains(styles?.dashboard))
@@ -115,14 +122,10 @@ export default function CustomURL() {
     function URIDecodeOptions() {
         let result = '';
 
-        Object.entries(playerOptions).forEach(function([key, value]) {
-        if(typeof value !== 'function') {
+        Object.entries(playerOptions.list).forEach(function([key, value]) {
             result += (result.length <= 0) ? '?' : '&';
             result += `${key}=${value}`;
-        }
         });
-
-        console.log(result);
 
         return result
     }
@@ -156,7 +159,7 @@ export default function CustomURL() {
                 <div className={styles.panel}>
                     <div className={`${styles.panel_content} ${styles.centered}`}>
                         <h2>Costumize your player</h2>
-                        <input ref={url} type='text' className={styles.input_text} defaultValue={decodeURIComponent(params?.get('url') || '')} placeholder='Your Player URL' />
+                        <input ref={url} type='text' className={styles.input_text} defaultValue={urlValue} placeholder='Your Player URL' />
                         <div className={styles.player_customize_options}>
                             <PlayerOption id='compact' onChange={changeCompactOptions}>
                                 <span className={styles.player_customize_option_name}>Compact Player</span>
@@ -178,11 +181,11 @@ export default function CustomURL() {
                         ) : (<></>)}
 
                         <p>Copy this URL and use it on you streaming software:</p>
-                        <input ref={result} type='text' className={styles.input_text} defaultValue={decodeURIComponent(params?.get('url') || '')} readOnly />
+                        <input ref={result} type='text' className={styles.input_text} defaultValue={urlValue} readOnly />
                         <b>Enjoy!</b>
                         <footer className={styles.btns}>
                             <button type='button' className={styles.btn} onClick={() => Clipboard(result?.current?.value, result?.current)}>Copy New URL</button>
-                            <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back to Homepage</button>
+                            <button type='button' className={styles.btn} onClick={() => navigate('/')}>Back to Homepage</button>
                         </footer>
                     </div>
                 </div>
