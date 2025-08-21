@@ -309,11 +309,7 @@ export function Player(props) {
           }}>{musicData?.artist}</span>
         </div>
         {(props.hideProgressBar && props.hideProgress) ?
-          (props?.showWaves > 0) ? (
-            <footer className={styles.music_progress}>
-              <DrawWaveForms number={props?.showWaves} />
-            </footer>
-          ) : (<></>) : (
+          (props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>) : (
             <footer className={styles.music_progress}>
               <div className={styles.music_progress_values}>
                 {!props.hideProgress ? (<span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
