@@ -146,7 +146,7 @@ export default function CustomURL() {
 
         playerOptions[name] = value;
 
-        result.current.value = `${urlBase}${params.list()}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
+        result.current.value = `${urlBase}${URIDecodeOptions(params.list())}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`;
 
         return false;
     }
