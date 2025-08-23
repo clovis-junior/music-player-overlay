@@ -95,17 +95,44 @@ export default function CustomURL() {
     const url = useRef(null);
     const result = useRef(null);
 
-    const urlValue = decodeURIComponent(params.get('url'));
+    const urlValue = params.has('url') ? decodeURIComponent(params.get('url')) : '';
 
     useLayoutEffect(() => {
         if (!document.body?.classList?.contains(styles?.dashboard))
             document.body?.classList?.add(styles?.dashboard);
     });
 
+    useLayoutEffect(() => {
+        checkOptions(url?.current)
+    });
+
     function changeCompactOptions(e) {
         setCompactChecked(e.target?.checked);
 
         return changePlayerOptions(e);
+    }
+
+    function checkOptions(element) {
+        if (!element) return false;
+
+        let params = GetURLParams(element?.value);
+
+        let options = atob(params.get('options'));
+        options = options?.split('&');
+
+        options.forEach((key)=> {
+            let name = key?.indexOf('=') > 0 ? key?.split('=')[0] : key;
+            let value = key?.indexOf('=') > 0 ? key?.split('=')[1] : '';
+
+            let target = document.querySelector(`[name="${name}"]`);
+
+            if ((target?.type === 'text' || target?.type === 'number') && !IsEmpty(value))
+                target.value = value;
+            else if((target?.type === 'checkbox' || target?.type === 'radio'))
+                target.checked = !target.checked ? true : target.checked;
+
+            changePlayerOptions({target: target});
+        })
     }
 
     function encodeOptions(string) {
@@ -129,10 +156,7 @@ export default function CustomURL() {
     }
 
     function changePlayerOptions(e) {
-        if (IsEmpty(url?.current?.value)) {
-            e.preventDefault();
-            return false
-        }
+        if (IsEmpty(url?.current?.value)) return false;
 
         let name = e.target?.name;
         let value = e.target?.value;
@@ -162,7 +186,7 @@ export default function CustomURL() {
                 <div className={styles.panel}>
                     <div className={`${styles.panel_content} ${styles.centered}`}>
                         <h2>Costumize your player</h2>
-                        <input ref={url} type='text' className={styles.input_text} defaultValue={urlValue} placeholder='Your Player URL' />
+                        <input ref={url} id='url' type='text' className={styles.input_text} defaultValue={urlValue} onChange={(e)=> checkOptions(e.target)} readOnly={params.has('url') ? true : false} placeholder='Your Player URL' />
                         <div className={styles.player_customize_options}>
                             <PlayerOption id='compact' onChange={changeCompactOptions}>
                                 <span className={styles.player_customize_option_name}>Compact Player</span>
@@ -183,7 +207,7 @@ export default function CustomURL() {
                             </div>
                         ) : (<></>)}
                         <p>Copy this URL and use it on you streaming software:</p>
-                        <input ref={result} type='text' className={styles.input_text} defaultValue={urlValue} readOnly />
+                        <input ref={result} id='result' type='text' className={styles.input_text} defaultValue={urlValue} readOnly />
                         <b>Enjoy!</b>
                         <footer className={styles.btns}>
                             <button type='button' className={styles.btn} onClick={() => Clipboard(result?.current?.value, result?.current)}>Copy New URL</button>

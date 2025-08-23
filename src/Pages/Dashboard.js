@@ -28,6 +28,10 @@ export default function Dashboard() {
         setSelected(name)
     }
 
+    function openNewTab(url) {
+        window.open(url, '_blank').focus();
+    }
+
     function Choose() {
         return (
             <div className={styles.container}>
@@ -36,17 +40,19 @@ export default function Dashboard() {
                         <div className={`${styles.panel_content} ${styles.centered}`}>
                             <h2>Welcome!</h2>
                             <p>Please, choose the platform for create the overlay.</p>
-                        </div>
-                        <div className={`${styles.btns} ${styles.column}`}>
-                            <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={()=> choosePlatform('youtube')}>YouTube Music</button>
-                            <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> choosePlatform('apple')}>Apple Music</button>
-                            <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={()=> choosePlatform('spotify')}>Spotify</button>
-                        </div>
-                        <div className={`${styles.panel_content} ${styles.centered}`}>
-                            <h3>You already choosed the platform?</h3>
-                        </div>
-                        <div className={`${styles.btns} ${styles.column}`}>
-                            <button type='button' className={styles.btn} onClick={() => navigate('/customize-url-player')}>Costumize your Player here</button>
+                            <div className={`${styles.btns} ${styles.column}`}>
+                                <button type='button' className={`${styles.btn} ${styles.ytm}`} onClick={()=> choosePlatform('youtube')}>YouTube Music</button>
+                                <button type='button' className={`${styles.btn} ${styles.apple}`} onClick={()=> choosePlatform('apple')}>Apple Music</button>
+                                <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={()=> choosePlatform('spotify')}>Spotify</button>
+                            </div>
+                            <strong>You already choosed the platform?</strong>
+                            <div className={`${styles.btns} ${styles.column}`}>
+                                <button type='button' className={styles.btn} onClick={() => navigate('/customize-url-player')}>Costumize your Player here</button>
+                            </div>
+                            <h3>Check out</h3>
+                            <div className={`${styles.btns} ${styles.column}`}>
+                                <button type='button' className={`${styles.btn} ${styles.success}`} onClick={() => openNewTab('https://ko-fi.com/clovao')}>Support Me</button>
+                            </div>
                         </div>
                     </div>
                 </div>
