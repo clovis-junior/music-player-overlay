@@ -8,17 +8,24 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - [x] **[Meld Studio](https://meldstudio.co/)**
 - [x] **[vMix](https://www.vmix.com/)**
 
+[!NOTE]
+> Every softwares has tested on Windows 11.
+
 ### 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
 - [ ] **Spotify (Our own app)** *(The Spotify App in "developer mode" for now)*
 - [x] **Spotify (Your own app)** *(Necessary create a Spotify App, [click here for more instructions](https://developer.spotify.com/documentation/web-api/concepts/apps))*
-- [x] **Apple Music** *(Its Necessary [Cider](https://cider.sh/)) (Not tested for now)*
+- [x] **Apple Music** *(Its Necessary [Cider](https://cider.sh/))*
 - [ ] **Amazon Music** *(Amazon Music API is in beta for now)*
+
+> [!NOTE]
+> Every platforms has tested on Windows 11 using Microsoft Edge Browser (lastest version).
 
 ### 🎛️ Player Options
 - Compact Mode
 - ~Progress bar colored (platform color) or a white color~
 - Rounded or square design
+- **Show/Hide** a music platform logo
 - **Show/Hide** background shadow
 - **Show/Hide** album art image - _(Not available on Compact Mode)_
 - **Show/Hide** a blur on background - _(Named "Solid Color")_
@@ -35,3 +42,4 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 
 ## 👇🏻 Check it out
 - 🧑🏻‍💼 Thats my [LinkedIn](https://www.linkedin.com/in/clovis-junior-/): [Click Here](https://www.linkedin.com/in/clovis-junior-/)!
+- 👛 Support me on [Ko-Fi](https://ko-fi.com/clovao): [Click Here](https://ko-fi.com/clovao)!
