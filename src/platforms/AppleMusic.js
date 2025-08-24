@@ -35,7 +35,7 @@ export function UpdatePlayerMusicData(data = {}, result = {}) {
     if (!IsEmpty(data)) {
         result.title = data?.name || result?.title;
         result.artist = data?.artistName || result?.artist;
-        result.albumCover = GetAlbumCover((data?.artwork?.url || result?.albumCover), (data?.artwork?.width || 300));
+        result.albumCover = GetAlbumCover(data?.artwork?.url, (data?.artwork?.width || 300));
     }
     
     return result;

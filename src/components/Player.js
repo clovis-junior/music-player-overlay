@@ -236,7 +236,6 @@ export function Player(props) {
 
   useLayoutEffect(() => {
     if (props?.platform === 'apple' || platformHasSpotify) {
-      console.log(!IsEmpty(result?.title));
       setLoaded(!IsEmpty(result?.title));
     } else
       setLoaded(!IsEmpty(result));
