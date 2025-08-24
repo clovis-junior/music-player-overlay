@@ -30,7 +30,7 @@ function DrawWaveForms({ number = 8 }) {
     waves.push(i);
 
   return (
-    <div className={styles.music_waveforms}>
+    <div className={`${styles.music_waveforms}`}>
       {waves.map(index => (
         <div key={index} className={styles.waveform} />
       ))}
@@ -90,7 +90,7 @@ export function Player(props) {
         webSocket.current = AppleMusicData();
         webSocket.current?.on('API:Playback', ({ data, type }) => {
           if (type === 'playbackStatus.playbackStateDidChange') {
-            setResult(UpdateMusicDataFromApple(data?.attributes, result));
+            setResult(UpdateMusicDataFromApple(data, result));
           } else if (type === 'playbackStatus.nowPlayingItemDidChange')
             setResult(UpdateMusicDataFromApple(data, result));
           else if (type === 'playbackStatus.playbackTimeDidChange')
@@ -154,12 +154,6 @@ export function Player(props) {
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   useEffect(() => {
-    if (!result || !result?.isPlaying) return;
-
-    setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
-  }, [result]);
-
-  useEffect(() => {
     if (!platformHasSpotify) return;
 
     async function GetResult() {
@@ -187,32 +181,26 @@ export function Player(props) {
   }, [loaded, result, props, platformHasSpotify]);
 
   useLayoutEffect(() => {
-    if (result?.albumCover !== albumArtImage)
-      setAlbumArtImage(result?.albumCover);
-
-  }, [result, albumArtImage]);
-
-  useLayoutEffect(() => {
     if (!loaded) return;
 
-    if (!result?.isPlaying) {
+    addPlayerClass(styles.show, playerClasses);
+
+    if (result?.isPlaying && albumArtImage !== result?.albumCover)
+      setAlbumArtImage(result?.albumCover);
+
+    if (result?.isPlaying) {
+      removePlayerClass(styles.paused, playerClasses);
+      setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
+    } else {
+      addPlayerClass(styles.paused, playerClasses);
+
       const waiting = setTimeout(() => {
         removePlayerClass(styles.show, playerClasses);
       }, (props?.sleepAfter * 1000));
 
       return () => clearTimeout(waiting);
-    } else
-      addPlayerClass(styles.show, playerClasses);
-
-  }, [loaded, result, props, playerClasses]);
-
-  useLayoutEffect(() => {
-    if (!result?.isPlaying)
-      addPlayerClass(styles.paused, playerClasses);
-    else if (result?.isPlaying)
-      removePlayerClass(styles.paused, playerClasses);
-
-  }, [result, playerClasses]);
+    }
+  }, [loaded, props, result, albumArtImage, playerClasses]);
 
   useLayoutEffect(() => {
     const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
@@ -306,7 +294,7 @@ export function Player(props) {
     <main className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
         <div className={styles.music_album_art}>
-          {(props?.showPlatform) ? (
+          {(props.showAlbum && props?.showPlatform) ? (
             <div className={styles.music_platform_icon}>
               <figure>
                 <AsyncImage src={platformLogo} />
@@ -319,6 +307,13 @@ export function Player(props) {
         </div>
       ) : (<></>)}
       <aside className={styles.music_infos}>
+        {(!props.showAlbum && props?.showPlatform) ? (
+          <div className={styles.music_platform_icon}>
+            <figure>
+              <AsyncImage src={platformLogo} />
+            </figure>
+          </div>
+        ) : (<></>)}
         {(!props.solidColor) ? (
           <div className={styles.music_album_blur_container}>
             <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>

@@ -281,6 +281,12 @@ body {
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 		position: relative;
 
+		& .music_platform_icon {
+			left: initial;
+			right: 10px;
+			top: 10px;
+		}
+
 		& #music_title {
 			letter-spacing: 1px;
 			font-weight: 600;

@@ -1,10 +1,14 @@
 // import songData from'../Apple.test.json';
 import { io } from 'socket.io-client';
+import { GetURLParams } from '../Utils.js';
 import { IsEmpty } from '../Utils.js';
 
 const baseURL = 'http://127.0.0.1:10767';
+const params = GetURLParams();
 
-function GetAlbumCover(url, size) {
+const token = params.get('token');
+
+function GetAlbumCover(url = '', size = 600) {
     if (IsEmpty(url))
         return '';
 
@@ -14,8 +18,19 @@ function GetAlbumCover(url, size) {
     return cover
 }
 
-export function UpdatePlayerTimeData(data, result) {
-    result = result || SetPlayerData();
+function SetPlayerData() {
+    return {
+        isPlaying: false,
+        title: '',
+        artist: '',
+        duration: { elapsed: 0, remaining: 0, total: 0 },
+        albumCover: ''
+    }
+}
+
+export function UpdatePlayerTimeData(data = {}, result = {}) {
+    if (IsEmpty(result))
+        result = SetPlayerData();
 
     result.isPlaying = data?.isPlaying || result?.isPlaying || false;
     result.duration = {
@@ -27,32 +42,27 @@ export function UpdatePlayerTimeData(data, result) {
     return result;
 }
 
-export function UpdatePlayerMusicData(data, result) {
-    result = result || SetPlayerData();
+export function UpdatePlayerMusicData(data = {}, result = {}) {
+    if (IsEmpty(result))
+        result = SetPlayerData();
 
     if (!IsEmpty(data)) {
-        result.title = data?.name || '';
-        result.artist = data?.artistName || '';
-        result.albumCover = GetAlbumCover(data?.artwork?.url, (data?.artwork?.width || 300));
+        const musicData = data.attributes ? data.attributes : data;
+
+        result.isPlaying = (data?.state === 'playing') || result?.isPlaying || false;
+        result.title = musicData?.name || '';
+        result.artist = musicData?.artistName || '';
+        result.albumCover = GetAlbumCover((musicData?.artwork?.url || result?.albumCover), (musicData?.artwork?.width || 300));
     }
 
     return result;
 }
 
-export function SetPlayerData() {
-    return {
-        isPlaying: false,
-        title: '',
-        artist: '',
-        duration: { elapsed: 0, remaining: 0, total: 0 },
-        albumCover: ''
-    }
-}
-
 export function GetData() {
     try {
         const socket = io(`${baseURL}`, {
-            'transports': ['websocket']
+            'transports': ['websocket'],
+            'auth': { 'apitoken': token }
         });
 
         socket.on('connect', () => console.log('Connected to Cider'));
