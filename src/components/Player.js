@@ -6,7 +6,8 @@ import {
 import {
   GetData as AppleMusicData,
   UpdatePlayerTimeData as UpdateTimeDataFromApple,
-  UpdatePlayerMusicData as UpdateMusicDataFromApple
+  UpdatePlayerMusicData as UpdateMusicDataFromApple,
+  UpdatePlayerStateData as UpdatePlayerStateFromApple
 } from '../platforms/AppleMusic.js';
 // import {
 //   GetData as SpotifyData,
@@ -89,14 +90,19 @@ export function Player(props) {
       case 'apple':
         webSocket.current = AppleMusicData();
         webSocket.current?.on('API:Playback', ({ data, type }) => {
-          if (type === 'playbackStatus.playbackStateDidChange') {
-            setResult(UpdateMusicDataFromApple(data, result));
-          } else if (type === 'playbackStatus.nowPlayingItemDidChange')
-            setResult(UpdateMusicDataFromApple(data, result));
-          else if (type === 'playbackStatus.playbackTimeDidChange')
-            setResult(UpdateTimeDataFromApple(data, result));
-          else
-            console.debug(type, data);
+          switch (type) {
+						case 'playbackStatus.nowPlayingItemDidChange':
+              setResult(UpdateMusicDataFromApple(data, result));
+              break;
+            case 'playbackStatus.playbackTimeDidChange':
+              setResult(UpdateTimeDataFromApple(data, result));
+              break;
+						case 'playbackStatus.playbackStateDidChange':
+              setResult(UpdatePlayerStateFromApple(data, result));
+            	/*break;
+            default:
+              console.debug(type, data);*/
+          }
         });
         break;
       case 'youtube':
