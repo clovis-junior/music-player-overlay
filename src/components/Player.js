@@ -129,7 +129,7 @@ export function Player(props) {
   //---------------- Spotify Connection --------------------//
   useEffect(() => {
     if (platformHasSpotify) {
-      async function Update() {
+      async function GetResult() {
         var data;
 
         // if(props.platform === 'spotify') {
@@ -142,10 +142,16 @@ export function Player(props) {
       }
 
       if (loaded) {
-        const check = setInterval(async () => await Update(), 2000);
+        if (result?.error) {
+          console.log('Trying to get Spotify data...');
+          const check = setTimeout(async () => await GetResult(), 5000);
+          return () => clearTimeout(check);
+        }
+
+        const check = setInterval(async () => await GetResult(), 2000);
 
         if (result?.isPlaying) {
-          const refresh = setTimeout(async () => await Update(), result?.duration?.remaining);
+          const refresh = setTimeout(async () => await GetResult(), result?.duration?.remaining);
           const update = setInterval(() => {
             result.duration.elapsed++;
             result.duration.remaining--;
@@ -159,35 +165,13 @@ export function Player(props) {
         }
 
         return () => clearInterval(check);
-      }
-    }
-  }, [loaded, result, props, playerClasses, platformHasSpotify]);
-
-  useLayoutEffect(() => {
-    if (platformHasSpotify) {
-      async function GetResult() {
-        var data;
-
-        // if(props.platform === 'spotify') {
-        //   data = await SpotifyData();
-        //   setResult(UpdatePlayerDataFromSpotify(data));
-        // } else if (props.platform === 'spotify-custom') {
-        data = await SpotifyCustomData();
-        setResult(UpdatePlayerDataFromSpotifyCustom(data));
-        // }
-      }
-
-      if (!loaded) {
+      } else {
         console.log('Trying to get Spotify data...');
         const check = setInterval(async () => await GetResult(), 3000);
         return () => clearInterval(check);
-      } else if (loaded && result?.error) {
-        console.log('Trying to get Spotify data... Again...');
-        const check = setTimeout(async () => await GetResult(), 5000);
-        return () => clearTimeout(check);
       }
     }
-  }, [loaded, result, props, platformHasSpotify]);
+  }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   //---------------- Player Functions --------------------//
   useEffect(() => {
