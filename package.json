@@ -1,6 +1,6 @@
 {
-  "name": "stream-your-player",
-  "version": "0.1.0",
+  "name": "music-player-overlay",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "dotenv": "^17.2.1",
