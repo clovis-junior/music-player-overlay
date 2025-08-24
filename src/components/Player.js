@@ -178,7 +178,7 @@ export function Player(props) {
     if (loaded) {
       if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
         return () => setAlbumArtImage(result?.albumCover);
-      else if (!IsEmpty(result?.albumCover) && 
+      else if ((!IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover)) && 
       (result?.albumCover !== albumArtImage))
         return () => setAlbumArtImage(result?.albumCover);
     }
