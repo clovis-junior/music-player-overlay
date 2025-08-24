@@ -314,7 +314,7 @@ export function Player(props) {
             </div>
           ) : (<></>)}
           <figure>
-            <img id={styles.music_album_art} src={albumArtImage || null} alt={result?.title} />
+            <img id={styles.music_album_art} src={albumArtImage} alt={result?.title} />
           </figure>
         </div>
       ) : (<></>)}

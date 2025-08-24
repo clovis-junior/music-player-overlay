@@ -46,6 +46,9 @@ function PlayerOptions(props) {
                 <PlayerOption id='hide_progressbar' name='hideProgressBar' {...attr}>
                     <span className={styles.player_customize_option_name}>Hide Progress Bar</span>
                 </PlayerOption>
+                <PlayerOption id='show_platform_icon' name='showPlatform' {...attr}>
+                    <span className={styles.player_customize_option_name}>Show Platform Logo</span>
+                </PlayerOption>
             </>
         )
     }
