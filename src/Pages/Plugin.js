@@ -16,6 +16,7 @@ export default function Plugin() {
                 noShadow={options.has('noShadow')}
                 showAlbum={!options.has('hideAlbum')}
                 solidColor={options.has('solidColor')}
+                showPlatform={options.has('showPlatform')}
                 textCentered={options.has('textCentered')}
                 showWaves={parseInt(options.get('showWaves')) || 0}
                 hideProgress={options.has('hideProgress')}

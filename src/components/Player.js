@@ -5,7 +5,8 @@ import {
 } from '../platforms/YouTubeMusic.js';
 import {
   GetData as AppleMusicData,
-  UpdatePlayerData as UpdatePlayerDataFromApple
+  UpdatePlayerTimeData as UpdateTimeDataFromApple,
+  UpdatePlayerMusicData as UpdateMusicDataFromApple
 } from '../platforms/AppleMusic.js';
 // import {
 //   GetData as SpotifyData,
@@ -17,10 +18,10 @@ import {
 } from '../platforms/SpotifyCustom.js';
 import { ConvertTime, IsEmpty } from '../Utils.js';
 import styles from '../scss/player.module.scss';
-// import AsyncImage from '../components/AsyncImage.js';
-// import appleIcon from '../images/apple-music-icon.svg';
-// import spotifyLogo from '../images/spotify-logo.png';
-// import ytmLogo from '../images/ytm-logo.png';
+import AsyncImage from '../components/AsyncImage.js';
+import appleIcon from '../images/apple-music-icon.svg';
+import spotifyLogo from '../images/spotify-logo.png';
+import ytmLogo from '../images/ytm-logo.png';
 
 function DrawWaveForms({ number = 8 }) {
   let waves = [];
@@ -52,6 +53,7 @@ function removePlayerClass(name = '', classes = []) {
 }
 
 export function Player(props) {
+  const [platformLogo, setPlatformLogo] = useState('');
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -86,26 +88,30 @@ export function Player(props) {
     switch (props?.platform) {
       case 'apple':
         webSocket.current = AppleMusicData();
-
         webSocket.current?.on('API:Playback', ({ data, type }) => {
-          if (type === 'playbackStatus.playbackStateDidChange')
-            setResult(UpdatePlayerDataFromApple(data));
+          if (type === 'playbackStatus.playbackStateDidChange') {
+            setResult(UpdateMusicDataFromApple(data?.attributes, result));
+          } else if (type === 'playbackStatus.nowPlayingItemDidChange')
+            setResult(UpdateMusicDataFromApple(data, result));
+          else if (type === 'playbackStatus.playbackTimeDidChange')
+            setResult(UpdateTimeDataFromApple(data, result));
+          else
+            console.debug(type, data);
         });
         break;
       case 'youtube':
       default:
         webSocket.current = YouTubeMusicData();
-
         webSocket.current?.on('state-update', state => {
           setResult(UpdatePlayerDataFromYTM(state));
         });
     }
 
     return () => {
-      if (webSocket.current?.connected)
+      if (webSocket.current?.readyState === 1)
         webSocket.current?.disconnect();
     }
-  }, [props, platformHasSpotify]);
+  }, [props, result, platformHasSpotify]);
 
   useEffect(() => {
     if (!platformHasSpotify) return;
@@ -123,7 +129,7 @@ export function Player(props) {
     }
 
     if (loaded) {
-      const check = setInterval(async () => await Update(), 3000);
+      const check = setInterval(async () => await Update(), 2000);
 
       if (!result || result?.title === '') {
         removePlayerClass(styles.show, playerClasses);
@@ -150,14 +156,8 @@ export function Player(props) {
   useEffect(() => {
     if (!result || !result?.isPlaying) return;
 
-    setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
+    setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
   }, [result]);
-
-  useEffect(() => {
-    if (result?.albumCover !== albumArtImage)
-      setAlbumArtImage(result?.albumCover);
-
-  }, [result, albumArtImage]);
 
   useEffect(() => {
     if (!platformHasSpotify) return;
@@ -185,6 +185,12 @@ export function Player(props) {
     }
 
   }, [loaded, result, props, platformHasSpotify]);
+
+  useLayoutEffect(() => {
+    if (result?.albumCover !== albumArtImage)
+      setAlbumArtImage(result?.albumCover);
+
+  }, [result, albumArtImage]);
 
   useLayoutEffect(() => {
     if (!loaded) return;
@@ -220,6 +226,21 @@ export function Player(props) {
     return () => clearInterval(artistNameScroll);
   }, [artistNameScrolled]);
 
+  useLayoutEffect(() => {
+    if (loaded) {
+      switch (props?.platform) {
+        case 'apple':
+          setPlatformLogo(appleIcon);
+          break;
+        case 'youtube':
+          setPlatformLogo(ytmLogo);
+          break;
+        default:
+          setPlatformLogo(spotifyLogo);
+      }
+    }
+  }, [loaded, props]);
+
   useLayoutEffect(() => setLoaded(!IsEmpty(result)), [result]);
 
   if (!loaded) {
@@ -242,6 +263,13 @@ export function Player(props) {
 
     return (
       <main className={playerClasses.join(' ')}>
+        {(props?.showPlatform) ? (
+          <div className={styles.music_platform_icon}>
+            <figure>
+              <AsyncImage src={platformLogo} />
+            </figure>
+          </div>
+        ) : (<></>)}
         {(!props.solidColor) ? (
           <div className={styles.music_album_blur_container}>
             <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
@@ -278,13 +306,15 @@ export function Player(props) {
     <main className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
         <div className={styles.music_album_art}>
-          {/* <div className={styles.music_platform_icon}>
-            <figure>
-              <AsyncImage src={spotifyLogo} alt={'Spotify Logo'} />
-            </figure>
-          </div> */}
+          {(props?.showPlatform) ? (
+            <div className={styles.music_platform_icon}>
+              <figure>
+                <AsyncImage src={platformLogo} />
+              </figure>
+            </div>
+          ) : (<></>)}
           <figure>
-            <img id={styles.music_album_art} src={albumArtImage} alt={result?.title} />
+            <img id={styles.music_album_art} src={albumArtImage || null} alt={result?.title} />
           </figure>
         </div>
       ) : (<></>)}
