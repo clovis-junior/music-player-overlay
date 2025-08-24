@@ -14,7 +14,7 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-export function UpdatePlayerTimeData(data = {}, result = {}) {
+export function UpdatePlayerTimeData(data = {}, result) {
     if (IsEmpty(result)) result = {};
 
     if (!IsEmpty(data)) {
@@ -29,7 +29,7 @@ export function UpdatePlayerTimeData(data = {}, result = {}) {
     return result;
 }
 
-export function UpdatePlayerMusicData(data = {}, result = {}) {
+export function UpdatePlayerMusicData(data = {}, result) {
     if (IsEmpty(result)) result = {};
     
     if (!IsEmpty(data)) {
@@ -41,7 +41,7 @@ export function UpdatePlayerMusicData(data = {}, result = {}) {
     return result;
 }
 
-export function UpdatePlayerStateData(data = {}, result = {}) {
+export function UpdatePlayerStateData(data = {}, result) {
     if (IsEmpty(result)) result = {};
     if (IsEmpty(data)) return result;
 
@@ -62,7 +62,10 @@ export function GetData() {
         });
 
         socket.on('connect', () => console.log('Connected to Cider'));
-        socket.on('disconnect', () => console.log('Disconnected to Cider... Reconnecting...'));
+        socket.on('disconnect', () => {
+            console.log('Disconnected to Cider... Reconnecting...');
+            setTimeout(()=> GetData(), 5000);
+        });
         // socket.onAny((event, ...args) => {
         //     console.debug(`${event}`, args);
         // });

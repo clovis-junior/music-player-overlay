@@ -92,7 +92,10 @@ export function GetData() {
     socket?.on('connect', ()=> {
       console.log('Connected to YTMDesktop');
     });
-    socket?.on('disconnect', ()=> console.log('Disconnected to YTMDesktop... Reconnecting...'));
+    socket?.on('disconnect', ()=> {
+      console.log('Disconnected to YTMDesktop... Reconnecting...');
+      setTimeout(()=> GetData(), 5000);
+    });
 
     return socket;
   } catch(e) {

@@ -105,19 +105,24 @@ export function Player(props) {
           default:
             console.debug(type, data);
         }
+
+        return () => {
+          if (webSocket.current?.connected)
+            webSocket.current?.disconnect();
+        }
       });
     }
-
+    
     if (props?.platform === 'youtube') {
       webSocket.current = YouTubeMusicData();
       webSocket.current?.on('state-update', state => {
         setResult(UpdatePlayerDataFromYTM(state))
       });
-    }
 
-    return () => {
-      if (webSocket.current?.connected)
-        webSocket.current?.disconnect();
+      return () => {
+        if (webSocket.current?.connected)
+          webSocket.current?.disconnect();
+      }
     }
   }, [props, result]);
 
@@ -155,11 +160,10 @@ export function Player(props) {
 
         return () => clearInterval(check);
       }
-
     }
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (platformHasSpotify) {
       async function GetResult() {
         var data;
@@ -186,7 +190,7 @@ export function Player(props) {
   }, [loaded, result, props, platformHasSpotify]);
 
   //---------------- Player Functions --------------------//
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (loaded) {
       if (!IsEmpty(result) && result?.isPlaying)
         addPlayerClass(styles.show, playerClasses);
@@ -196,7 +200,7 @@ export function Player(props) {
 
       if (result?.isPlaying) {
         removePlayerClass(styles.paused, playerClasses);
-        setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
+        return () => setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
       } else {
         addPlayerClass(styles.paused, playerClasses);
 
@@ -207,8 +211,6 @@ export function Player(props) {
         return () => clearTimeout(waiting);
       }
     }
-
-
   }, [loaded, props, result, albumArtImage, playerClasses]);
 
   useLayoutEffect(() => {
@@ -238,7 +240,7 @@ export function Player(props) {
     }
   }, [loaded, props]);
 
-  useLayoutEffect(() => setLoaded(!IsEmpty(result?.title)), [result]);
+  useLayoutEffect(() => setLoaded(!IsEmpty(musicData)), [result, musicData]);
 
   if (!loaded) {
     console.log('Loading...');
