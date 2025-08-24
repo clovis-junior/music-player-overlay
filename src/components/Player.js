@@ -189,7 +189,7 @@ export function Player(props) {
   useLayoutEffect(() => {
     if (!loaded) return;
 
-    if (result?.isPlaying && albumArtImage !== result?.albumCover)
+    if (!IsEmpty(result?.albumCover) && albumArtImage !== result?.albumCover)
       setAlbumArtImage(result?.albumCover);
 
     if (result?.isPlaying) {
