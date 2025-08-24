@@ -233,7 +233,6 @@ export function Player(props) {
       setLoaded(true);
       return () => addPlayerClass(styles.show, playerClasses);
     }
-    
   }, [result, musicData, playerClasses]);
 
   if (!loaded) {
