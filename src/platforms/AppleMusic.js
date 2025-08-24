@@ -41,14 +41,23 @@ export function UpdatePlayerTimeData(data = {}, result = {}) {
 export function UpdatePlayerMusicData(data = {}, result = {}) {
     if (IsEmpty(result))
         result = SetPlayerData();
+    
+    if (!IsEmpty(data)) {
+        result.title = data?.name || result?.title;
+        result.artist = data?.artistName || result?.artist;
+        result.albumCover = GetAlbumCover((data?.artwork?.url || result?.albumCover), (data?.artwork?.width || 300));
+    }
+    
+    return result;
+}
+
+export function UpdatePlayerStateData(data = {}, result = {}) {
+    if (IsEmpty(result))
+        result = SetPlayerData();
 
     if (!IsEmpty(data)) {
-        const musicData = data.attributes ? data.attributes : data;
-
-        result.isPlaying = (data?.state === 'playing') || result?.isPlaying || false;
-        result.title = musicData?.name || '';
-        result.artist = musicData?.artistName || '';
-        result.albumCover = GetAlbumCover((musicData?.artwork?.url || result?.albumCover), (musicData?.artwork?.width || 300));
+        result.isPlaying = (data?.state === 'playing') || result?.isPlaying;
+        return UpdatePlayerMusicData(data?.attributes, result);
     }
 
     return result;
