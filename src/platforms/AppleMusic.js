@@ -48,7 +48,7 @@ export function UpdatePlayerStateData(data = {}, result = {}) {
     if (data?.state === 'paused' || data?.state === 'stopped')
         result.isPlaying = false;
     else if (data?.state === 'playing') {
-        setTimeout(()=> result.isPlaying = true, 1000);
+        setTimeout(()=> result.isPlaying = true, 500);
         UpdatePlayerMusicData(data?.attributes, result);
     }
 
