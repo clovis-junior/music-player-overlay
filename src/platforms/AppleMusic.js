@@ -35,7 +35,7 @@ export function UpdatePlayerMusicData(data = {}, result = {}) {
     if (!IsEmpty(data)) {
         result.title = data?.name || result?.title;
         result.artist = data?.artistName || result?.artist;
-        result.albumCover = GetAlbumCover(data?.artwork?.url, (data?.artwork?.width || 300));
+        result.albumCover = GetAlbumCover((data?.artwork?.url || result?.albumCover), (data?.artwork?.width || 300));
     }
     
     return result;
@@ -48,7 +48,7 @@ export function UpdatePlayerStateData(data = {}, result = {}) {
     if (data?.state === 'paused' || data?.state === 'stopped')
         result.isPlaying = false;
     else if (data?.state === 'playing') {
-        setTimeout(()=> result.isPlaying = true, 500);
+        result.isPlaying = true;
         return UpdatePlayerMusicData(data?.attributes, result);
     }
 
@@ -62,10 +62,7 @@ export function GetData() {
         });
 
         socket.on('connect', () => console.log('Connected to Cider'));
-        socket.on('disconnect', () => {
-            console.log('Disconnected to Cider... Reconnecting...');
-            setTimeout(() => GetData(), 5000);
-        });
+        socket.on('disconnect', () => console.log('Disconnected to Cider... Reconnecting...'));
         // socket.onAny((event, ...args) => {
         //     console.debug(`${event}`, args);
         // });
@@ -73,8 +70,6 @@ export function GetData() {
         return socket
     } catch (e) {
         console.error(e.message.toString());
-
-        setTimeout(() => GetData(), 3000);
 
         return { error: e.message.toString() }
     }

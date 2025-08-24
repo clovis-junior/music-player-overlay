@@ -24,6 +24,8 @@ import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
 
+const defaultTitle = document.title;
+
 function DrawWaveForms({ number = 8 }) {
   let waves = [];
 
@@ -58,153 +60,155 @@ export function Player(props) {
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
 
-  const platformHasSpotify = props?.platform.includes('spotify');
-
   const [playerClasses] = useState([]);
+
   const [albumArtImage, setAlbumArtImage] = useState(null);
   const [musicProgress, setMusicProgress] = useState(0);
 
-  const webSocket = useRef(null);
-
   const [musicNameScrolled, setMusicNameScrolled] = useState(false);
   const [artistNameScrolled, setArtistNameScrolled] = useState(false);
+
+  const webSocket = useRef(null);
 
   const musicNameComponent = useRef(null);
   const artistNameComponent = useRef(null);
 
   const musicData = useMemo(() => {
-    if (!result) return;
+    if (IsEmpty(result?.title) || IsEmpty(result?.artist))
+      return;
 
     const title = result?.title;
     const artist = result?.artist;
 
-    document.title = title ? `${title} - ${artist}` : 'Paused';
+    document.title = title ? `${title} - ${artist}` : defaultTitle;
 
     return { title, artist };
   }, [result]);
 
-  useEffect(() => {
-    if (platformHasSpotify) return;
+  const platformHasSpotify = props?.platform.includes('spotify');
 
-    switch (props?.platform) {
-      case 'apple':
-        webSocket.current = AppleMusicData();
-        webSocket.current?.on('API:Playback', ({ data, type }) => {
-          switch (type) {
-            case 'playbackStatus.nowPlayingItemDidChange':
-              setResult(UpdateMusicDataFromApple(data, result));
-              break;
-            case 'playbackStatus.playbackTimeDidChange':
-              setResult(UpdateTimeDataFromApple(data, result));
-              break;
-            case 'playbackStatus.playbackStateDidChange':
-              setResult(UpdatePlayerStateFromApple(data, result));
-              break;
-            default:
-              console.debug(type, data);
-          }
-        });
-        break;
-      case 'youtube':
-      default:
-        webSocket.current = YouTubeMusicData();
-        webSocket.current?.on('state-update', state => {
-          setResult(UpdatePlayerDataFromYTM(state));
-        });
+  //---------------- Apple Music and YouTube Music Connections --------------------//
+  useEffect(() => {
+    if (props?.platform === 'apple') {
+      webSocket.current = AppleMusicData();
+      webSocket.current?.on('API:Playback', ({ data, type }) => {
+        switch (type) {
+          case 'playbackStatus.nowPlayingItemDidChange':
+            setResult(UpdateMusicDataFromApple(data, result));
+            break;
+          case 'playbackStatus.playbackTimeDidChange':
+            setResult(UpdateTimeDataFromApple(data, result));
+            break;
+          case 'playbackStatus.playbackStateDidChange':
+            setResult(UpdatePlayerStateFromApple(data, result));
+            break;
+          default:
+            console.debug(type, data);
+        }
+      });
+    }
+
+    if (props?.platform === 'youtube') {
+      webSocket.current = YouTubeMusicData();
+      webSocket.current?.on('state-update', state => {
+        setResult(UpdatePlayerDataFromYTM(state))
+      });
     }
 
     return () => {
-      if (webSocket.current?.readyState === 1)
+      if (webSocket.current?.connected)
         webSocket.current?.disconnect();
     }
-  }, [props, result, platformHasSpotify]);
+  }, [props, result]);
 
+  //---------------- Spotify Connection --------------------//
   useEffect(() => {
-    if (!platformHasSpotify) return;
+    if (platformHasSpotify) {
+      async function Update() {
+        var data;
 
-    async function Update() {
-      var data;
-
-      // if(props.platform === 'spotify') {
-      //   data = await SpotifyData();
-      //   setResult(UpdatePlayerDataFromSpotify(data));
-      // } else if (props.platform === 'spotify-custom') {
-      data = await SpotifyCustomData();
-      setResult(UpdatePlayerDataFromSpotifyCustom(data));
-      // }
-    }
-
-    if (loaded) {
-      const check = setInterval(async () => await Update(), 2000);
-
-      if (!result || result?.title === '') {
-        removePlayerClass(styles.show, playerClasses);
-      } else addPlayerClass(styles.show, playerClasses);
-
-      if (result?.isPlaying) {
-        const refresh = setTimeout(async () => await Update(), result?.duration?.remaining);
-        const update = setInterval(() => {
-          result.duration.elapsed++;
-          result.duration.remaining--;
-        }, 1000);
-
-        return () => {
-          clearInterval(update);
-          clearTimeout(refresh);
-          clearInterval(check);
-        }
+        // if(props.platform === 'spotify') {
+        //   data = await SpotifyData();
+        //   setResult(UpdatePlayerDataFromSpotify(data));
+        // } else if (props.platform === 'spotify-custom') {
+        data = await SpotifyCustomData();
+        setResult(UpdatePlayerDataFromSpotifyCustom(data));
+        // }
       }
 
-      return () => clearInterval(check);
+      if (loaded) {
+        const check = setInterval(async () => await Update(), 2000);
+
+        if (result?.isPlaying) {
+          const refresh = setTimeout(async () => await Update(), result?.duration?.remaining);
+          const update = setInterval(() => {
+            result.duration.elapsed++;
+            result.duration.remaining--;
+          }, 1000);
+
+          return () => {
+            clearInterval(update);
+            clearTimeout(refresh);
+            clearInterval(check);
+          }
+        }
+
+        return () => clearInterval(check);
+      }
+
     }
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   useEffect(() => {
-    if (!platformHasSpotify) return;
+    if (platformHasSpotify) {
+      async function GetResult() {
+        var data;
 
-    async function GetResult() {
-      var data;
+        // if(props.platform === 'spotify') {
+        //   data = await SpotifyData();
+        //   setResult(UpdatePlayerDataFromSpotify(data));
+        // } else if (props.platform === 'spotify-custom') {
+        data = await SpotifyCustomData();
+        setResult(UpdatePlayerDataFromSpotifyCustom(data));
+        // }
+      }
 
-      // if(props.platform === 'spotify') {
-      //   data = await SpotifyData();
-      //   setResult(UpdatePlayerDataFromSpotify(data));
-      // } else if (props.platform === 'spotify-custom') {
-      data = await SpotifyCustomData();
-      setResult(UpdatePlayerDataFromSpotifyCustom(data));
-      // }
+      if (!loaded) {
+        console.log('Trying to get Spotify data...');
+        const check = setInterval(async () => await GetResult(), 3000);
+        return () => clearInterval(check);
+      } else if (loaded && result?.error) {
+        console.log('Trying to get Spotify data... Again...');
+        const check = setTimeout(async () => await GetResult(), 5000);
+        return () => clearTimeout(check);
+      }
     }
-
-    if (!loaded) {
-      console.log('Trying to get Spotify data...');
-      const check = setInterval(async () => await GetResult(), 3000);
-      return () => clearInterval(check);
-    } else if (loaded && result?.error) {
-      console.log('Trying to get Spotify data... Again...');
-      const check = setTimeout(async () => await GetResult(), 5000);
-      return () => clearTimeout(check);
-    }
-
   }, [loaded, result, props, platformHasSpotify]);
 
+  //---------------- Player Functions --------------------//
   useLayoutEffect(() => {
-    if (!loaded) return;
+    if (loaded) {
+      if (!IsEmpty(result) && result?.isPlaying)
+        addPlayerClass(styles.show, playerClasses);
 
-    if (!IsEmpty(result?.albumCover) && albumArtImage !== result?.albumCover)
-      setAlbumArtImage(result?.albumCover);
+      if (!IsEmpty(result?.albumCover) && albumArtImage !== result?.albumCover)
+        setAlbumArtImage(result?.albumCover);
 
-    if (result?.isPlaying) {
-      addPlayerClass(styles.show, playerClasses);
-      removePlayerClass(styles.paused, playerClasses);
-      setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
-    } else {
-      addPlayerClass(styles.paused, playerClasses);
+      if (result?.isPlaying) {
+        removePlayerClass(styles.paused, playerClasses);
+        setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
+      } else {
+        addPlayerClass(styles.paused, playerClasses);
 
-      const waiting = setTimeout(() => {
-        removePlayerClass(styles.show, playerClasses);
-      }, (props?.sleepAfter * 1000));
+        const waiting = setTimeout(() => {
+          removePlayerClass(styles.show, playerClasses);
+        }, (props?.sleepAfter * 1000));
 
-      return () => clearTimeout(waiting);
+        return () => clearTimeout(waiting);
+      }
     }
+
+
   }, [loaded, props, result, albumArtImage, playerClasses]);
 
   useLayoutEffect(() => {
@@ -234,13 +238,7 @@ export function Player(props) {
     }
   }, [loaded, props]);
 
-  useLayoutEffect(() => {
-    if (props?.platform === 'apple' || platformHasSpotify) {
-      setLoaded(!IsEmpty(result?.title));
-    } else
-      setLoaded(!IsEmpty(result));
-
-  }, [props, result, platformHasSpotify]);
+  useLayoutEffect(() => setLoaded(!IsEmpty(result?.title)), [result]);
 
   if (!loaded) {
     console.log('Loading...');
@@ -256,7 +254,6 @@ export function Player(props) {
 
   if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
   if (props?.squareLayout) addPlayerClass(styles.square, playerClasses);
-
   if (props.compact) {
     addPlayerClass(styles.music_player_compact, playerClasses);
 

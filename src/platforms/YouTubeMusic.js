@@ -89,17 +89,14 @@ export function GetData() {
       'auth': { 'token': token }
     });
   
-    socket.on('connect', ()=> console.log('Connected to YTMDesktop'));
-    socket.on('disconnect', ()=> {
-      console.log('Disconnected to YTMDesktop... Reconnecting...');
-      setTimeout(() => GetData(), 5000);
+    socket?.on('connect', ()=> {
+      console.log('Connected to YTMDesktop');
     });
-  
-    return socket
+    socket?.on('disconnect', ()=> console.log('Disconnected to YTMDesktop... Reconnecting...'));
+
+    return socket;
   } catch(e) {
     console.error(e.message.toString());
-
-    setTimeout(()=> GetData(), 3000);
 
     return { error: e.message.toString() }
   }
