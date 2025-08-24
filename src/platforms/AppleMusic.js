@@ -14,41 +14,42 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-function SetPlayerData() {
-    return {
-        isPlaying: false,
-        title: '',
-        artist: '',
-        duration: { elapsed: 0, remaining: 0, total: 0 },
-        albumCover: ''
-    }
-}
-
 export function UpdatePlayerTimeData(data = {}, result = {}) {
-    if (IsEmpty(result))
-        result = SetPlayerData();
+    if (IsEmpty(result)) result = {};
 
-    result.isPlaying = data?.isPlaying || result?.isPlaying || false;
-    result.duration = {
-        elapsed: data?.currentPlaybackTime || 0,
-        remaining: data?.currentPlaybackTimeRemaining || 0,
-        total: data?.currentPlaybackDuration || 0
-    };
+    if (!IsEmpty(data)) {
+        result.isPlaying = data?.isPlaying || false;
+        result.duration = {
+            elapsed: data?.currentPlaybackTime || 0,
+            remaining: data?.currentPlaybackTimeRemaining || 0,
+            total: data?.currentPlaybackDuration || 0
+        };
+    }
 
     return result;
 }
 
 export function UpdatePlayerMusicData(data = {}, result = {}) {
-    if (IsEmpty(result))
-        result = SetPlayerData();
-
+    if (IsEmpty(result)) result = {};
+    
     if (!IsEmpty(data)) {
-        const musicData = data.attributes ? data.attributes : data;
+        result.title = data?.name || result?.title;
+        result.artist = data?.artistName || result?.artist;
+        result.albumCover = GetAlbumCover((data?.artwork?.url || result?.albumCover), (data?.artwork?.width || 300));
+    }
+    
+    return result;
+}
 
-        result.isPlaying = (data?.state === 'playing') || result?.isPlaying || false;
-        result.title = musicData?.name || '';
-        result.artist = musicData?.artistName || '';
-        result.albumCover = GetAlbumCover((musicData?.artwork?.url || result?.albumCover), (musicData?.artwork?.width || 300));
+export function UpdatePlayerStateData(data = {}, result = {}) {
+    if (IsEmpty(result)) result = {};
+    if (IsEmpty(data)) return result;
+
+    if (data?.state === 'paused' || data?.state === 'stopped')
+        result.isPlaying = false;
+    else if (data?.state === 'playing') {
+        setTimeout(()=> result.isPlaying = true, 1000);
+        UpdatePlayerMusicData(data?.attributes, result);
     }
 
     return result;
@@ -63,6 +64,7 @@ export function GetData() {
         socket.on('connect', () => console.log('Connected to Cider'));
         socket.on('disconnect', () => {
             console.log('Disconnected to Cider... Reconnecting...');
+            setTimeout(() => GetData(), 5000);
         });
         // socket.onAny((event, ...args) => {
         //     console.debug(`${event}`, args);
