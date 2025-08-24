@@ -49,7 +49,7 @@ export function UpdatePlayerStateData(data = {}, result = {}) {
         result.isPlaying = false;
     else if (data?.state === 'playing') {
         setTimeout(()=> result.isPlaying = true, 500);
-        UpdatePlayerMusicData(data?.attributes, result);
+        return UpdatePlayerMusicData(data?.attributes, result);
     }
 
     return result;
