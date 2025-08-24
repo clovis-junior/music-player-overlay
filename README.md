@@ -8,7 +8,7 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - [x] **[Meld Studio](https://meldstudio.co/)**
 - [x] **[vMix](https://www.vmix.com/)**
 
-[!NOTE]
+> [!NOTE]
 > Every softwares has tested on Windows 11.
 
 ### 🎧 Supported Music Platforms
