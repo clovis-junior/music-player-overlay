@@ -30,7 +30,6 @@ export function UpdatePlayerTimeData(data = {}, result = {}) {
 }
 
 export function UpdatePlayerMusicData(data = {}, result = {}) {
-<<<<<<< HEAD
     if (IsEmpty(result)) result = {};
     
     if (!IsEmpty(data)) {
@@ -51,27 +50,6 @@ export function UpdatePlayerStateData(data = {}, result = {}) {
     else if (data?.state === 'playing') {
         setTimeout(()=> result.isPlaying = true, 1000);
         UpdatePlayerMusicData(data?.attributes, result);
-=======
-    if (IsEmpty(result))
-        result = SetPlayerData();
-    
-    if (!IsEmpty(data)) {
-        result.title = data?.name || result?.title;
-        result.artist = data?.artistName || result?.artist;
-        result.albumCover = GetAlbumCover((data?.artwork?.url || result?.albumCover), (data?.artwork?.width || 300));
-    }
-    
-    return result;
-}
-
-export function UpdatePlayerStateData(data = {}, result = {}) {
-    if (IsEmpty(result))
-        result = SetPlayerData();
-
-    if (!IsEmpty(data)) {
-        result.isPlaying = (data?.state === 'playing') || result?.isPlaying;
-        return UpdatePlayerMusicData(data?.attributes, result);
->>>>>>> 1a929930d3996a1984ce0dabd77d0d728e6d4754
     }
 
     return result;

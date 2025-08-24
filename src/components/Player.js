@@ -91,23 +91,17 @@ export function Player(props) {
         webSocket.current = AppleMusicData();
         webSocket.current?.on('API:Playback', ({ data, type }) => {
           switch (type) {
-						case 'playbackStatus.nowPlayingItemDidChange':
+            case 'playbackStatus.nowPlayingItemDidChange':
               setResult(UpdateMusicDataFromApple(data, result));
               break;
             case 'playbackStatus.playbackTimeDidChange':
               setResult(UpdateTimeDataFromApple(data, result));
               break;
-						case 'playbackStatus.playbackStateDidChange':
+            case 'playbackStatus.playbackStateDidChange':
               setResult(UpdatePlayerStateFromApple(data, result));
-<<<<<<< HEAD
-            	break;
+              break;
             default:
               console.debug(type, data);
-=======
-            	/*break;
-            default:
-              console.debug(type, data);*/
->>>>>>> 1a929930d3996a1984ce0dabd77d0d728e6d4754
           }
         });
         break;
