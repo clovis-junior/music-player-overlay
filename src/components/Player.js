@@ -99,9 +99,15 @@ export function Player(props) {
               break;
 						case 'playbackStatus.playbackStateDidChange':
               setResult(UpdatePlayerStateFromApple(data, result));
+<<<<<<< HEAD
             	break;
             default:
               console.debug(type, data);
+=======
+            	/*break;
+            default:
+              console.debug(type, data);*/
+>>>>>>> 1a929930d3996a1984ce0dabd77d0d728e6d4754
           }
         });
         break;
