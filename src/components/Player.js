@@ -174,14 +174,18 @@ export function Player(props) {
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   //---------------- Player Functions --------------------//
+  useLayoutEffect(() => {
+    if (loaded) {
+      if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
+        return () => setAlbumArtImage(result?.albumCover);
+      else if (!IsEmpty(result?.albumCover) && 
+      (result?.albumCover !== albumArtImage))
+        return () => setAlbumArtImage(result?.albumCover);
+    }
+  }, [loaded, result, albumArtImage, playerClasses]);
+
   useEffect(() => {
     if (loaded) {
-      if (!IsEmpty(result) && result?.isPlaying)
-        addPlayerClass(styles.show, playerClasses);
-
-      if (!IsEmpty(result?.albumCover) && albumArtImage !== result?.albumCover)
-        setAlbumArtImage(result?.albumCover);
-
       if (result?.isPlaying) {
         removePlayerClass(styles.paused, playerClasses);
         return () => setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
@@ -224,7 +228,13 @@ export function Player(props) {
     }
   }, [loaded, props]);
 
-  useLayoutEffect(() => setLoaded(!IsEmpty(musicData)), [result, musicData]);
+  useLayoutEffect(() => {
+    if (!IsEmpty(musicData)) {
+      setLoaded(true);
+      return () => addPlayerClass(styles.show, playerClasses);
+    }
+    
+  }, [result, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
