@@ -1,12 +1,8 @@
 // import songData from'../Apple.test.json';
 import { io } from 'socket.io-client';
-import { GetURLParams } from '../Utils.js';
 import { IsEmpty } from '../Utils.js';
 
 const baseURL = 'http://127.0.0.1:10767';
-const params = GetURLParams();
-
-const token = params.get('token');
 
 function GetAlbumCover(url = '', size = 600) {
     if (IsEmpty(url))
@@ -61,8 +57,7 @@ export function UpdatePlayerMusicData(data = {}, result = {}) {
 export function GetData() {
     try {
         const socket = io(`${baseURL}`, {
-            'transports': ['websocket'],
-            'auth': { 'apitoken': token }
+            'transports': ['websocket']
         });
 
         socket.on('connect', () => console.log('Connected to Cider'));
