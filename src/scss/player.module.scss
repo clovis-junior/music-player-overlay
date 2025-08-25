@@ -80,7 +80,7 @@ body {
 }
 
 .music_platform_icon {
-	z-index: 1;
+	z-index: 4;
 	width: 24px;
 	overflow: hidden;
 	position: absolute;
@@ -371,7 +371,8 @@ body {
 	}
 
 	& .music_platform_icon {
-		left: 1rem;
+		left: initial;
+		right: 1rem;
 		top: 1rem;
 	}
 
