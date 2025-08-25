@@ -142,12 +142,6 @@ export function Player(props) {
       }
 
       if (loaded) {
-        if (result?.error) {
-          console.log('Trying to get Spotify data...');
-          const check = setTimeout(async () => await GetResult(), 5000);
-          return () => clearTimeout(check);
-        }
-
         const check = setInterval(async () => await GetResult(), 2000);
 
         if (result?.isPlaying) {
@@ -165,9 +159,9 @@ export function Player(props) {
         }
 
         return () => clearInterval(check);
-      } else {
+      } else if (!loaded || result?.error) {
         console.log('Trying to get Spotify data...');
-        const check = setInterval(async () => await GetResult(), 3000);
+        const check = setInterval(async () => await GetResult(), 5000);
         return () => clearInterval(check);
       }
     }
