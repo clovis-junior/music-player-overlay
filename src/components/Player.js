@@ -163,10 +163,8 @@ export function Player(props) {
         console.log('Trying to get Spotify data...');
         const check = setInterval(async () => await GetResult(), 5000);
         return () => clearInterval(check);
-      } else if (!loaded) {
-        const check = setInterval(async () => await GetResult(), 3000);
-        return () => clearInterval(check);
-      }
+      } else if (!loaded && !IsEmpty(result))
+        return async () => await GetResult();
     }
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
