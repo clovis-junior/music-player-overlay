@@ -112,7 +112,7 @@ export function Player(props) {
         }
       });
     }
-    
+
     if (props?.platform === 'youtube') {
       webSocket.current = YouTubeMusicData();
       webSocket.current?.on('state-update', state => {
@@ -159,8 +159,8 @@ export function Player(props) {
         }
 
         return () => clearInterval(check);
-      } else if ((!loaded && !IsEmpty(result)) ||
-                (loaded && result?.error)) {
+      } else if ((!loaded && !IsEmpty(result))
+        || (loaded && result?.error)) {
         console.log('Trying to get Spotify data...');
         const check = setInterval(async () => await GetResult(), 5000);
         return () => clearInterval(check);
@@ -169,16 +169,6 @@ export function Player(props) {
   }, [loaded, result, props, playerClasses, platformHasSpotify]);
 
   //---------------- Player Functions --------------------//
-  useLayoutEffect(() => {
-    if (loaded) {
-      if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
-        return () => setAlbumArtImage(result?.albumCover);
-      else if ((!IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover)) && 
-      (result?.albumCover !== albumArtImage))
-        return () => setAlbumArtImage(result?.albumCover);
-    }
-  }, [loaded, result, albumArtImage, playerClasses]);
-
   useEffect(() => {
     if (loaded) {
       if (result?.isPlaying) {
@@ -194,7 +184,17 @@ export function Player(props) {
         return () => clearTimeout(waiting);
       }
     }
-  }, [loaded, props, result, albumArtImage, playerClasses]);
+  }, [loaded, props, result, playerClasses]);
+
+  useLayoutEffect(() => {
+    if (loaded) {
+      if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
+        return () => setAlbumArtImage(result?.albumCover);
+      else if ((!IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover)) &&
+        (result?.albumCover !== albumArtImage))
+        return () => setAlbumArtImage(result?.albumCover);
+    }
+  }, [loaded, result, albumArtImage, playerClasses]);
 
   useLayoutEffect(() => {
     const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
