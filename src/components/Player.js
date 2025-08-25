@@ -218,7 +218,7 @@ export function Player(props) {
     } else
       addPlayerClass(styles?.paused, playerClasses);
 
-  }, [result?.isPlaying, playerClasses]);
+  }, [result, playerClasses]);
 
   useLayoutEffect(() => {
     if (result?.isPlaying && sleeping) {
