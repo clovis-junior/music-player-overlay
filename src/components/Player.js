@@ -164,6 +164,7 @@ export function Player(props) {
         const retry = setInterval(async () => await GetResult(), 5000);
         return () => clearInterval(retry);
       } else if (!loaded) {
+        console.log('Connection to Spotify...');
         const check = setInterval(async () => await GetResult(), 2000);
         return () => clearInterval(check);
       }
