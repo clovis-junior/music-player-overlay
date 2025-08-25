@@ -22,17 +22,17 @@ export async function RequestCode() {
       body: JSON.stringify({
         'appId': appID,
         'appName': appName,
-        'appVersion': appVersion 
+        'appVersion': appVersion
       })
     });
 
     const data = await response.json();
 
-    if(data.statusCode)
+    if (data.statusCode)
       return { statusCode: data.statusCode, message: data.message };
 
     return data;
-  } catch(e) {
+  } catch (e) {
     console.error(`Error on Request Code: ${e.message}`);
     return { statusCode: '?', message: e.message };
   }
@@ -50,21 +50,21 @@ export async function RequestToken(code) {
         'code': code
       })
     });
-    
+
     const data = await response.json();
 
-    if(data.statusCode)
+    if (data.statusCode)
       return { statusCode: data.statusCode, message: data.message };
 
     return data;
-  } catch(e) {
+  } catch (e) {
     console.error(`Error on Request Token: ${e.message}`);
     return { statusCode: '?', message: e.message };
   }
 }
 
 export function UpdatePlayerData(data) {
-  if(data.error) return data;
+  if (data.error) return data;
 
   const player = data?.player;
   const song = data?.video;
@@ -74,33 +74,31 @@ export function UpdatePlayerData(data) {
   const artist = song?.author;
   const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
   const duration = {
-      elapsed: player?.videoProgress || 0,
-      remaining: (song?.durationSeconds - player?.videoProgress) || 0,
-      total: song?.durationSeconds || 0
+    elapsed: player?.videoProgress || 0,
+    remaining: (song?.durationSeconds - player?.videoProgress) || 0,
+    total: song?.durationSeconds || 0
   };
 
-  return {isPlaying, title, artist, duration, albumCover};
+  return { isPlaying, title, artist, duration, albumCover };
 }
 
 export function GetData() {
   try {
     const socket = io(`${baseURL}/realtime`, {
-      'transports': ['websocket'],
-      'auth': { 'token': token }
-    });
-  
-    socket?.on('connect', ()=> {
-      console.log('Connected to YTMDesktop');
-    });
-    socket?.on('disconnect', ()=> {
-      console.log('Disconnected to YTMDesktop... Reconnecting...');
-      setTimeout(()=> GetData(), 5000);
+      transports: ['websocket'],
+      auth: { 'token': token },
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 5000
     });
 
-    return socket;
-  } catch(e) {
-    console.error(e.message.toString());
+    socket?.on('connect', () => console.log('Connected to YTMDesktop'));
+    socket?.on('disconnect', () => console.log('Disconnected to YTMDesktop... Reconnecting...'));
+    socket?.on('connect_error', err => console.error('Connection error:', err.message));
+    return socket
+  } catch (e) {
+    console.error(e.message);
 
-    return { error: e.message.toString() }
+    return { error: JSON.stringify(e.message) }
   }
 }

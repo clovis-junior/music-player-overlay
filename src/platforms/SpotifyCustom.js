@@ -61,5 +61,16 @@ export async function GetData() {
     body: JSON.stringify({ clientID, clientSecret, refreshToken }),
   });
 
-  return await response.json();
+  const data = await response.json();
+
+  switch (response.status) {
+    case 401:
+        return setTimeout(async () => await GetData(), 5000);
+    case 200:
+        return data;
+    case 400:
+    case 404:
+    default:
+        return { error: JSON.stringify(data) };
+  }
 }

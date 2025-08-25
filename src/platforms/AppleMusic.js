@@ -14,66 +14,59 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-export function UpdatePlayerTimeData(data = {}, result) {
-    if (IsEmpty(result)) result = {};
-
+export function UpdatePlayerTimeData(data = {}) {
     if (!IsEmpty(data)) {
-        result.isPlaying = data?.isPlaying || false;
-        result.duration = {
+        const isPlaying = data?.isPlaying || false;
+        const duration = {
             elapsed: data?.currentPlaybackTime || 0,
             remaining: data?.currentPlaybackTimeRemaining || 0,
             total: data?.currentPlaybackDuration || 0
         };
-    }
 
-    return result;
+        return { isPlaying, duration };
+    }
 }
 
-export function UpdatePlayerMusicData(data = {}, result) {
-    if (IsEmpty(result)) result = {};
-    
+export function UpdatePlayerMusicData(data = {}) {
     if (!IsEmpty(data)) {
-        result.title = data?.name || result?.title;
-        result.artist = data?.artistName || result?.artist;
-        result.albumCover = GetAlbumCover((data?.artwork?.url || result?.albumCover), (data?.artwork?.width || 300));
+        const title = data?.name;
+        const artist = data?.artistName;
+        const albumCover = GetAlbumCover(data?.artwork?.url, (data?.artwork?.width || 300));
+
+        return {title, artist, albumCover};
     }
-    
-    return result;
 }
 
-export function UpdatePlayerStateData(data = {}, result) {
-    if (IsEmpty(result)) result = {};
-    if (IsEmpty(data)) return result;
+export function UpdatePlayerStateData(data = {}) {
+    if (data?.state === 'playing') {
+        return UpdatePlayerMusicData(data?.attributes);
+    } else if (data?.state === 'paused' || data?.state === 'stopped') {
+        const isPlaying = false;
 
-    if (data?.state === 'paused' || data?.state === 'stopped')
-        result.isPlaying = false;
-    else if (data?.state === 'playing') {
-        result.isPlaying = true;
-        return UpdatePlayerMusicData(data?.attributes, result);
+        return { isPlaying };
     }
-
-    return result;
 }
 
 export function GetData() {
     try {
         const socket = io(`${baseURL}`, {
-            'transports': ['websocket']
+            transports: ['websocket'],
+            reconnection: true,
+            reconnectionAttempts: Infinity,
+            reconnectionDelay: 5000
         });
 
-        socket.on('connect', () => console.log('Connected to Cider'));
-        socket.on('disconnect', () => {
-            console.log('Disconnected to Cider... Reconnecting...');
-            setTimeout(()=> GetData(), 5000);
-        });
-        // socket.onAny((event, ...args) => {
+        socket?.on('connect', () => console.log('Connected to Cider'));
+        socket?.on('disconnect', () => console.log('Disconnected to Cider... Reconnecting...'));
+        socket?.on('connect_error', err => console.error('Connection error:', err.message));
+        // socket?.onAny((event, ...args) => {
         //     console.debug(`${event}`, args);
         // });
 
         return socket
     } catch (e) {
-        console.error(e.message.toString());
+        console.error(e.message);
 
-        return { error: e.message.toString() }
+        return { error: JSON.stringify(e.message) }
     }
 }

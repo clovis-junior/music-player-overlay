@@ -1,9 +1,10 @@
 import fetch from 'node-fetch';
 
-export async function handler(request) {
+var accessToken;
 
-  if(!request?.body)
-    return { 
+export async function handler(request) {
+  if (!request?.body)
+    return {
       statusCode: 404,
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -18,8 +19,15 @@ export async function handler(request) {
   if (!clientID || !clientSecret || !refreshToken)
     return { statusCode: 400, body: 'Missing the client credencials or refresh token.' };
 
+  return GetCurrentPlaying(clientID, clientSecret, refreshToken);
+}
+
+async function GetAccessToken(clientID, clientSecret, refreshToken) {
+  if (!clientID || !clientSecret || !refreshToken)
+    return { statusCode: 400, body: 'Missing the client credencials or refresh token.' };
+
   try {
-    const token_response = await fetch('https://accounts.spotify.com/api/token', {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
@@ -31,22 +39,51 @@ export async function handler(request) {
       })
     });
 
-    if (!token_response)
-      return { 
+    if (!response)
+      return {
         statusCode: 401,
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET',
           'Access-Control-Allow-Headers': 'Content-Type',
         },
-        body: JSON.stringify(`An error ocurred trying to get token. Status Code: ${token_response?.status}`)
+        body: JSON.stringify(`An error ocurred trying to get token. Status Code: ${response?.status}`)
       };
 
-    const token_data = await token_response.json();
+    const data = await response.json();
 
-    const accessToken = token_data?.access_token;
+    accessToken = data.access_token;
 
-    const playing_response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    return GetCurrentPlaying(clientID, clientSecret, refreshToken);
+
+    /*return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: JSON.stringify(data)
+    }*/
+  } catch (err) {
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: JSON.stringify(err?.message)
+    }
+  }
+}
+
+async function GetCurrentPlaying(clientID, clientSecret, refreshToken) {
+  if (!accessToken)
+    return GetAccessToken(clientID, clientSecret, refreshToken);
+
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -54,9 +91,12 @@ export async function handler(request) {
       }
     });
 
-    const data = await playing_response.json();
+    const data = await response.json();
 
-    return { 
+    if (!data)
+      return GetAccessToken(clientID, clientSecret, refreshToken);
+
+    return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -66,7 +106,7 @@ export async function handler(request) {
       body: JSON.stringify(data)
     }
   } catch (err) {
-    return { 
+    return {
       statusCode: 500,
       headers: {
         'Access-Control-Allow-Origin': '*',
