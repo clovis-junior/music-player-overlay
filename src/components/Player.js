@@ -59,6 +59,7 @@ export function Player(props) {
   const [platformLogo, setPlatformLogo] = useState('');
   const [result, setResult] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [sleeping, setSleeping] = useState(false);
 
   const [playerClasses] = useState([]);
 
@@ -124,7 +125,7 @@ export function Player(props) {
           webSocket.current?.disconnect();
       }
     }
-  }, [props, result]);
+  }, [props?.platform, result]);
 
   //---------------- Spotify Connection --------------------//
   useEffect(() => {
@@ -173,31 +174,63 @@ export function Player(props) {
 
   //---------------- Player Functions --------------------//
   useEffect(() => {
-    if (loaded) {
-      if (result?.isPlaying) {
-        removePlayerClass(styles.paused, playerClasses);
-        return () => setMusicProgress(UpdatePercentage(result.duration?.elapsed, result.duration?.total));
-      } else {
-        addPlayerClass(styles.paused, playerClasses);
+    if (result?.isPlaying)
+      setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
 
-        const waiting = setTimeout(() => {
-          removePlayerClass(styles.show, playerClasses);
-        }, (props?.sleepAfter * 1000));
-
-        return () => clearTimeout(waiting);
-      }
-    }
-  }, [loaded, props, result, playerClasses]);
+  }, [result?.isPlaying, result?.duration]);
 
   useLayoutEffect(() => {
-    if (loaded) {
-      if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
-        return () => setAlbumArtImage(result?.albumCover);
-      else if ((!IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover)) &&
-        (result?.albumCover !== albumArtImage))
-        return () => setAlbumArtImage(result?.albumCover);
+    if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
+      return () => setAlbumArtImage(result?.albumCover);
+    else if ((!IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover)) &&
+      (result?.albumCover !== albumArtImage))
+      return () => setAlbumArtImage(result?.albumCover);
+  }, [result, albumArtImage, playerClasses]);
+
+  useEffect(() => {
+    switch (props?.platform) {
+      case 'apple':
+        setPlatformLogo(appleIcon);
+        break;
+      case 'youtube':
+        setPlatformLogo(ytmLogo);
+        break;
+      default:
+        setPlatformLogo(spotifyLogo);
     }
-  }, [loaded, result, albumArtImage, playerClasses]);
+  }, [props?.platform]);
+
+  useLayoutEffect(() => {
+    if (!IsEmpty(result) || !IsEmpty(musicData)) {
+      addPlayerClass(styles.show, playerClasses);
+      return () => setLoaded(true);
+    } else
+      removePlayerClass(styles.show, playerClasses);
+
+  }, [result, musicData, playerClasses]);
+
+  useLayoutEffect(() => {
+    if (result?.isPlaying) {
+      removePlayerClass(styles?.paused, playerClasses);
+    } else
+      addPlayerClass(styles?.paused, playerClasses);
+
+  }, [result?.isPlaying, playerClasses]);
+
+  useLayoutEffect(() => {
+    if (result?.isPlaying && sleeping) {
+      setSleeping(false);
+      addPlayerClass(styles?.show, playerClasses);
+    } else if (!result?.isPlaying && !sleeping) {
+      const timer = setTimeout(() => {
+        console.log('Sleeping...');
+        setSleeping(true);
+        removePlayerClass(styles?.show, playerClasses);
+      }, (props?.sleepAfter * 1000));
+
+      return () => clearTimeout(timer);
+    }
+  }, [result?.isPlaying, sleeping, props?.sleepAfter, playerClasses]);
 
   useLayoutEffect(() => {
     const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
@@ -210,28 +243,6 @@ export function Player(props) {
 
     return () => clearInterval(artistNameScroll);
   }, [artistNameScrolled]);
-
-  useLayoutEffect(() => {
-    if (loaded) {
-      switch (props?.platform) {
-        case 'apple':
-          setPlatformLogo(appleIcon);
-          break;
-        case 'youtube':
-          setPlatformLogo(ytmLogo);
-          break;
-        default:
-          setPlatformLogo(spotifyLogo);
-      }
-    }
-  }, [loaded, props]);
-
-  useLayoutEffect(() => {
-    if (!IsEmpty(musicData)) {
-      setLoaded(true);
-      return () => addPlayerClass(styles.show, playerClasses);
-    }
-  }, [result, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
