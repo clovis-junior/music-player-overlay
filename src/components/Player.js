@@ -159,10 +159,12 @@ export function Player(props) {
         }
 
         return () => clearInterval(check);
-      } else if ((!loaded && !IsEmpty(result))
-        || (loaded && (result?.error || IsEmpty(result)))) {
+      } else if (loaded && (!IsEmpty(result) || result?.error)) {
         console.log('Trying to get Spotify data...');
         const check = setInterval(async () => await GetResult(), 5000);
+        return () => clearInterval(check);
+      } else if (!loaded) {
+        const check = setInterval(async () => await GetResult(), 3000);
         return () => clearInterval(check);
       }
     }
