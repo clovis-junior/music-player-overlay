@@ -97,7 +97,7 @@ export function Player(props) {
     document.title = title ? `${title} - ${artist}` : defaultTitle;
 
     return { title, artist };
-  }, [result]);
+  }, [result?.title, result?.artist]);
 
   const throttleUpdate = useThrottle(data => setResult(data), 1000);
   const platformHasSpotify = props?.platform.includes('spotify');
@@ -111,20 +111,18 @@ export function Player(props) {
       socket?.on('API:Playback', ({ data, type }) => {
         switch (type) {
           case 'playbackStatus.nowPlayingItemDidChange':
-            setResult(UpdateMusicDataFromApple(data));
+            setResult(UpdateMusicDataFromApple(data, result));
             break;
           case 'playbackStatus.playbackTimeDidChange':
-            throttleUpdate(UpdateTimeDataFromApple(data));
+            throttleUpdate(UpdateTimeDataFromApple(data, result));
             break;
           case 'playbackStatus.playbackStateDidChange':
-            setResult(UpdatePlayerStateFromApple(data));
+            setResult(UpdatePlayerStateFromApple(data, result));
             break;
           default:
             console.debug(type, data);
         }
-      });
-
-      
+      });  
     }
 
     if (props?.platform === 'youtube') {
@@ -141,7 +139,7 @@ export function Player(props) {
         webSocket.current?.disconnect();
     }
 
-  }, [props?.platform, throttleUpdate]);
+  }, [props?.platform, throttleUpdate, result]);
 
   //---------------- Spotify Connection --------------------//
   useEffect(() => {
@@ -209,12 +207,8 @@ export function Player(props) {
   }, [props?.platform]);
 
   useLayoutEffect(() => {
-    if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
-      return () => setAlbumArtImage(result?.albumCover);
-    else if ((!IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover)) &&
-      (result?.albumCover !== albumArtImage))
-      return () => setAlbumArtImage(result?.albumCover);
-  }, [result, albumArtImage, playerClasses]);
+    return () => setAlbumArtImage(result?.albumCover);
+  }, [result?.albumCover, albumArtImage]);
 
   useLayoutEffect(() => {
     const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
@@ -243,22 +237,32 @@ export function Player(props) {
 
   useLayoutEffect(() => {
     if (loaded) {
-      if (!sleeping)
-        addPlayerClass(styles?.show, playerClasses);
-      else
-        removePlayerClass(styles?.show, playerClasses);
+      return () => {
+        if (!result?.isPlaying && sleeping)
+          removePlayerClass(styles?.show, playerClasses);
+        else if (result?.isPlaying && !sleeping)
+          addPlayerClass(styles?.show, playerClasses);
 
-      if (result?.isPlaying)
-        removePlayerClass(styles?.paused, playerClasses);
-      else
-        addPlayerClass(styles?.paused, playerClasses);
+        if (result?.isPlaying)
+          removePlayerClass(styles?.paused, playerClasses);
+        else
+          addPlayerClass(styles?.paused, playerClasses);
+      } 
     }
   }, [loaded, result, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
-    setLoaded((!IsEmpty(albumArtImage) && !IsEmpty(musicData)));
+    if (props?.platform === 'apple')
+      setLoaded((!IsEmpty(musicData)));
+    else
+      setLoaded((!IsEmpty(result)));
 
-  }, [albumArtImage, musicData, playerClasses]);
+    if (loaded)
+      addPlayerClass(styles?.show, playerClasses);
+    else
+      removePlayerClass(styles?.show, playerClasses);
+
+  }, [loaded, props?.platform, result, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
@@ -344,7 +348,7 @@ export function Player(props) {
         ) : (<></>)}
         {(!props.solidColor) ? (
           <div className={styles?.music_album_blur_container}>
-            <div className={styles?.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+            <div className={styles?.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage || 'null'})` }}></div>
           </div>
         ) : (<></>)}
         <div className={styles?.music_info_mask}>

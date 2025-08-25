@@ -14,37 +14,43 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-export function UpdatePlayerTimeData(data = {}) {
+export function UpdatePlayerTimeData(data = {}, result) {
+    result = result || {};
+
     if (!IsEmpty(data)) {
-        const isPlaying = data?.isPlaying || false;
-        const duration = {
+        result.isPlaying = data?.isPlaying || false;
+        result.duration = {
             elapsed: data?.currentPlaybackTime || 0,
             remaining: data?.currentPlaybackTimeRemaining || 0,
             total: data?.currentPlaybackDuration || 0
         };
-
-        return { isPlaying, duration };
     }
+
+    return result;
 }
 
-export function UpdatePlayerMusicData(data = {}) {
+export function UpdatePlayerMusicData(data = {}, result) {
+    result = result || {};
+
     if (!IsEmpty(data)) {
-        const title = data?.name;
-        const artist = data?.artistName;
-        const albumCover = GetAlbumCover(data?.artwork?.url, (data?.artwork?.width || 300));
-
-        return {title, artist, albumCover};
+        result.title = data?.name || result?.title;
+        result.artist = data?.artistName || result?.artist;
+        result.albumCover = GetAlbumCover(data?.artwork?.url ||  result.albumCover, (data?.artwork?.width || 300));
     }
+
+    return result;
 }
 
-export function UpdatePlayerStateData(data = {}) {
-    if (data?.state === 'playing') {
-        return UpdatePlayerMusicData(data?.attributes);
-    } else if (data?.state === 'paused' || data?.state === 'stopped') {
-        const isPlaying = false;
+export function UpdatePlayerStateData(data = {}, result) {
+    result = result || {};
 
-        return { isPlaying };
-    }
+    if (data?.state === 'playing') {
+        result.isPlaying = true;
+        return UpdatePlayerMusicData(data?.attributes, result);
+    } else if (data?.state === 'paused' || data?.state === 'stopped')
+        result.isPlaying = false;
+
+    return result;
 }
 
 export function GetData() {
