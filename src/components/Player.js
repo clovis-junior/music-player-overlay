@@ -76,7 +76,7 @@ export function Player(props) {
 
   const musicData = useMemo(() => {
     if (IsEmpty(result?.title) || IsEmpty(result?.artist))
-      return;
+      return null;
 
     const title = result?.title;
     const artist = result?.artist;
@@ -187,6 +187,18 @@ export function Player(props) {
       return () => setAlbumArtImage(result?.albumCover);
   }, [result, albumArtImage, playerClasses]);
 
+  useLayoutEffect(() => {
+    const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
+
+    return () => clearInterval(musicNameScroll);
+  }, [musicNameScrolled]);
+
+  useLayoutEffect(() => {
+    const artistNameScroll = setInterval(() => setArtistNameScrolled(!artistNameScrolled), 8000);
+
+    return () => clearInterval(artistNameScroll);
+  }, [artistNameScrolled]);
+
   useEffect(() => {
     switch (props?.platform) {
       case 'apple':
@@ -199,15 +211,6 @@ export function Player(props) {
         setPlatformLogo(spotifyLogo);
     }
   }, [props?.platform]);
-
-  useLayoutEffect(() => {
-    if (!IsEmpty(result) || !IsEmpty(musicData)) {
-      addPlayerClass(styles.show, playerClasses);
-      return () => setLoaded(true);
-    } else
-      removePlayerClass(styles.show, playerClasses);
-
-  }, [result, musicData, playerClasses]);
 
   useLayoutEffect(() => {
     if (result?.isPlaying) {
@@ -233,16 +236,12 @@ export function Player(props) {
   }, [result?.isPlaying, sleeping, props?.sleepAfter, playerClasses]);
 
   useLayoutEffect(() => {
-    const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
-
-    return () => clearInterval(musicNameScroll);
-  }, [musicNameScrolled]);
-
-  useLayoutEffect(() => {
-    const artistNameScroll = setInterval(() => setArtistNameScrolled(!artistNameScrolled), 8000);
-
-    return () => clearInterval(artistNameScroll);
-  }, [artistNameScrolled]);
+    setLoaded((!IsEmpty(result) && !IsEmpty(musicData)));
+    
+    if (loaded)
+      addPlayerClass(styles?.show, playerClasses);
+    
+  }, [result, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
@@ -314,7 +313,7 @@ export function Player(props) {
             </div>
           ) : (<></>)}
           <figure>
-            <img id={styles.music_album_art} src={albumArtImage} alt={result?.title} />
+            <img id={styles.music_album_art} src={albumArtImage} alt={musicData?.title} />
           </figure>
         </div>
       ) : (<></>)}
