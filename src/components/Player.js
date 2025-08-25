@@ -33,9 +33,9 @@ function DrawWaveForms({ number = 8 }) {
     waves.push(i);
 
   return (
-    <div className={`${styles.music_waveforms}`}>
+    <div className={`${styles?.music_waveforms}`}>
       {waves.map(index => (
-        <div key={index} className={styles.waveform} />
+        <div key={index} className={styles?.waveform} />
       ))}
     </div>
   )
@@ -106,12 +106,12 @@ export function Player(props) {
           default:
             console.debug(type, data);
         }
-
-        return () => {
-          if (webSocket.current?.connected)
-            webSocket.current?.disconnect();
-        }
       });
+
+      return () => {
+        if (webSocket.current?.connected)
+          webSocket.current?.disconnect();
+      }
     }
 
     if (props?.platform === 'youtube') {
@@ -125,6 +125,7 @@ export function Player(props) {
           webSocket.current?.disconnect();
       }
     }
+
   }, [props?.platform, result]);
 
   //---------------- Spotify Connection --------------------//
@@ -179,6 +180,19 @@ export function Player(props) {
 
   }, [result?.isPlaying, result?.duration]);
 
+  useEffect(() => {
+    switch (props?.platform) {
+      case 'apple':
+        setPlatformLogo(appleIcon);
+        break;
+      case 'youtube':
+        setPlatformLogo(ytmLogo);
+        break;
+      default:
+        setPlatformLogo(spotifyLogo);
+    }
+  }, [props?.platform]);
+
   useLayoutEffect(() => {
     if (IsEmpty(albumArtImage) && !IsEmpty(result?.albumCover))
       return () => setAlbumArtImage(result?.albumCover);
@@ -199,49 +213,43 @@ export function Player(props) {
     return () => clearInterval(artistNameScroll);
   }, [artistNameScrolled]);
 
-  useEffect(() => {
-    switch (props?.platform) {
-      case 'apple':
-        setPlatformLogo(appleIcon);
-        break;
-      case 'youtube':
-        setPlatformLogo(ytmLogo);
-        break;
-      default:
-        setPlatformLogo(spotifyLogo);
-    }
-  }, [props?.platform]);
-
-  useLayoutEffect(() => {
-    if (result?.isPlaying) {
-      removePlayerClass(styles?.paused, playerClasses);
-    } else
-      addPlayerClass(styles?.paused, playerClasses);
-
-  }, [result, playerClasses]);
-
   useLayoutEffect(() => {
     if (result?.isPlaying && sleeping) {
       setSleeping(false);
-      addPlayerClass(styles?.show, playerClasses);
     } else if (!result?.isPlaying && !sleeping) {
       const timer = setTimeout(() => {
         console.log('Sleeping...');
         setSleeping(true);
-        removePlayerClass(styles?.show, playerClasses);
       }, (props?.sleepAfter * 1000));
 
       return () => clearTimeout(timer);
     }
-  }, [result?.isPlaying, sleeping, props?.sleepAfter, playerClasses]);
+  }, [result?.isPlaying, sleeping, props?.sleepAfter]);
 
   useLayoutEffect(() => {
-    setLoaded((!IsEmpty(result) && !IsEmpty(musicData)));
+    if (loaded) {
+      if (!sleeping)
+        addPlayerClass(styles?.show, playerClasses);
+      else
+        removePlayerClass(styles?.show, playerClasses);
+
+      if (result?.isPlaying)
+        removePlayerClass(styles?.paused, playerClasses);
+      else
+        addPlayerClass(styles?.paused, playerClasses);
+    }
+  }, [loaded, result, sleeping, playerClasses]);
+
+  useLayoutEffect(() => {
+    if (loaded) {
+      if (IsEmpty(musicData))
+        setLoaded(false);
+    } else {
+      if (!IsEmpty(albumArtImage) && !IsEmpty(musicData))
+        setLoaded(true);
+    }
     
-    if (loaded)
-      addPlayerClass(styles?.show, playerClasses);
-    
-  }, [result, playerClasses]);
+  }, [loaded, albumArtImage, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
@@ -255,40 +263,40 @@ export function Player(props) {
     return (<>{result?.error}</>);
   }
 
-  if (props?.noShadow) addPlayerClass(styles.no_shadow, playerClasses);
-  if (props?.squareLayout) addPlayerClass(styles.square, playerClasses);
+  if (props?.noShadow) addPlayerClass(styles?.no_shadow, playerClasses);
+  if (props?.squareLayout) addPlayerClass(styles?.square, playerClasses);
   if (props.compact) {
-    addPlayerClass(styles.music_player_compact, playerClasses);
+    addPlayerClass(styles?.music_player_compact, playerClasses);
 
     return (
       <main className={playerClasses.join(' ')}>
         {(props?.showPlatform) ? (
-          <div className={styles.music_platform_icon}>
+          <div className={styles?.music_platform_icon}>
             <figure>
               <AsyncImage src={platformLogo} />
             </figure>
           </div>
         ) : (<></>)}
         {(!props.solidColor) ? (
-          <div className={styles.music_album_blur_container}>
-            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+          <div className={styles?.music_album_blur_container}>
+            <div className={styles?.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
           </div>
         ) : (<></>)}
         {(!props.hideProgressBar) ? (
-          <div className={styles.music_progress_bar}>
+          <div className={styles?.music_progress_bar}>
             <div id='music-progress-bar' style={{ 'width': `${musicProgress}%` }} />
           </div>
         ) : (<></>)}
-        <div className={props?.textCentered ? `${styles.music_infos} ${styles.centered}` : styles.music_infos}>
-          <div className={styles.music_info_mask}>
-            <span ref={musicNameComponent} id={styles.music_title} style={{
+        <div className={props?.textCentered ? `${styles?.music_infos} ${styles?.centered}` : styles?.music_infos}>
+          <div className={styles?.music_info_mask}>
+            <span ref={musicNameComponent} id={styles?.music_title} style={{
               'transform': (!musicNameScrolled)
                 ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
                 : `translateX(0)`
             }}>{musicData?.title}</span>
           </div>
-          <div className={styles.music_info_mask}>
-            <span ref={artistNameComponent} id={styles.music_artist} style={{
+          <div className={styles?.music_info_mask}>
+            <span ref={artistNameComponent} id={styles?.music_artist} style={{
               'transform': (!artistNameScrolled)
                 ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
                 : `translateX(0)`
@@ -299,46 +307,46 @@ export function Player(props) {
     )
   }
 
-  addPlayerClass(styles.music_player, playerClasses);
+  addPlayerClass(styles?.music_player, playerClasses);
 
   return (
     <main className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
-        <div className={styles.music_album_art}>
+        <div className={styles?.music_album_art}>
           {(props.showAlbum && props?.showPlatform) ? (
-            <div className={styles.music_platform_icon}>
+            <div className={styles?.music_platform_icon}>
               <figure>
                 <AsyncImage src={platformLogo} />
               </figure>
             </div>
           ) : (<></>)}
           <figure>
-            <img id={styles.music_album_art} src={albumArtImage} alt={musicData?.title} />
+            <img id={styles?.music_album_art} src={albumArtImage} alt={musicData?.title} />
           </figure>
         </div>
       ) : (<></>)}
-      <aside className={styles.music_infos}>
+      <aside className={styles?.music_infos}>
         {(!props.showAlbum && props?.showPlatform) ? (
-          <div className={styles.music_platform_icon}>
+          <div className={styles?.music_platform_icon}>
             <figure>
               <AsyncImage src={platformLogo} />
             </figure>
           </div>
         ) : (<></>)}
         {(!props.solidColor) ? (
-          <div className={styles.music_album_blur_container}>
-            <div className={styles.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
+          <div className={styles?.music_album_blur_container}>
+            <div className={styles?.music_album_art} style={{ 'backgroundImage': `url(${albumArtImage})` }}></div>
           </div>
         ) : (<></>)}
-        <div className={styles.music_info_mask}>
-          <span ref={musicNameComponent} id={styles.music_title} style={{
+        <div className={styles?.music_info_mask}>
+          <span ref={musicNameComponent} id={styles?.music_title} style={{
             'transform': (!musicNameScrolled)
               ? `translateX(-${(musicNameComponent.current?.scrollWidth - musicNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
           }}>{musicData?.title}</span>
         </div>
-        <div className={styles.music_info_mask}>
-          <span ref={artistNameComponent} id={styles.music_artist} style={{
+        <div className={styles?.music_info_mask}>
+          <span ref={artistNameComponent} id={styles?.music_artist} style={{
             'transform': (!artistNameScrolled)
               ? `translateX(-${(artistNameComponent.current?.scrollWidth - artistNameComponent.current?.offsetWidth)}px)`
               : `translateX(0)`
@@ -346,16 +354,16 @@ export function Player(props) {
         </div>
         {(props.hideProgressBar && props.hideProgress) ?
           (props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>) : (
-            <footer className={styles.music_progress}>
-              <div className={styles.music_progress_values}>
-                {!props.hideProgress ? (<span id={styles.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
+            <footer className={styles?.music_progress}>
+              <div className={styles?.music_progress_values}>
+                {!props.hideProgress ? (<span id={styles?.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
                 {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
                 {!props.hideProgress ? (
-                  <span id={styles.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
+                  <span id={styles?.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
                   : (<></>)}
               </div>
               {(!props.hideProgressBar) ? (
-                <div className={styles.music_progress_bar}>
+                <div className={styles?.music_progress_bar}>
                   <div style={{ 'width': `${musicProgress}%` }} />
                 </div>
               ) : (<></>)}
