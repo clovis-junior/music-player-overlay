@@ -237,7 +237,7 @@ export function Player(props) {
 
   useLayoutEffect(() => {
     if (props?.platform === 'apple') {
-      if ((!IsEmpty(albumArtImage) && !IsEmpty(result))) {
+      if (!IsEmpty(albumArtImage) && !IsEmpty(result)) {
         addPlayerClass(styles?.show, playerClasses);
         setLoaded(true);
       }
