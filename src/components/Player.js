@@ -236,15 +236,19 @@ export function Player(props) {
   }, [result?.isPlaying, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
-    if (props?.platform === 'apple')
-      setLoaded((!IsEmpty(albumArtImage) && !IsEmpty(result)));
-    else
-      setLoaded((!IsEmpty(albumArtImage) && !IsEmpty(musicData)));
+    if (props?.platform === 'apple') {
+      if ((!IsEmpty(albumArtImage) && !IsEmpty(result))) {
+        addPlayerClass(styles?.show, playerClasses);
+        setLoaded(true);
+      }
+    } else {
+      if (!IsEmpty(albumArtImage) && !IsEmpty(musicData)) {
+        addPlayerClass(styles?.show, playerClasses);
+        setLoaded(true);
+      }
+    }
 
-    if (loaded)
-      addPlayerClass(styles?.show, playerClasses);
-    
-  }, [loaded, props?.platform, albumArtImage, result, musicData, playerClasses]);
+  }, [props?.platform, albumArtImage, result, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
