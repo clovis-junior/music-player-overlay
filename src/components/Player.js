@@ -95,16 +95,43 @@ export function Player(props) {
     if (props?.platform === 'apple') {
       socket = AppleMusicData();
 
+      let playData;
+
       socket?.on('API:Playback', ({ data, type }) => {
         switch (type) {
           case 'playbackStatus.playbackStateDidChange':
-            setResult(current => UpdatePlaybackStateFromCider(data, current));
+            playData = UpdatePlaybackStateFromCider(data);
+            if (playData.isPlaying) {
+              setResult(current => ({
+                ...current,
+                isPlaying: playData.isPlaying,
+                title: playData?.musicData?.title || current?.title, 
+                artist: playData?.musicData?.artist || current?.artist,
+                albumCover: playData?.musicData?.albumCover || current?.albumCover
+              }));
+            } else
+              setResult(current => ({
+                ...current,
+                isPlaying: playData.isPlaying
+              }));
             break;
           case 'playbackStatus.nowPlayingItemDidChange':
-            setResult(current => UpdateMusicDataFromCider(data, current));
+            playData = UpdateMusicDataFromCider(data);
+            setResult(current => ({
+              ...current,
+              isPlaying: playData.isPlaying || current?.isPlaying,
+              title: title, 
+              artist: artist,
+              albumCover: albumCover
+            }));
             break;
           case 'playbackStatus.playbackTimeDidChange':
-            setResult(current => UpdateMusicTimeFromCider(data, current));
+            playData = UpdateMusicTimeFromCider(data);
+            setResult(current => ({
+              ...current,
+              isPlaying: playData?.isPlaying || current?.isPlaying,
+              duration: playData?.duration || current?.duration
+            }));
             break;
           default:
             console.debug(type, data);
