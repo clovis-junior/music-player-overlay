@@ -24,6 +24,8 @@ export function UpdateMusicTime(data) {
 
         return { isPlaying, duration };
     }
+
+    return {};
 }
 
 export function UpdateMusicData(data) {
@@ -34,6 +36,8 @@ export function UpdateMusicData(data) {
 
         return { title, artist, albumCover }
     }
+
+    return {};
 }
 
 export function UpdatePlaybackState(data) {
