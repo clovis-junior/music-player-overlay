@@ -128,7 +128,7 @@ export function Player(props) {
     if (props?.platform === 'youtube') {
       socket = YouTubeMusicData();
       socket?.on('state-update', state => {
-        setResult(UpdatePlayerDataFromYTM(state))
+        throttleUpdate(setResult(UpdatePlayerDataFromYTM(state)))
       });
     }
 
@@ -252,17 +252,15 @@ export function Player(props) {
   }, [loaded, result, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
-    if (props?.platform === 'apple')
-      setLoaded((!IsEmpty(musicData)));
-    else
-      setLoaded((!IsEmpty(result)));
+    if (!IsEmpty(albumArtImage) || !IsEmpty(musicData))
+      setLoaded(true);
 
     if (loaded)
       addPlayerClass(styles?.show, playerClasses);
     else
       removePlayerClass(styles?.show, playerClasses);
 
-  }, [loaded, props?.platform, result, musicData, playerClasses]);
+  }, [loaded, albumArtImage, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
@@ -369,10 +367,10 @@ export function Player(props) {
           (props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>) : (
             <footer className={styles?.music_progress}>
               <div className={styles?.music_progress_values}>
-                {!props.hideProgress ? (<span id={styles?.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
+                {!props.hideProgress ? (<span id={styles?.music_time_elapsed}>{ConvertTime(result?.duration?.elapsed)}</span>) : (<></>)}
                 {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
                 {!props.hideProgress ? (
-                  <span id={styles?.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
+                  <span id={styles?.music_time_total}>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>)
                   : (<></>)}
               </div>
               {(!props.hideProgressBar) ? (

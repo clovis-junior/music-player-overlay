@@ -82,7 +82,7 @@ export function UpdatePlayerData(data) {
   return { isPlaying, title, artist, duration, albumCover };
 }
 
-export function GetData() {
+export function GetData(debug = false) {
   try {
     const socket = io(`${baseURL}/realtime`, {
       transports: ['websocket'],
@@ -95,6 +95,10 @@ export function GetData() {
     socket?.on('connect', () => console.log('Connected to YTMDesktop'));
     socket?.on('disconnect', () => console.log('Disconnected to YTMDesktop... Reconnecting...'));
     socket?.on('connect_error', err => console.error('Connection error:', err.message));
+
+    if (debug)
+      socket?.onAny((event, ...args) => console.debug(`${event}`, args));
+
     return socket
   } catch (e) {
     console.error(e.message);
