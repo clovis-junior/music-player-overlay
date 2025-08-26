@@ -233,7 +233,7 @@ export function Player(props) {
     else
       addPlayerClass(styles?.paused, playerClasses); 
 
-  }, [loaded, result?.isPlaying, sleeping, playerClasses]);
+  }, [result?.isPlaying, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
     if (props?.platform === 'apple')
