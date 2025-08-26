@@ -252,17 +252,14 @@ export function Player(props) {
   }, [loaded, result, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
-    if (props?.platform === 'apple')
-      setLoaded((!IsEmpty(musicData)));
-    else
-      setLoaded((!IsEmpty(result)));
-
+    setLoaded((!IsEmpty(musicData)));
+    
     if (loaded)
       addPlayerClass(styles?.show, playerClasses);
     else
       removePlayerClass(styles?.show, playerClasses);
 
-  }, [loaded, props?.platform, result, musicData, playerClasses]);
+  }, [loaded, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
