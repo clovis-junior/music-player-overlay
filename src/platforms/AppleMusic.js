@@ -14,9 +14,7 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-export function UpdatePlayerTimeData(data = {}, result) {
-    result = result || {};
-
+export function UpdatePlayerTimeData(data, result) {
     if (!IsEmpty(data)) {
         result.isPlaying = data?.isPlaying || false;
         result.duration = {
@@ -29,9 +27,7 @@ export function UpdatePlayerTimeData(data = {}, result) {
     return result;
 }
 
-export function UpdatePlayerMusicData(data = {}, result) {
-    result = result || {};
-
+export function UpdatePlayerMusicData(data, result) {
     if (!IsEmpty(data)) {
         result.title = data?.name || result?.title;
         result.artist = data?.artistName || result?.artist;
@@ -41,9 +37,7 @@ export function UpdatePlayerMusicData(data = {}, result) {
     return result;
 }
 
-export function UpdatePlayerStateData(data = {}, result) {
-    result = result || {};
-
+export function UpdatePlayerStateData(data, result) {
     if (data?.state === 'playing') {
         result.isPlaying = true;
         return UpdatePlayerMusicData(data?.attributes, result);

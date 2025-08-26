@@ -109,7 +109,9 @@ export function Player(props) {
             console.debug(type, data);
         }
       });
-    } else if (props?.platform === 'youtube') {
+    } 
+    
+    if (props?.platform === 'youtube') {
       socket = YouTubeMusicData();
       socket?.on('state-update', state => {
         setResult(UpdatePlayerDataFromYTM(state));
@@ -222,28 +224,30 @@ export function Player(props) {
   }, [result?.isPlaying, sleeping, props?.sleepAfter]);
 
   useLayoutEffect(() => {
-    if (loaded) {
-      return () => {
-        if (!result?.isPlaying && sleeping)
-          removePlayerClass(styles?.show, playerClasses);
-        else if (result?.isPlaying && !sleeping)
-          addPlayerClass(styles?.show, playerClasses);
+    if (!result?.isPlaying && sleeping)
+      removePlayerClass(styles?.show, playerClasses);
+    else if (result?.isPlaying && !sleeping)
+      addPlayerClass(styles?.show, playerClasses);
 
-        if (result?.isPlaying)
-          removePlayerClass(styles?.paused, playerClasses);
-        else
-          addPlayerClass(styles?.paused, playerClasses);
-      } 
-    }
-  }, [loaded, result, sleeping, playerClasses]);
+    if (result?.isPlaying)
+      removePlayerClass(styles?.paused, playerClasses);
+    else
+      addPlayerClass(styles?.paused, playerClasses); 
+
+  }, [loaded, result?.isPlaying, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
-    if (!IsEmpty(albumArtImage) && !IsEmpty(musicData)) {
+    if (props?.platform === 'apple')
+      setLoaded((!IsEmpty(albumArtImage) && !IsEmpty(result)));
+    else
+      setLoaded((!IsEmpty(albumArtImage) && !IsEmpty(musicData)));
+
+    if (loaded) {
       console.log('Loaded!');
-      setLoaded(true);
       addPlayerClass(styles?.show, playerClasses);
     }
-  }, [albumArtImage, musicData, playerClasses]);
+    
+  }, [loaded, props?.platform, albumArtImage, result, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');

@@ -87,7 +87,7 @@ export function GetData(debug = false) {
     const socket = io(`${baseURL}/realtime`, {
       transports: ['websocket'],
       auth: { 'token': token },
-      reconnection: false,
+      reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 5000
     });
