@@ -252,17 +252,11 @@ export function Player(props) {
   }, [loaded, result, sleeping, playerClasses]);
 
   useLayoutEffect(() => {
-    if (!IsEmpty(albumArtImage) || !IsEmpty(musicData))
+    if (!IsEmpty(albumArtImage) && !IsEmpty(musicData)) {
       setLoaded(true);
-
-    setLoaded((!IsEmpty(musicData)));
-    
-    if (loaded)
       addPlayerClass(styles?.show, playerClasses);
-    else
-      removePlayerClass(styles?.show, playerClasses);
-
-  }, [loaded, albumArtImage, musicData, playerClasses]);
+    }
+  }, [albumArtImage, musicData, playerClasses]);
 
   if (!loaded) {
     console.log('Loading...');
