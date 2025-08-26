@@ -88,8 +88,6 @@ export function Player(props) {
     return { title, artist };
   }, [result?.title, result?.artist]);
 
-  const platformHasSpotify = props?.platform.includes('spotify');
-
   //---------------- Apple Music and YouTube Music Connections --------------------//
   useEffect(() => {
     let socket;
@@ -140,14 +138,14 @@ export function Player(props) {
 
   //---------------- Spotify Connection --------------------//
   useEffect(() => {
-    if (platformHasSpotify) {
+    if (props?.platform === 'spotify') {
       async function GetResult() {
         let data = await SpotifyData();
         setResult(UpdatePlayerDataFromSpotify(data));
       }
 
       if (loaded) {
-        const check = setInterval(async () => await GetResult(), 1000);
+        const check = setInterval(async () => await GetResult(), 2000);
 
         if (result?.isPlaying) {
           const refresh = setTimeout(async () => await GetResult(), result?.duration?.remaining);
@@ -174,7 +172,7 @@ export function Player(props) {
         return () => clearInterval(check);
       }
     }
-  }, [loaded, result, props, playerClasses, platformHasSpotify]);
+  }, [loaded, result, playerClasses, props?.platform]);
 
   //---------------- Player Functions --------------------//
   useEffect(() => {
