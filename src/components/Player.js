@@ -1,25 +1,27 @@
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+
 import {
   GetData as YouTubeMusicData,
   UpdatePlayerData as UpdatePlayerDataFromYTM
 } from '../platforms/YouTubeMusic.js';
+
 import {
   GetData as AppleMusicData,
-  UpdatePlayerTimeData as UpdateTimeDataFromApple,
-  UpdatePlayerMusicData as UpdateMusicDataFromApple,
-  UpdatePlayerStateData as UpdatePlayerStateFromApple
+  UpdateMusicTime as UpdateMusicTimeFromCider,
+  UpdateMusicData as UpdateMusicDataFromCider,
+  UpdatePlaybackState as UpdatePlaybackStateFromCider
 } from '../platforms/AppleMusic.js';
-// import {
-//   GetData as SpotifyData,
-//   UpdatePlayerData as UpdatePlayerDataFromSpotify
-// } from '../platforms/Spotify.js';
+
 import {
-  GetData as SpotifyCustomData,
-  UpdatePlayerData as UpdatePlayerDataFromSpotifyCustom
-} from '../platforms/SpotifyCustom.js';
+  GetData as SpotifyData,
+  UpdatePlayerData as UpdatePlayerDataFromSpotify
+} from '../platforms/Spotify.js';
+
 import { ConvertTime, IsEmpty } from '../Utils.js';
 import styles from '../scss/player.module.scss';
+
 import AsyncImage from '../components/AsyncImage.js';
+
 import appleIcon from '../images/apple-music-icon.svg';
 import spotifyLogo from '../images/spotify-logo.png';
 import ytmLogo from '../images/ytm-logo.png';
@@ -90,51 +92,47 @@ export function Player(props) {
 
   //---------------- Apple Music and YouTube Music Connections --------------------//
   useEffect(() => {
-    async function GetResult() {
-      let socket;
+    let socket;
 
-      if (props?.platform === 'apple') {
-        socket = AppleMusicData();
-        socket?.on('API:Playback', ({ data, type }) => {
-          switch (type) {
-            case 'playbackStatus.nowPlayingItemDidChange':
-              setResult(current => UpdateMusicDataFromApple(data, current));
-              break;
-            case 'playbackStatus.playbackTimeDidChange':
-              setResult(current => UpdateTimeDataFromApple(data, current));
-              break;
-            case 'playbackStatus.playbackStateDidChange':
-              setResult(current => UpdatePlayerStateFromApple(data, current));
-              break;
-            default:
-              console.debug(type, data);
-          }
-        });
-      } 
-      
-      if (props?.platform === 'youtube') {
-        socket = YouTubeMusicData();
-        socket?.on('state-update', state => {
-          setResult(UpdatePlayerDataFromYTM(state));
-        });
-      }
+    if (props?.platform === 'apple') {
+      socket = AppleMusicData();
 
-      webSocket.current = socket;
+      socket?.on('API:Playback', ({ data, type }) => {
+        switch (type) {
+          case 'playbackStatus.playbackStateDidChange':
+            setResult(current => UpdatePlaybackStateFromCider(data, current));
+            break;
+          case 'playbackStatus.nowPlayingItemDidChange':
+            setResult(current => UpdateMusicDataFromCider(data, current));
+            break;
+          case 'playbackStatus.playbackTimeDidChange':
+            setResult(current => UpdateMusicTimeFromCider(data, current));
+            break;
+          default:
+            console.debug(type, data);
+        }
+      }); 
+    } else if (props?.platform === 'youtube') {
+      socket = YouTubeMusicData();
+
+      socket?.on('state-update', state => {
+        setResult(UpdatePlayerDataFromYTM(state));
+      });
     }
 
-    GetResult();
+    webSocket.current = socket;
 
     return () => {
       if (webSocket.current) {
+
         if (props?.platform === 'apple')
           webSocket.current?.off('API:Playback');
-  
-        if (props?.platform === 'youtube')
+        else if (props?.platform === 'youtube')
           webSocket.current?.off('state-update');
-        
+
         if (webSocket.current?.connected)
           webSocket.current?.disconnect();
-  
+
         webSocket.current = null;
       }
     }
@@ -144,15 +142,8 @@ export function Player(props) {
   useEffect(() => {
     if (platformHasSpotify) {
       async function GetResult() {
-        var data;
-
-        // if(props.platform === 'spotify') {
-        //   data = await SpotifyData();
-        //   setResult(UpdatePlayerDataFromSpotify(data));
-        // } else if (props.platform === 'spotify-custom') {
-        data = await SpotifyCustomData();
-        setResult(UpdatePlayerDataFromSpotifyCustom(data));
-        // }
+        let data = await SpotifyData();
+        setResult(UpdatePlayerDataFromSpotify(data));
       }
 
       if (loaded) {
@@ -187,10 +178,13 @@ export function Player(props) {
 
   //---------------- Player Functions --------------------//
   useEffect(() => {
-    if (result?.isPlaying)
-      setMusicProgress(UpdatePercentage(result?.duration?.elapsed, result?.duration?.total));
+    if (result?.isPlaying) {
+      const percentage = UpdatePercentage(result?.duration?.elapsed, result?.duration?.total);
 
-  }, [result?.isPlaying, result?.duration]);
+      return () => setMusicProgress(percentage);
+    }
+
+  }, [result?.isPlaying, result?.duration?.elapsed, result?.duration?.total]);
 
   useEffect(() => {
     switch (props?.platform) {
@@ -241,7 +235,7 @@ export function Player(props) {
     if (result?.isPlaying)
       removePlayerClass(styles?.paused, playerClasses);
     else
-      addPlayerClass(styles?.paused, playerClasses); 
+      addPlayerClass(styles?.paused, playerClasses);
 
   }, [result?.isPlaying, sleeping, playerClasses]);
 
@@ -356,10 +350,10 @@ export function Player(props) {
           (props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>) : (
             <footer className={styles?.music_progress}>
               <div className={styles?.music_progress_values}>
-                {!props.hideProgress ? (<span id={styles?.music_time_elapsed}>{ConvertTime(result?.duration?.elapsed)}</span>) : (<></>)}
+                {!props.hideProgress ? (<span id={styles?.music_time_elapsed}>{ConvertTime(result.duration?.elapsed)}</span>) : (<></>)}
                 {(props?.showWaves > 0) ? (<DrawWaveForms number={props?.showWaves} />) : (<></>)}
                 {!props.hideProgress ? (
-                  <span id={styles?.music_time_total}>{props?.remainingTime ? ConvertTime(result?.duration?.remaining) : ConvertTime(result?.duration?.total)}</span>)
+                  <span id={styles?.music_time_total}>{props?.remainingTime ? ConvertTime(result.duration?.remaining) : ConvertTime(result.duration?.total)}</span>)
                   : (<></>)}
               </div>
               {(!props.hideProgressBar) ? (

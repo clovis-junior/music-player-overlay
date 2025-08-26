@@ -1,59 +1,61 @@
-// import songData from'../Apple.test.json';
 import { io } from 'socket.io-client';
 import { IsEmpty } from '../Utils.js';
 
-const baseURL = 'http://127.0.0.1:10767';
+const baseURL = 'http://localhost:10767';
 
 function GetAlbumCover(url = '', size = 600) {
     if (IsEmpty(url))
         return '';
 
-    let cover = url.replace('{w}', size);
-    cover = cover.replace('{h}', size);
+    let cover = url.replace('{w}', size || 600);
+    cover = cover.replace('{h}', size || 600);
 
     return cover
 }
 
-export function UpdatePlayerTimeData(data, result) {
+export function UpdateMusicTime(data, result) {
     if (!IsEmpty(data)) {
-        result.isPlaying = data?.isPlaying || false;
+        result.isPlaying = data?.isPlaying || result?.isPlaying || false;
         result.duration = {
-            elapsed: data?.currentPlaybackTime || 0,
-            remaining: data?.currentPlaybackTimeRemaining || 0,
-            total: data?.currentPlaybackDuration || 0
+            elapsed: data?.currentPlaybackTime || result?.duration?.elapsed || 0,
+            remaining: data?.currentPlaybackTimeRemaining || result?.duration?.remaining || 0,
+            total: data?.currentPlaybackDuration || result?.duration?.total || 0
         };
     }
 
     return result;
 }
 
-export function UpdatePlayerMusicData(data, result) {
+export function UpdateMusicData(data, result) {
     if (!IsEmpty(data)) {
         result.title = data?.name || result?.title;
         result.artist = data?.artistName || result?.artist;
-        result.albumCover = GetAlbumCover(data?.artwork?.url ||  result.albumCover, (data?.artwork?.width || 300));
+        result.albumCover = GetAlbumCover(data?.artwork?.url || result.albumCover, data?.artwork?.width || 600);
     }
 
     return result;
 }
 
-export function UpdatePlayerStateData(data, result) {
-    if (data?.state === 'playing') {
-        result.isPlaying = true;
-        return UpdatePlayerMusicData(data?.attributes, result);
-    } else if (data?.state === 'paused' || data?.state === 'stopped')
-        result.isPlaying = false;
+export function UpdatePlaybackState(data, result) {
+    if (IsEmpty(data)) return result;
 
-    return result;
+    switch (data?.state) {
+        case 'paused':
+        case 'stopped':
+            result.isPlaying = false;
+            return result;
+        case 'playing':
+            result.isPlaying = true;
+            return UpdateMusicData(data?.attributes, result);
+        default:
+            return result;
+    }  
 }
 
 export function GetData(debug = false) {
     try {
         const socket = io(`${baseURL}`, {
-            transports: ['websocket'],
-            reconnection: true,
-            reconnectionAttempts: Infinity,
-            timeout: 10000
+            transports: ['websocket']
         });
 
         socket?.on('connect', () => console.log('Connected to Cider'));
@@ -64,7 +66,7 @@ export function GetData(debug = false) {
 
         if (debug)
             socket?.onAny((event, ...args) => console.debug(`${event}`, args));
-        
+
         return socket
     } catch (e) {
         console.error(e.message);

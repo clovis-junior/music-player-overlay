@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 // import { inDevelopment } from '../App';
-import { GetAccessToken } from '../platforms/SpotifyCustom.js';
+import { GetAccessToken } from '../platforms/Spotify.js';
 import { IsEmpty } from '../Utils.js';
 import { RequestCode, RequestToken } from '../platforms/YouTubeMusic.js';
 import { useNavigate } from 'react-router-dom';
@@ -162,13 +162,12 @@ function Spotify() {
     const [playerParams, setPlayerParams] = useState(null);
 
     function Success(props) {
-        // const playerURL = `${browserURL}#player?platform=spotify&token=${props?.token}`;
         const playerURL = `${browserURL}player?platform=spotify-custom&${props?.playerParams}`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
 
-    function YourOwnApp() {
+    function Auth() {
         const clientID = useRef(null);
         const clientSecret = useRef(null);
 
@@ -242,28 +241,6 @@ function Spotify() {
         )
     }
 
-    // function OurOwnApp() {
-    //     function GetSpotifyAuthURL(e) {
-    //         const baseURL = inDevelopment ? 'http://localhost' : 'https://music-player-spotify-web-api.onrender.com';
-    //         e.target.disabled = true;
-
-    //         return window.location.href = `${baseURL}/login`
-    //     }
-
-    //     return (
-    //         <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
-    //             <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate on Spotify now</button>
-    //             <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
-    //         </footer>
-    //     )
-    // }
-
-    // function Auth() {
-    //     return (
-    //         <></>
-    //     )
-    // }
-
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const clientID = localStorage.getItem('spotifyAppClientID') || '';
@@ -300,7 +277,7 @@ function Spotify() {
             <figure>
                 <AsyncImage className={styles.platform_logo} src={spotifyLogo} alt={'Spotify Logo'} />
             </figure>
-            {playerURLCreated ? (<Success playerParams={playerParams} />) : (<YourOwnApp />)}
+            {playerURLCreated ? (<Success playerParams={playerParams} />) : (<Auth />)}
         </main>
     )
 }

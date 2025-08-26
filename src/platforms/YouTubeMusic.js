@@ -5,7 +5,7 @@ const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
-const baseURL = 'http://127.0.0.1:9863/api/v1';
+const baseURL = 'http://localhost:9863/api/v1';
 const params = GetURLParams();
 
 const token = params.get('token');
@@ -86,11 +86,11 @@ export function GetData(debug = false) {
   try {
     const socket = io(`${baseURL}/realtime`, {
       transports: ['websocket'],
-      auth: { 'token': token },
-      reconnection: true
+      auth: { 'token': token }
     });
 
     socket?.on('connect', () => console.log('Connected to YTMDesktop'));
+    socket?.on('reconnect', attempt => console.log(`Successfully reconnected after ${attempt} attempts.`));
     socket?.on('disconnect', () => console.log('Disconnected to YTMDesktop... Reconnecting...'));
     socket?.on('connect_error', err => console.error('Connection error:', err.message));
     socket?.on('reconnect_failed', () => console.error('Reconnect failed!'));
