@@ -120,14 +120,14 @@ export function Player(props) {
       }
 
       webSocket.current = socket;
-
-      return () => {
-        if (webSocket.current?.connected)
-          webSocket.current?.disconnect();
-      }
     }
 
     GetResult();
+
+    return () => {
+      if (webSocket.current?.connected)
+        webSocket.current?.disconnect();
+    }
   }, [props?.platform]);
 
   //---------------- Spotify Connection --------------------//
