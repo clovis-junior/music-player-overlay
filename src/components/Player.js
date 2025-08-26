@@ -90,45 +90,44 @@ export function Player(props) {
 
   //---------------- Apple Music and YouTube Music Connections --------------------//
   useEffect(() => {
-    let socket;
+    async function GetResult() {
+      let socket;
 
-    if (props?.platform === 'apple') {
-      socket = AppleMusicData();
-      socket?.on('API:Playback', ({ data, type }) => {
-        switch (type) {
-          case 'playbackStatus.nowPlayingItemDidChange':
-            setResult(current => UpdateMusicDataFromApple(data, current));
-            break;
-          case 'playbackStatus.playbackTimeDidChange':
-            setResult(current => UpdateTimeDataFromApple(data, current));
-            break;
-          case 'playbackStatus.playbackStateDidChange':
-            setResult(current => UpdatePlayerStateFromApple(data, current));
-            break;
-          default:
-            console.debug(type, data);
-        }
-      });
-    } 
-    
-    if (props?.platform === 'youtube') {
-      socket = YouTubeMusicData();
-      socket?.on('state-update', state => {
-        setResult(UpdatePlayerDataFromYTM(state));
-      });
+      if (props?.platform === 'apple') {
+        socket = AppleMusicData();
+        socket?.on('API:Playback', ({ data, type }) => {
+          switch (type) {
+            case 'playbackStatus.nowPlayingItemDidChange':
+              setResult(current => UpdateMusicDataFromApple(data, current));
+              break;
+            case 'playbackStatus.playbackTimeDidChange':
+              setResult(current => UpdateTimeDataFromApple(data, current));
+              break;
+            case 'playbackStatus.playbackStateDidChange':
+              setResult(current => UpdatePlayerStateFromApple(data, current));
+              break;
+            default:
+              console.debug(type, data);
+          }
+        });
+      } 
+      
+      if (props?.platform === 'youtube') {
+        socket = YouTubeMusicData();
+        socket?.on('state-update', state => {
+          setResult(UpdatePlayerDataFromYTM(state));
+        });
+      }
+
+      webSocket.current = socket;
+
+      return () => {
+        if (webSocket.current?.connected)
+          webSocket.current?.disconnect();
+      }
     }
 
-    webSocket.current = socket;
-
-    return () => {
-      webSocket.current?.off();
-
-      if (webSocket.current?.connected)
-        webSocket.current?.disconnect();
-
-      webSocket.current = null;
-    }
-
+    GetResult();
   }, [props?.platform]);
 
   //---------------- Spotify Connection --------------------//
@@ -242,10 +241,8 @@ export function Player(props) {
     else
       setLoaded((!IsEmpty(albumArtImage) && !IsEmpty(musicData)));
 
-    if (loaded) {
-      console.log('Loaded!');
+    if (loaded)
       addPlayerClass(styles?.show, playerClasses);
-    }
     
   }, [loaded, props?.platform, albumArtImage, result, musicData, playerClasses]);
 
