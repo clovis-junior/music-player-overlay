@@ -42,14 +42,18 @@ export function UpdatePlaybackState(data, result) {
     switch (data?.state) {
         case 'paused':
         case 'stopped':
+        default:
             result.isPlaying = false;
-            return result;
+            break;
         case 'playing':
             result.isPlaying = true;
-            return UpdateMusicData(data?.attributes, result);
-        default:
-            return result;
-    }  
+            break;
+    }
+
+    if (result.isPlaying) {
+        return data?.attributes ? UpdateMusicData(data.attributes, result) : result;
+    } else
+        return result;
 }
 
 export function GetData(debug = false) {
