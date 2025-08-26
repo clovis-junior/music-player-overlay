@@ -13,47 +13,45 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-export function UpdateMusicTime(data, result) {
+export function UpdateMusicTime(data) {
     if (!IsEmpty(data)) {
-        result.isPlaying = data?.isPlaying || result?.isPlaying || false;
-        result.duration = {
-            elapsed: data?.currentPlaybackTime || result?.duration?.elapsed || 0,
-            remaining: data?.currentPlaybackTimeRemaining || result?.duration?.remaining || 0,
-            total: data?.currentPlaybackDuration || result?.duration?.total || 0
+        const isPlaying = data?.isPlaying || false;
+        const duration = {
+            elapsed: data?.currentPlaybackTime || 0,
+            remaining: data?.currentPlaybackTimeRemaining || 0,
+            total: data?.currentPlaybackDuration || 0
         };
-    }
 
-    return result;
+        return { isPlaying, duration };
+    }
 }
 
-export function UpdateMusicData(data, result) {
+export function UpdateMusicData(data) {
     if (!IsEmpty(data)) {
-        result.title = data?.name || result?.title;
-        result.artist = data?.artistName || result?.artist;
-        result.albumCover = GetAlbumCover(data?.artwork?.url || result.albumCover, data?.artwork?.width || 600);
-    }
+        title = data?.name || '';
+        artist = data?.artistName || '';
+        albumCover = GetAlbumCover(data?.artwork?.url, data?.artwork?.width || 600);
 
-    return result;
+        return { title, artist, albumCover }
+    }
 }
 
-export function UpdatePlaybackState(data, result) {
-    if (IsEmpty(data)) return result;
+export function UpdatePlaybackState(data) {
+    let isPlaying, musicData;
 
     switch (data?.state) {
         case 'paused':
         case 'stopped':
         default:
-            result.isPlaying = false;
+            isPlaying = false;
             break;
         case 'playing':
-            result.isPlaying = true;
+            isPlaying = true;
+            musicData = data?.attributes;
             break;
     }
-
-    if (result.isPlaying) {
-        return data?.attributes ? UpdateMusicData(data.attributes, result) : result;
-    } else
-        return result;
+    
+    return isPlaying ? { isPlaying, musicData } : { isPlaying };
 }
 
 export function GetData(debug = false) {
