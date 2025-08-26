@@ -53,7 +53,7 @@ export function GetData(debug = false) {
             transports: ['websocket'],
             reconnection: true,
             reconnectionAttempts: Infinity,
-            reconnectionDelay: 5000
+            timeout: 10000
         });
 
         socket?.on('connect', () => console.log('Connected to Cider'));
