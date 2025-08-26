@@ -125,8 +125,18 @@ export function Player(props) {
     GetResult();
 
     return () => {
-      if (webSocket.current?.connected)
-        webSocket.current?.disconnect();
+      if (webSocket.current) {
+        if (props?.platform === 'apple')
+          webSocket.current?.off('API:Playback');
+  
+        if (props?.platform === 'youtube')
+          webSocket.current?.off('state-update');
+        
+        if (webSocket.current?.connected)
+          webSocket.current?.disconnect();
+  
+        webSocket.current = null;
+      }
     }
   }, [props?.platform]);
 
