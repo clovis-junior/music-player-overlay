@@ -239,7 +239,7 @@ export function Player(props) {
     if (!IsEmpty(albumArtImage) && !IsEmpty(musicData))
       setLoaded(true);
 
-  }, [albumArtImage, musicData, playerClasses]);
+  }, [albumArtImage, musicData]);
 
   if (!loaded) {
     console.log('Loading...');
