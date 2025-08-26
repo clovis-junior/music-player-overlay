@@ -55,19 +55,6 @@ function removePlayerClass(name = '', classes = []) {
     classes?.splice(classes?.indexOf(name), 1);
 }
 
-function useThrottle(callback, delay) {
-  const last = useRef(0);
-
-  return data => {
-    const now = Date.now();
-
-    if (now - last.current >= delay) {
-      last.current = now;
-      callback(data);
-    }
-  };
-}
-
 export function Player(props) {
   const [platformLogo, setPlatformLogo] = useState('');
   const [result, setResult] = useState({});
@@ -99,7 +86,6 @@ export function Player(props) {
     return { title, artist };
   }, [result?.title, result?.artist]);
 
-  const throttleUpdate = useThrottle(data => setResult(data), 1000);
   const platformHasSpotify = props?.platform.includes('spotify');
 
   //---------------- Apple Music and YouTube Music Connections --------------------//
@@ -111,35 +97,37 @@ export function Player(props) {
       socket?.on('API:Playback', ({ data, type }) => {
         switch (type) {
           case 'playbackStatus.nowPlayingItemDidChange':
-            setResult(UpdateMusicDataFromApple(data, result));
+            setResult(current => UpdateMusicDataFromApple(data, current));
             break;
           case 'playbackStatus.playbackTimeDidChange':
-            throttleUpdate(UpdateTimeDataFromApple(data, result));
+            setResult(current => UpdateTimeDataFromApple(data, current));
             break;
           case 'playbackStatus.playbackStateDidChange':
-            setResult(UpdatePlayerStateFromApple(data, result));
+            setResult(current => UpdatePlayerStateFromApple(data, current));
             break;
           default:
             console.debug(type, data);
         }
-      });  
-    }
-
-    if (props?.platform === 'youtube') {
+      });
+    } else if (props?.platform === 'youtube') {
       socket = YouTubeMusicData();
       socket?.on('state-update', state => {
-        throttleUpdate(setResult(UpdatePlayerDataFromYTM(state)))
+        setResult(UpdatePlayerDataFromYTM(state));
       });
     }
 
     webSocket.current = socket;
 
     return () => {
+      webSocket.current?.off();
+
       if (webSocket.current?.connected)
         webSocket.current?.disconnect();
+
+      webSocket.current = null;
     }
 
-  }, [props?.platform, throttleUpdate, result]);
+  }, [props?.platform]);
 
   //---------------- Spotify Connection --------------------//
   useEffect(() => {
@@ -206,9 +194,7 @@ export function Player(props) {
     }
   }, [props?.platform]);
 
-  useLayoutEffect(() => {
-    return () => setAlbumArtImage(result?.albumCover);
-  }, [result?.albumCover, albumArtImage]);
+  useLayoutEffect(() => setAlbumArtImage(result?.albumCover), [result?.albumCover, albumArtImage]);
 
   useLayoutEffect(() => {
     const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
@@ -253,6 +239,7 @@ export function Player(props) {
 
   useLayoutEffect(() => {
     if (!IsEmpty(albumArtImage) && !IsEmpty(musicData)) {
+      console.log('Loaded!');
       setLoaded(true);
       addPlayerClass(styles?.show, playerClasses);
     }

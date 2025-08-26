@@ -63,8 +63,10 @@ export function GetData(debug = false) {
         });
 
         socket?.on('connect', () => console.log('Connected to Cider'));
-        socket?.on('disconnect', () => console.log('Disconnected to Cider... Reconnecting...'));
+        socket?.on('disconnect', () => console.warn('Disconnected to Cider... Reconnecting...'));
         socket?.on('connect_error', err => console.error('Connection error:', err.message));
+        socket?.on('reconnect_failed', () => console.error('Reconnect failed!'));
+        socket?.on('reconnect_attempt', attempt => console.log(`Reconnect attempt #${attempt}`));
 
         if (debug)
             socket?.onAny((event, ...args) => console.debug(`${event}`, args));

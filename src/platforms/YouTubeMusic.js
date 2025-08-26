@@ -87,7 +87,7 @@ export function GetData(debug = false) {
     const socket = io(`${baseURL}/realtime`, {
       transports: ['websocket'],
       auth: { 'token': token },
-      reconnection: true,
+      reconnection: false,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 5000
     });
@@ -95,6 +95,8 @@ export function GetData(debug = false) {
     socket?.on('connect', () => console.log('Connected to YTMDesktop'));
     socket?.on('disconnect', () => console.log('Disconnected to YTMDesktop... Reconnecting...'));
     socket?.on('connect_error', err => console.error('Connection error:', err.message));
+    socket?.on('reconnect_failed', () => console.error('Reconnect failed!'));
+    socket?.on('reconnect_attempt', attempt => console.log(`Reconnect attempt #${attempt}`));
 
     if (debug)
       socket?.onAny((event, ...args) => console.debug(`${event}`, args));
