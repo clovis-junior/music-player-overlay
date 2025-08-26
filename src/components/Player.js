@@ -223,9 +223,9 @@ export function Player(props) {
   }, [result?.isPlaying, sleeping, props?.sleepAfter]);
 
   useLayoutEffect(() => {
-    if (!result?.isPlaying && sleeping)
+    if (sleeping)
       removePlayerClass(styles?.show, playerClasses);
-    else if (result?.isPlaying && !sleeping)
+    else
       addPlayerClass(styles?.show, playerClasses);
 
     if (result?.isPlaying)
@@ -237,15 +237,11 @@ export function Player(props) {
 
   useLayoutEffect(() => {
     if (props?.platform === 'apple') {
-      if (!IsEmpty(albumArtImage) && !IsEmpty(result)) {
-        addPlayerClass(styles?.show, playerClasses);
+      if (!IsEmpty(albumArtImage) && !IsEmpty(result))
         setLoaded(true);
-      }
     } else {
-      if (!IsEmpty(albumArtImage) && !IsEmpty(musicData)) {
-        addPlayerClass(styles?.show, playerClasses);
+      if (!IsEmpty(albumArtImage) && !IsEmpty(musicData))
         setLoaded(true);
-      }
     }
 
   }, [props?.platform, albumArtImage, result, musicData, playerClasses]);
