@@ -132,6 +132,7 @@ export function Player(props) {
           webSocket.current?.disconnect();
 
         webSocket.current = null;
+        webSocket.current?.connect();
       }
     }
   }, [props?.platform]);
