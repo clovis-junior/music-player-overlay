@@ -255,6 +255,8 @@ export function Player(props) {
     if (!IsEmpty(albumArtImage) || !IsEmpty(musicData))
       setLoaded(true);
 
+    setLoaded((!IsEmpty(musicData)));
+    
     if (loaded)
       addPlayerClass(styles?.show, playerClasses);
     else
