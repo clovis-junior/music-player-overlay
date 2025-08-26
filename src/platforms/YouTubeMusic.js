@@ -87,9 +87,7 @@ export function GetData(debug = false) {
     const socket = io(`${baseURL}/realtime`, {
       transports: ['websocket'],
       auth: { 'token': token },
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 5000
+      reconnection: true
     });
 
     socket?.on('connect', () => console.log('Connected to YTMDesktop'));
