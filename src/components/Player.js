@@ -95,48 +95,21 @@ export function Player(props) {
     if (props?.platform === 'apple') {
       socket = AppleMusicData();
 
-      let playData;
-
       socket?.on('API:Playback', ({ data, type }) => {
         switch (type) {
           case 'playbackStatus.playbackStateDidChange':
-            playData = UpdatePlaybackStateFromCider(data);
-            if (playData.isPlaying) {
-              setResult(current => ({
-                ...current,
-                isPlaying: playData.isPlaying,
-                title: playData?.musicData?.title || current?.title, 
-                artist: playData?.musicData?.artist || current?.artist,
-                albumCover: playData?.musicData?.albumCover || current?.albumCover
-              }));
-            } else
-              setResult(current => ({
-                ...current,
-                isPlaying: playData.isPlaying
-              }));
+            setResult(current => ({...current, ...UpdatePlaybackStateFromCider(data)}));
             break;
           case 'playbackStatus.nowPlayingItemDidChange':
-            playData = UpdateMusicDataFromCider(data);
-            setResult(current => ({
-              ...current,
-              isPlaying: playData.isPlaying || current?.isPlaying,
-              title: title, 
-              artist: artist,
-              albumCover: albumCover
-            }));
+            setResult(current => ({...current, ...UpdateMusicDataFromCider(data)}));
             break;
           case 'playbackStatus.playbackTimeDidChange':
-            playData = UpdateMusicTimeFromCider(data);
-            setResult(current => ({
-              ...current,
-              isPlaying: playData?.isPlaying || current?.isPlaying,
-              duration: playData?.duration || current?.duration
-            }));
+            setResult(current => ({...current, ...UpdateMusicTimeFromCider(data)}));
             break;
           default:
             console.debug(type, data);
         }
-      }); 
+      });
     } else if (props?.platform === 'youtube') {
       socket = YouTubeMusicData();
 
@@ -146,21 +119,18 @@ export function Player(props) {
     }
 
     webSocket.current = socket;
+    webSocket.current?.connect();
 
     return () => {
-      if (webSocket.current) {
+      if (props?.platform === 'apple')
+        webSocket.current?.off('API:Playback');
+      else if (props?.platform === 'youtube')
+        webSocket.current?.off('state-update');
 
-        if (props?.platform === 'apple')
-          webSocket.current?.off('API:Playback');
-        else if (props?.platform === 'youtube')
-          webSocket.current?.off('state-update');
+      if (webSocket.current?.connected)
+        webSocket.current?.disconnect();
 
-        if (webSocket.current?.connected)
-          webSocket.current?.disconnect();
-
-        webSocket.current = null;
-        webSocket.current?.connect();
-      }
+      webSocket.current = null;
     }
   }, [props?.platform]);
 

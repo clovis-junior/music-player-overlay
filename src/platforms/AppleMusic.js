@@ -30,9 +30,9 @@ export function UpdateMusicTime(data) {
 
 export function UpdateMusicData(data) {
     if (!IsEmpty(data)) {
-        title = data?.name || '';
-        artist = data?.artistName || '';
-        albumCover = GetAlbumCover(data?.artwork?.url, data?.artwork?.width || 600);
+        const title = data?.name || '';
+        const artist = data?.artistName || '';
+        const albumCover = GetAlbumCover(data?.artwork?.url, data?.artwork?.width || 600);
 
         return { title, artist, albumCover }
     }
@@ -41,7 +41,7 @@ export function UpdateMusicData(data) {
 }
 
 export function UpdatePlaybackState(data) {
-    let isPlaying, musicData;
+    let isPlaying;
 
     switch (data?.state) {
         case 'paused':
@@ -51,11 +51,10 @@ export function UpdatePlaybackState(data) {
             break;
         case 'playing':
             isPlaying = true;
-            musicData = data?.attributes;
             break;
     }
-    
-    return isPlaying ? { isPlaying, musicData } : { isPlaying };
+
+    return data?.attributes ? { isPlaying, ...UpdateMusicData(data?.attributes) } : { isPlaying }
 }
 
 export function GetData(debug = false) {
