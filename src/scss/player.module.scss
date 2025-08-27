@@ -206,11 +206,14 @@ body {
 }
 
 .music_player {
+	width: calc(100% - 50vw);
 	max-width: calc(#{$size} * 4);
+	height: calc(100vh - 2rem);
 	max-height: $size;
 	@include display-flex;
 	flex-wrap: nowrap;
 	flex-direction: row;
+	justify-content: center;
 	align-items: center;
 
 	&:not(.paused) .waveform {
@@ -350,9 +353,10 @@ body {
     Compact Player
 ******************************************************** */
 .music_player_compact {
+	width: 100%;
 	min-width: calc(#{$size} * 3);
 	max-width: calc(60% - (#{$size} * 2));
-	height: calc(1.25rem * 4 + 8px);
+	height: calc((1.25rem * 4) + 8px);
 	overflow: hidden;
 	@include border-radius(100px);
 	background-color: rgba($bg-color, 0.9);
