@@ -97,7 +97,9 @@ export default function CustomURL() {
     }
 
     function encodeOptions(string) {
-        string = btoa(string);
+        if (IsEmpty(string)) return '';
+        
+        string = btoa(string.toString());
         string = string.replace(/\+/g, '-');
         string = string.replace(/\//g, '_');
         string = string.replace(/=+$/, '');
@@ -117,21 +119,21 @@ export default function CustomURL() {
     }
 
     function changePlayerOptions(e) {
-        let name = e?.target?.name;
-        let value = e?.target?.value;
-        let checked = e?.target?.checked;
-        let type = e?.target?.type;
+        if (!e.target) return false;
+        
+        let name = e.target?.name;
+        let value = e.target?.value;
+        let checked = e.target?.checked;
+        let type = e.target?.type;
 
         if (name in playerOptions) {
             if ((type === 'checkbox' && !checked) || 
-            ((type === 'radio') && (value === 'off')) ||
-            (type === 'text' && IsEmpty(value)) || (type === 'number' || value <= 0))
+            ((type === 'radio') && (value === 'off')) || IsEmpty(value)))
                 delete playerOptions[name];
         } else {
             if ((type === 'checkbox' && checked ) || (type === 'radio' && value === 'on'))
                 playerOptions[name] = '';
-            else if ((type === 'text' && !IsEmpty(value)) || (type === 'number' || value > 0))
-                playerOptions[name] = value;
+            else playerOptions[name] = value;
         }
 
         setPlayerOptions({...playerOptions});
