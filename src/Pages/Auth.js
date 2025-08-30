@@ -45,7 +45,7 @@ function PlayerGenerated(props) {
         <>
             <div className={styles.panel_content}>
                 <p>Now, you need to copy this URL and use it on you streaming software:</p>
-                <input ref={input} type='text' className={styles.input_text} value={props.playerURL} readOnly />
+                <input ref={input} type='text' className={`${styles?.input_text} ${styles?.full}`} value={props.playerURL} readOnly />
                 <b>Enjoy!</b>
             </div>
             <footer className={styles.btns}>
@@ -158,6 +158,7 @@ function YouTubeMusic() {
 }
 
 function Spotify() {
+    const [alert, setAlert] = useState(false);
     const [playerURLCreated, setPlayerURLCreated] = useState(false);
     const [playerParams, setPlayerParams] = useState(null);
 
@@ -175,7 +176,10 @@ function Spotify() {
             e.target.disabled = true;
 
             if (IsEmpty(clientID?.current.value) || IsEmpty(clientSecret?.current.value)) {
-                alert('Please, fill the Client ID and Cliend secret!');
+                setAlert({
+                    type: 'error',
+                    content: (<p>Please, fill the Client ID and Cliend secret!</p>)
+                });
 
                 clientID?.current?.focus();
 
@@ -231,9 +235,10 @@ function Spotify() {
         return (
             <>
                 <Instructions />
+                {alert ? (<Alert type={alert.type} content={alert.content} />) : (<></>)}
                 <footer className={`${styles.btns} ${styles.column} ${styles.centered}`}>
-                    <input ref={clientID} type='text' className={styles.input_text} placeholder='Your Client ID' />
-                    <input ref={clientSecret} type='password' className={styles.input_text} placeholder='Your Client secret' />
+                    <input ref={clientID} type='text' className={`${styles?.input_text} ${styles?.full}`} placeholder='Your Client ID' />
+                    <input ref={clientSecret} type='password' className={`${styles?.input_text} ${styles?.full}`} placeholder='Your Client secret' />
                     <button type='button' className={`${styles.btn} ${styles.spotify}`} onClick={(e) => GetSpotifyAuthURL(e)}>Authenticate</button>
                     <button type='button' className={styles.btn} onClick={() => window.history.back(-1)}>Back</button>
                 </footer>

@@ -228,7 +228,7 @@ body {
 	}
 
 	&.square {
-		& .music_cover,
+		& .music_album_art,
 		& .music_infos {
 			@include border-radius(2px);
 		}
