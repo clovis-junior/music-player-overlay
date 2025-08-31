@@ -49,19 +49,18 @@ function PlayerOption(props) {
 }
 
 export default function CustomURL() {
-    const params = GetURLParams();
-
     const navigate = useNavigate();
 
-    const [compactMode, setCompactMode] = useState('off');
-    const [playerOptions, setPlayerOptions] = useState({});
-    const [disableOptions, setDisableOptions] = useState(true);
-
-    const url = useRef(null);
-    const result = useRef(null);
+    const params = GetURLParams();
 
     const urlValue = params.has('url') ? decodeURIComponent(params.get('url')) : '';
 
+    const [compactMode, setCompactMode] = useState('off');
+    const [playerOptions, setPlayerOptions] = useState({});
+    const [disableOptions, setDisableOptions] = useState(!IsEmpty(urlValue) ? false : true);
+
+    const url = useRef(null);
+    const result = useRef(null);
 
     function changePlayerLayout(e) {
         if (!e.target) return false;
