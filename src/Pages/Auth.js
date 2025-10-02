@@ -163,7 +163,7 @@ function Spotify() {
     const [playerParams, setPlayerParams] = useState(null);
 
     function Success(props) {
-        const playerURL = `${browserURL}player?platform=spotify-custom&${props?.playerParams}`;
+        const playerURL = `${browserURL}player?platform=spotify&${props?.playerParams}`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
