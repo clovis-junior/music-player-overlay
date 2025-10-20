@@ -163,7 +163,7 @@ function Spotify() {
     const [playerParams, setPlayerParams] = useState(null);
 
     function Success(props) {
-        const playerURL = `${browserURL}player?platform=spotify-custom&${props?.playerParams}`;
+        const playerURL = `${browserURL}player?platform=spotify&${props?.playerParams}`;
 
         return (<PlayerGenerated playerURL={playerURL} />)
     }
@@ -334,7 +334,7 @@ export default function Auth(props) {
             case 'apple':
                 return (<AppleMusic />)
             case 'spotify':
-            case 'spotify-custom':
+            case 'spotify':
                 return (<Spotify />)
             case 'youtube':
             default:
