@@ -1,5 +1,15 @@
 @use "functions.scss" as *;
 @use "reset.scss" as *;
+@use "sass:color";
+
+@function hexToRGB($hexColor) {
+    $red: color.channel($hexColor, "red", $space: rgb);
+    $blue: color.channel($hexColor, "blue", $space: rgb);
+    $green: color.channel($hexColor, "green", $space: rgb);
+
+    @return "#{$red},#{$green},#{$blue}";
+}
+
 
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Display:ital,wght@0,100..900;1,100..900&display=swap");
 
@@ -31,8 +41,8 @@
 $fonts: -apple-system, BlinkMacSystemFont, "Noto Sans Display", system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 $size: 8rem !default;
 $radius: 10px !default;
-$bg-color: #0d0d0f !default;
-$font-color: #f1eaea !default;
+$dark-color: #09090b !default;
+$light-color: #fafafa !default;
 
 /* ********************************************************
     Base
@@ -140,7 +150,7 @@ body {
 		max-width: 100%;
 		height: 100%;
 		display: block;
-		background-color: $font-color;
+		background-color: rgb(var(--text-color));
 		@include transition(all 500ms linear);
 	}
 }
@@ -159,8 +169,8 @@ body {
 		height: 1rem;
 		display: block;
 		@include border-radius(50px);
-		background-color: $font-color;
-		@include box-shadow(0 0 1px 0 $font-color);
+		background-color: rgb(var(--text-color));
+		@include box-shadow(0 0 1px 0 rgb(var(--text-color)));
 		@include animation-timing-function(ease-in-out);
 		@include animation-iteration-count(infinite);
 		@include transition(all 1s ease-in-out);
@@ -184,6 +194,9 @@ body {
 ******************************************************** */
 .music_player,
 .music_player_compact {
+	--background-color: #{hexToRGB($dark-color)};
+	--text-color: #{hexToRGB($light-color)};
+
 	pointer-events: none;
 	width: calc(100% - #{$size});
 	height: 100%;
@@ -191,6 +204,15 @@ body {
 	text-transform: initial;
 	@include user-select(none);
 	@include transition(filter 200ms ease);
+
+	&.album_art_theme {
+		@include transition(background-color 400ms ease, color 600ms ease, filter 200ms ease)
+	}
+
+	&.light {
+		--background-color: #{hexToRGB($light-color)};
+		--text-color: #{hexToRGB($dark-color)};
+	}
 
 	&:not(.show) {
 		@include filter(opacity(0));
@@ -220,6 +242,12 @@ body {
 		@include animation-name(waveform);
 	}
 
+	&:not(.album_art_theme, .light) {
+		& .music_infos {
+			text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+		}
+	}
+
 	&.no_shadow {
 		& .music_album_art,
 		& .music_infos {
@@ -232,13 +260,21 @@ body {
 		& .music_infos {
 			@include border-radius(2px);
 		}
+
+		.waveform {
+			@include border-radius(1px);
+		}
+
+		.music_progress_bar {
+			--radius: 2px !important;
+		}
 	}
 
 	& .music_album_art,
 	& .music_infos {
 		@include border-radius($radius);
-		background-color: rgba($bg-color, 0.9);
-		color: $font-color;
+		background-color: rgba(var(--background-color), 0.9);
+		color: rgb(var(--text-color));
 		@include backdrop-filter(blur(8px));
 		@include box-shadow(6px 6px 2px 0 rgba(0, 0, 0, 0.6));
 	}
@@ -281,7 +317,6 @@ body {
 		justify-content: space-around;
 		overflow: hidden;
 		padding: 1rem;
-		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 		position: relative;
 
 		& .music_platform_icon {
@@ -315,14 +350,16 @@ body {
 			}
 
 			& .music_progress_bar {
+				--radius: 50px;
+
 				height: 10px;
 				overflow: hidden;
-				@include border-radius(50px);
-				background-color: rgba($font-color, 0.24);
+				@include border-radius(var(--radius));
+				background-color: rgba(var(--text-color), 0.24);
 				@include backdrop-filter(blur(8px));
 
 				& > * {
-					@include border-radius(50px);
+					@include border-radius(var(--radius));
 				}
 			}
 
@@ -359,8 +396,8 @@ body {
 	height: calc((1.25rem * 4) + 8px);
 	overflow: hidden;
 	@include border-radius(100px);
-	background-color: rgba($bg-color, 0.9);
-	color: $font-color;
+	background-color: rgba(var(--background-color), 0.9);
+	color: rgb(var(--text-color));
 	@include backdrop-filter(blur(8px));
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
 	@include box-shadow(6px 6px 2px 0 rgba(0, 0, 0, 0.6));

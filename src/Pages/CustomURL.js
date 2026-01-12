@@ -196,6 +196,19 @@ export default function CustomURL() {
                                 onChange={e => changePlayerLayout(e)} disabled={disableOptions} 
                             />
                         </div>
+                        {'solidColor' in playerOptions ? (
+                            <div className={styles?.player_customize_options}>
+                                <PlayerOption type='checkbox' id='vibrant' name='vibrant' value={('vibrant' in playerOptions)}
+                                    onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                                    <span className={styles?.player_customize_option_name}>Vibrant Theme</span>
+                                </PlayerOption>
+                                {'vibrant' in playerOptions ? (<></>) : (
+                                    <PlayerOption type='radio' id='player_theme' name='light'
+                                    value={(!('light' in playerOptions) && playerOptions['light']) ? 'on' : 'off'}
+                                    options={['Light Theme', 'Dark Theme']} onChange={e => changePlayerOptions(e)} disabled={disableOptions} />
+                                )}
+                            </div> 
+                        ) : (<></>)}
                         <div className={styles?.player_customize_options}>
                             <PlayerOption type='checkbox' id='square' name='squareLayout' value={('squareLayout' in playerOptions)}
                                 onChange={e => changePlayerOptions(e)} disabled={disableOptions}>

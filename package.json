@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "colorthief": "^2.6.0",
     "dotenv": "^17.2.1",
     "node-fetch": "^3.3.2",
+    "node-vibrant": "^4.0.3",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "react-router-dom": "^6.30.0",
@@ -19,8 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-
-    "dev": "netlify dev" 
+    "dev": "netlify dev"
   },
   "eslintConfig": {
     "extends": [

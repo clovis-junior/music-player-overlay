@@ -1,4 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import { Vibrant } from 'node-vibrant/browser';
 
 import {
   GetData as YouTubeMusicData,
@@ -73,6 +74,7 @@ export function Player(props) {
 
   const webSocket = useRef(null);
 
+  const playerComponent = useRef(null);
   const musicNameComponent = useRef(null);
   const artistNameComponent = useRef(null);
 
@@ -195,7 +197,9 @@ export function Player(props) {
     }
   }, [props?.platform]);
 
-  useLayoutEffect(() => setAlbumArtImage(result?.albumCover), [result?.albumCover, albumArtImage]);
+  useLayoutEffect(() => {
+    setAlbumArtImage(result?.albumCover)
+  }, [result?.albumCover, albumArtImage]);
 
   useLayoutEffect(() => {
     const musicNameScroll = setInterval(() => setMusicNameScrolled(!musicNameScrolled), 6000);
@@ -241,6 +245,30 @@ export function Player(props) {
 
   }, [albumArtImage, musicData]);
 
+  useEffect(() => {
+    if (!albumArtImage || !props?.albumArtTheme) return;
+
+    Vibrant.from(albumArtImage)
+    .getPalette().then(palette => {
+      const swatch = palette?.DarkVibrant || 
+      palette?.LightVibrant || palette?.Vibrant || 
+      palette?.Muted;
+
+      if (!swatch) return;
+
+      const [r, g, b] = swatch?.rgb;
+
+      playerComponent?.current.style?.setProperty('--background-color', `${r},${g},${b}`);
+
+      const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+      playerComponent?.current.style?.setProperty('--text-color',
+        luminance > .6 ? '0,0,0' : '255,255,255'
+      )
+    }).catch(console.error);
+
+  }, [albumArtImage, props?.albumArtTheme, playerClasses]);
+
   if (!loaded) {
     console.log('Loading...');
     return (<></>);
@@ -253,13 +281,15 @@ export function Player(props) {
     return (<>{result?.error}</>);
   }
 
+  if (props?.albumArtTheme) addPlayerClass(styles?.album_art_theme, playerClasses);
+  if (props?.lightTheme) addPlayerClass(styles?.light, playerClasses);
   if (props?.noShadow) addPlayerClass(styles?.no_shadow, playerClasses);
   if (props?.squareLayout) addPlayerClass(styles?.square, playerClasses);
   if (props.compact) {
     addPlayerClass(styles?.music_player_compact, playerClasses);
 
     return (
-      <main className={playerClasses.join(' ')}>
+      <main ref={playerComponent} className={playerClasses.join(' ')}>
         {(props?.showPlatform) ? (
           <div className={styles?.music_platform_icon}>
             <figure>
@@ -300,7 +330,7 @@ export function Player(props) {
   addPlayerClass(styles?.music_player, playerClasses);
 
   return (
-    <main className={playerClasses.join(' ')}>
+    <main ref={playerComponent} className={playerClasses.join(' ')}>
       {(props.showAlbum) ? (
         <div className={styles?.music_album_art}>
           {(props.showAlbum && props?.showPlatform) ? (

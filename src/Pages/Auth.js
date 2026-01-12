@@ -334,7 +334,6 @@ export default function Auth(props) {
             case 'apple':
                 return (<AppleMusic />)
             case 'spotify':
-            case 'spotify':
                 return (<Spotify />)
             case 'youtube':
             default:

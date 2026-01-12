@@ -1,12 +1,21 @@
 @use "functions.scss" as *;
 @use "reset.scss" as *;
+@use "sass:color";
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@function hexToRGB($hexColor) {
+    $red: color.channel($hexColor, "red", $space: rgb);
+    $blue: color.channel($hexColor, "blue", $space: rgb);
+    $green: color.channel($hexColor, "green", $space: rgb);
+
+    @return "#{$red},#{$green},#{$blue}";
+}
 
 /* ********************************************************
     Variables
 ******************************************************** */
-$fonts: -apple-system, BlinkMacSystemFont, 'Barlow', Roboto, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif !default;
+$fonts: -apple-system, BlinkMacSystemFont, Inter, Roboto, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif !default;
 
 $light-color: #fafafa;
 $light-pallete-1st: #dfdfdf;
@@ -14,10 +23,11 @@ $light-pallete-2nd: #c9c9c9;
 $light-pallete-3rd: #b1b1b1;
 $light-pallete-4th: #9f9f9f;
 
-$dark-pallete-1st: #030712;
-$dark-pallete-2nd: #111827;
-$dark-pallete-3rd: #1f2937;
-$dark-pallete-4th: #374151;
+$dark-color: #09090b;
+$dark-pallete-1st: #18181b;
+$dark-pallete-2nd: #27272a;
+$dark-pallete-3rd: #3f3f46;
+$dark-pallete-4th: #52525c;
 
 $info-color: #0284c7;
 $warning-color: #f97316;
@@ -38,22 +48,22 @@ $youtube-color: #FF0033;
 
 
 :root {
-    --background-color: #{$light-pallete-1st};
-    --foreground-color: #{$light-color};
+    --background-color: #{hexToRGB($light-pallete-1st)};
+    --foreground-color: #{hexToRGB($light-color)};
                         
-    --font-primary-color: #{$dark-pallete-1st};
-    --font-secondary-color: #{$dark-pallete-2nd};
-    --font-tertiary-color: #{$dark-pallete-3rd};
+    --font-primary-color: #{hexToRGB($dark-pallete-1st)};
+    --font-secondary-color: #{hexToRGB($dark-pallete-2nd)};
+    --font-tertiary-color: #{hexToRGB($dark-pallete-3rd)};
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #{$dark-pallete-2nd};
-        --foreground-color: #{$dark-pallete-3rd};
+        --background-color: #{hexToRGB($dark-pallete-2nd)};
+        --foreground-color: #{hexToRGB($dark-pallete-3rd)};
                             
-        --font-primary-color: #{$light-pallete-1st};
-        --font-secondary-color: #{$light-pallete-2nd};
-        --font-tertiary-color: #{$light-pallete-3rd};
+        --font-primary-color: #{hexToRGB($light-pallete-1st)};
+        --font-secondary-color: #{hexToRGB($light-pallete-2nd)};
+        --font-tertiary-color: #{hexToRGB($light-pallete-3rd)};
     }
 }
 
@@ -70,17 +80,17 @@ body {
     &.dashboard {
         overflow-y: auto;
         overflow-x: hidden;
-        background-color: var(--background-color);
+        background-color: rgb(var(--background-color));
         font-family: $fonts !important;
-        color: var(--font-primary-color);
+        color: rgb(var(--font-primary-color));
 
         &::-webkit-scrollbar {
             width: .5rem;
-            background-color: var(--background-color);
+            background-color: rgb(var(--background-color));
         }
         
         &::-webkit-scrollbar-thumb {
-            background-color: var(--font-primary-color);
+            background-color: rgb(var(--font-primary-color));
         }
     }
 }
@@ -116,17 +126,21 @@ body {
     padding: 2rem 0;
     @include border-radius($border-radius);
     overflow: hidden;
-    background-color: var(--foreground-color);
+    background-color: rgb(var(--foreground-color));
     white-space: normal;
     word-wrap: break-word;
     line-height: 2rem;
     font-size: 1.25rem;
-    color: var(--font-primary-color);
+    color: rgb(var(--font-primary-color));
     @include box-shadow(0 0 1rem rgba(0,0,0,.4));
     @include user-select(none);
 
     & .panel_content {
+        @include display-flex;
+        flex-wrap: nowrap;
+        flex-direction: column;
         padding: 1rem 2rem;
+        gap: 1rem;
 
         & :disabled, & .disabled {
             cursor: not-allowed;
@@ -138,7 +152,6 @@ body {
         }
 
         & h1, & h2, &h3 {
-            margin-bottom: 1rem;
             letter-spacing: 1px;
             font-weight: 800;
         }
@@ -189,21 +202,21 @@ body {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin: 10px 0;
+        row-gap: 20px;
+        column-gap: 10px;
 
         & .player_customize_option {
             cursor: pointer;
-            flex: 1 1 50%;
+            flex: 1 0;
             @include display-flex;
             flex-wrap: nowrap;
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
-            padding: 10px 0;
             @include transition(all 120ms);
 
             &.full {
-                flex: 1 1 100%;
+                flex-basis: 100%;
                 flex-wrap: wrap;
                 justify-content: space-between;
             }
@@ -235,7 +248,7 @@ body {
                 height: 1rem;
                 display: block;
                 margin-right: 10px;
-                background-color: var(--font-primary-color);
+                background-color: rgb(var(--font-primary-color));
                 position: relative;
             }
 
@@ -294,14 +307,26 @@ body {
     .input_text {
         display: block;
         padding: 1rem 0;
-        margin: 1rem;
-        border: 1px solid var(--font-tertiary-color);
+        border: 1px solid rgba(var(--font-tertiary-color), .6);
+        background-color: rgba(var(--font-tertiary-color), .05);
         @include border-radius($border-radius);
         font-weight: 300;
-        color: var(--font-primary-color);
+        color: rgb(var(--font-primary-color));
         text-align: center;
         text-overflow: ellipsis;
         @include border-radius($border-radius);
+
+        @mixin placeholder {
+            color: rgb(var(--font-primary-color));
+        }
+
+        &:not(:focus):hover {
+            background-color: rgba(var(--font-tertiary-color), .1);
+        }
+
+        &:focus {
+            border-color: $info-color;
+        }
 
         &.compact {
             margin: 6px 1rem;
@@ -321,7 +346,8 @@ body {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 2rem;
+        gap: 1rem;
+        padding: 0 1rem;
 
         &.column {
             flex-wrap: nowrap;
@@ -331,10 +357,6 @@ body {
 
             & .btn {
                 width: 100%;
-
-                &:not(:last-child) {
-                    margin-bottom: 1rem;
-                }
             }
         }
 
@@ -351,10 +373,8 @@ body {
         padding: 1rem;
         @include border-radius($border-radius);
         background-color: $dark-pallete-1st;
-        letter-spacing: 1px;
         font-weight: 700;
         color: $light-color;
-        text-transform: uppercase;
         @include user-select(none);
         @include transition(all 100ms ease);
 
@@ -383,20 +403,21 @@ body {
 }
 
 .alert {
+    --color: #{hexToRGB($info-color)};
+
     width: calc(100% - 3rem);
     display: block;
     margin: 0 auto;
     padding: 1rem 2rem;
     @include border-radius($border-radius);
-    background-color: rgba($info-color, .2);
-    letter-spacing: 2px;
+    border: 1px solid rgba(var(--color), .6);
+    background-color: rgba(var(--color), .2);
     font-weight: 600;
-    font-size: 1.25rem;
-    color: $info-color;
+    color: rgb(var(--color));
     text-align: center;
     @include user-select(none);
 
-    &.warning { background-color: rgba($warning-color, .2); color: $warning-color }
-    &.error { background-color: rgba($danger-color, .2); color: $danger-color }
+    &.warning { --color: #{hexToRGB($warning-color)}; }
+    &.error { --color: #{hexToRGB($danger-color)}; }
 }
     
