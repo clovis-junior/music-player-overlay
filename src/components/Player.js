@@ -144,33 +144,39 @@ export function Player(props) {
         setResult(UpdatePlayerDataFromSpotify(data));
       }
 
-      if (loaded) {
-        const check = setInterval(async () => await GetResult(), 2000);
+      const check = setInterval(async () => await GetResult(), 2000);
 
-        if (result?.isPlaying) {
-          const refresh = setTimeout(async () => await GetResult(), result?.duration?.remaining);
-          const update = setInterval(() => {
-            result.duration.elapsed++;
-            result.duration.remaining--;
-          }, 1000);
-
-          return () => {
-            clearInterval(update);
-            clearTimeout(refresh);
-            clearInterval(check);
-          }
-        }
-
-        return () => clearInterval(check);
-      } else if (loaded && (!IsEmpty(result) || result?.error)) {
-        console.log('Trying to get Spotify data...');
-        const retry = setInterval(async () => await GetResult(), 5000);
-        return () => clearInterval(retry);
-      } else if (!loaded) {
-        console.log('Connection to Spotify...');
-        const check = setInterval(async () => await GetResult(), 2000);
+      if (!loaded) {
+        console.log('Connecting to Spotify API...');
         return () => clearInterval(check);
       }
+
+      if (result?.error) {
+        console.log('Trying to get Spotify data...');
+        return () => clearInterval(check);
+      }
+
+      if (result?.type !== 'track')
+        removePlayerClass(styles?.show, playerClasses);
+      else
+        addPlayerClass(styles?.show, playerClasses);
+
+      if (result?.isPlaying) {
+        const refresh = setTimeout(async () => await GetResult(), result?.duration?.remaining);
+        const update = setInterval(() => {
+          result.duration.elapsed++;
+          result.duration.remaining--;
+        }, 1000);
+
+        return () => {
+          clearInterval(check);
+          clearInterval(update);
+          clearTimeout(refresh);
+        }
+      }
+
+      console.log('Connecting to Spotify API...');
+      return () => clearInterval(check);
     }
   }, [loaded, result, playerClasses, props?.platform]);
 
@@ -214,9 +220,10 @@ export function Player(props) {
   }, [artistNameScrolled]);
 
   useLayoutEffect(() => {
-    if (result?.isPlaying && sleeping) {
-      setSleeping(false);
-    } else if (!result?.isPlaying && !sleeping) {
+    if (result?.isPlaying && sleeping)
+      return () => setSleeping(false);
+    
+    if (!result?.isPlaying && !sleeping) {
       const timer = setTimeout(() => {
         console.log('Sleeping...');
         setSleeping(true);
