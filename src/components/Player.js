@@ -146,20 +146,11 @@ export function Player(props) {
 
       const check = setInterval(async () => await GetResult(), 2000);
 
-      if (!loaded) {
+      if (!loaded)
         console.log('Connecting to Spotify API...');
-        return () => clearInterval(check);
-      }
 
-      if (result?.error) {
+      if (result?.error)
         console.log('Trying to get Spotify data...');
-        return () => clearInterval(check);
-      }
-
-      if (result?.type !== 'track')
-        removePlayerClass(styles?.show, playerClasses);
-      else
-        addPlayerClass(styles?.show, playerClasses);
 
       if (result?.isPlaying) {
         const refresh = setTimeout(async () => await GetResult(), result?.duration?.remaining);
@@ -175,10 +166,18 @@ export function Player(props) {
         }
       }
 
-      console.log('Connecting to Spotify API...');
       return () => clearInterval(check);
     }
   }, [loaded, result, playerClasses, props?.platform]);
+
+  useLayoutEffect(() => {
+    if (props?.platform === 'spotify') {
+      if (result?.type !== 'track')
+        removePlayerClass(styles?.show, playerClasses);
+      else
+        addPlayerClass(styles?.show, playerClasses);
+    }
+  }, [playerClasses, result?.type, props?.platform]);
 
   //---------------- Player Functions --------------------//
   useEffect(() => {
