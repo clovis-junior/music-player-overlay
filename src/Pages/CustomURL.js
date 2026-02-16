@@ -71,10 +71,8 @@ export default function CustomURL() {
     }
 
     function checkOptions(element) {
-        if (!IsEmpty(element?.value) && !URLValidade(element?.value))
-            console.error('URL is not valid.');
-
         if (IsEmpty(element?.value) || !URLValidade(element?.value)) {
+            console.error('URL is not valid.');
             setDisableOptions(true);
             return false;
         }
@@ -296,7 +294,9 @@ export default function CustomURL() {
                 </footer>
             </aside>
             <div className={styles?.player_preview}>
-                <iframe title="preview" ref={preview} />
+                <div className={styles?.player_aspect}>
+                    <iframe title="preview" ref={preview} />
+                </div>
             </div>
         </div>
     )
