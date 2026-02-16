@@ -5,10 +5,13 @@ const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
 const appVersion = '1.0.0';
 
-const baseURL = 'http://localhost:9863/api/v1';
 const params = GetURLParams();
 
-const token = params.get('token');
+const host = params?.get('host') || 'localhost';
+const port = params?.get('port') || 9863;
+const token = params?.get('token');
+
+const baseURL = `http://${host}:${port}/api/v1`;
 
 export var authCode;
 

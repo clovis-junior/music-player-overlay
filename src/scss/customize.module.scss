@@ -34,7 +34,7 @@ $warning-color: #f97316;
 $danger-color: #dc2626;
 $success-color: #16a34a;
 
-$border-radius: 10px;
+$border-radius: 5px;
 
 /* ********************************************************
     Base
@@ -58,8 +58,8 @@ $youtube-color: #FF0033;
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #{hexToRGB($dark-pallete-2nd)};
-        --foreground-color: #{hexToRGB($dark-pallete-3rd)};
+        --background-color: #{hexToRGB($dark-pallete-3rd)};
+        --foreground-color: #{hexToRGB($dark-pallete-2nd)};
                             
         --font-primary-color: #{hexToRGB($light-pallete-1st)};
         --font-secondary-color: #{hexToRGB($light-pallete-2nd)};
@@ -78,20 +78,10 @@ body {
 	text-rendering: optimizeLegibility;
 
     &.dashboard {
-        overflow-y: auto;
-        overflow-x: hidden;
         background-color: rgb(var(--background-color));
         font-family: $fonts !important;
+        font-size: 1rem;
         color: rgb(var(--font-primary-color));
-
-        &::-webkit-scrollbar {
-            width: .5rem;
-            background-color: rgb(var(--background-color));
-        }
-        
-        &::-webkit-scrollbar-thumb {
-            background-color: rgb(var(--font-primary-color));
-        }
     }
 }
 
@@ -101,109 +91,97 @@ body {
 }
 
 .container {
-    width: 100%;
-    max-width: 1600px;
-    margin: 0 auto;
-    padding-right: 1rem;
-    padding-left: 1rem;
-}
-
-.middle {
-    width: 100%;
-    min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     @include display-flex;
     flex-wrap: nowrap;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
     align-items: center;
 }
 
-.panel {
-    width: 100%;
-    max-width: 560px;
-    display: block;
-    margin: 2rem auto;
-    padding: 2rem 0;
-    @include border-radius($border-radius);
+.customize_panel {
+    width: 100vw;
+    max-width: 480px;
+    height: 100vh;
+    @include display-flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 1rem;
     overflow: hidden;
+    line-height: 130%;
     background-color: rgb(var(--foreground-color));
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 2rem;
-    font-size: 1.25rem;
     color: rgb(var(--font-primary-color));
-    @include box-shadow(0 0 1rem rgba(0,0,0,.4));
+    @include box-shadow(0 -1rem 1rem rgba(0,0,0,.4));
     @include user-select(none);
 
-    & .panel_content {
+    & .customize_panel_header,
+    & .customize_panel_footer {
+        padding: 1rem 0;
+    }
+
+    & .customize_panel_content {
+        flex: 1 1;
         @include display-flex;
         flex-wrap: nowrap;
         flex-direction: column;
-        padding: 2rem;
-        gap: 1rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 2rem 0;
 
-        & :disabled, & .disabled {
-            cursor: not-allowed;
-            @include filter(opacity(.1));
+        &::-webkit-scrollbar {
+            width: .32rem;
+            background-color: transparent;
         }
-
-        &.centered {
-            text-align: center;
-        }
-
-        & h1, & h2, &h3 {
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
-
-        & a {
-            font-weight: 700;
-            color: inherit;
-            text-decoration: none; 
-        }
-
-        & ul {
-            list-style-type: decimal;
-        }
-
-        & ol {
-            list-style-type: disc;
-        }
-
-        & ul, & ol {
-            padding-right: 1rem;
-            margin-left: 2rem;
-            margin-top: 10px;
-
-            & li:not(:last-child) {
-                margin-bottom: 10px;
-            }
+            
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(var(--font-primary-color),.25);
         }
     }
 
-    .platform_logo {
-        max-width: calc(100% - 10rem);
-        max-height: 6rem;
-        display: block;
-        margin: 0 auto;
-        @include object-fit(cover);
-        -webkit-user-drag: none;
+    & :disabled, & .disabled {
+        cursor: not-allowed;
+        @include filter(opacity(.1));
     }
 
-    .user_select_valid {
-        cursor: text;
-        @include user-select(text);
+    & h1, & h2, &h3 {
+        letter-spacing: 1px;
+        font-weight: 800;
+    }
+
+    & a {
+        font-weight: 700;
+        color: inherit;
+        text-decoration: none; 
+    }
+
+    & ul {
+        list-style-type: decimal;
+    }
+
+    & ol {
+        list-style-type: disc;
+    }
+
+    & ul, & ol {
+        padding-right: 1rem;
+        margin-left: 2rem;
+        margin-top: 10px;
+
+        & li:not(:last-child) {
+            margin-bottom: 10px;
+        }
     }
 
     .player_customize_options {
-        flex: 1 0 100%;
         @include display-flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        row-gap: 20px;
-        column-gap: 10px;
+        gap: 1rem;
 
         & .player_customize_option {
             cursor: pointer;
@@ -213,10 +191,11 @@ body {
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
+            gap: 10px;
             @include transition(all 120ms);
 
             &.full {
-                flex-basis: 100%;
+                flex: 2 0 100%;
                 flex-wrap: wrap;
                 justify-content: space-between;
             }
@@ -244,10 +223,9 @@ body {
 
             & .player_customize_option_check,
             & .player_customize_option_radio {
-                flex: 0 0 1rem;
+                width: 1rem;
                 height: 1rem;
                 display: block;
-                margin-right: 10px;
                 background-color: rgb(var(--font-primary-color));
                 position: relative;
             }
@@ -291,13 +269,11 @@ body {
             }
 
             & .player_customize_option_name {
+                flex: 1 0;
                 display: block;
                 white-space: nowrap;
                 overflow: hidden;
-                padding: 5px 0;
-                line-height: 1.1rem;
                 font-weight: 600;
-                font-size: 1.1rem;
                 text-align: left;
                 text-overflow: ellipsis;
             }
@@ -340,35 +316,18 @@ body {
     }
 
     .btns {
-        width: 100%;
+        flex: 1 0;
         @include display-flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
-        padding: 0 1rem;
-
-        &.column {
-            flex-wrap: nowrap;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            & .btn {
-                width: 100%;
-            }
-        }
-
-        &.centered {
-            justify-content: center;
-        }
     }
 
     .btn {
-        flex: 1 0 auto;
+        flex: 1 0;
         @include display-flex;
-        flex-wrap: nowrap;
         flex-direction: row;
         justify-content: center;
         align-items: center;
@@ -395,31 +354,23 @@ body {
         &:not(:disabled):active {
             @include transform(scale(.9));
         }
-
-        &.success:not(:disabled):hover { background-color: $success-color }
-
-        &.ytm:not(:disabled):hover { background-color: $youtube-color }
-        &.spotify:not(:disabled):hover { background-color: $spotify-color }
-        &.apple:not(:disabled):hover { background-color: $apple-color }
     }
 }
 
-.alert {
-    --color: #{hexToRGB($info-color)};
+.player_preview {
+    width: 100vw;
+    height: 100vh;
+    max-width: calc(100vw - 480px);
+    @include display-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 2rem;
 
-    width: calc(100% - 3rem);
-    display: block;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    @include border-radius($border-radius);
-    border: 1px solid rgba(var(--color), .6);
-    background-color: rgba(var(--color), .2);
-    font-weight: 600;
-    color: rgb(var(--color));
-    text-align: center;
-    @include user-select(none);
-
-    &.warning { --color: #{hexToRGB($warning-color)}; }
-    &.error { --color: #{hexToRGB($danger-color)}; }
+    & iframe {
+        width: 100%;
+        height: 100vh;
+        display: block;
+    }
 }
-    

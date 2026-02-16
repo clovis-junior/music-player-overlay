@@ -1,7 +1,13 @@
+import { GetURLParams } from '../Utils.js';
 import { io } from 'socket.io-client';
 import { IsEmpty } from '../Utils.js';
 
-const baseURL = 'http://localhost:10767';
+const params = GetURLParams();
+
+const host = params?.get('host') || 'localhost';
+const port = params?.get('port') || 10767;
+
+const baseURL = `http://${host}:${port}`;
 
 function GetAlbumCover(url = '', size = 600) {
     if (IsEmpty(url))

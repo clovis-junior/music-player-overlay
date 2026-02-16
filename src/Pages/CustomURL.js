@@ -1,7 +1,7 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GetURLParams, IsEmpty, URLValidade } from '../Utils.js';
-import styles from '../scss/dashboard.module.scss';
+import styles from '../scss/customize.module.scss';
 
 function Clipboard(text, element) {
     element?.select();
@@ -23,14 +23,14 @@ function PlayerOption(props) {
         return (
             <>
                 <label className={!attr?.disabled ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}
-                    htmlFor={`${id || name}_on`}>
-                    <input id={`${id || name}_on`} type='radio' name={name || id} value='on' defaultChecked={value === 'on'} {...attr} />
+                    htmlFor={`${id || name} ${options[0]}`}>
+                    <input id={`${id || name} ${options[0]}`} type='radio' name={name || id} value='on' defaultChecked={value === 'on'} {...attr} />
                     <span className={styles?.player_customize_option_radio}></span>
                     <span className={styles?.player_customize_option_name}>{options[0]}</span>
                 </label>
                 <label className={!attr?.disabled ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}
-                    htmlFor={`${id || name}_off`}>
-                    <input id={`${id || name}_off`} type='radio' name={name || id} value='off' defaultChecked={value === 'off'} {...attr} />
+                    htmlFor={`${id || name} ${options[1]}`}>
+                    <input id={`${id || name} ${options[1]}`} type='radio' name={name || id} value='off' defaultChecked={value === 'off'} {...attr} />
                     <span className={styles?.player_customize_option_radio}></span>
                     <span className={styles?.player_customize_option_name}>{options[1]}</span>
                 </label>
@@ -50,7 +50,6 @@ function PlayerOption(props) {
 
 export default function CustomURL() {
     const navigate = useNavigate();
-
     const params = GetURLParams();
 
     const urlValue = params.has('url') ? decodeURIComponent(params.get('url')) : '';
@@ -60,6 +59,7 @@ export default function CustomURL() {
     const [disableOptions, setDisableOptions] = useState(!IsEmpty(urlValue) ? false : true);
 
     const url = useRef(null);
+    const preview = useRef(null);
     const result = useRef(null);
 
     function changePlayerLayout(e) {
@@ -159,14 +159,20 @@ export default function CustomURL() {
         return false;
     }
 
+    useEffect(() => {
+        if (!preview.current)
+            return;
+
+        preview.current.src = result.current?.value;
+
+    }, [result.current?.value]);
+
     useLayoutEffect(() => {
         if (!document.body?.classList?.contains(styles?.dashboard))
             document.body?.classList?.add(styles?.dashboard);
     });
 
     useLayoutEffect(() => {
-        // console.debug(playerOptions, URIDecodeOptions(playerOptions));
-
         let urlBase = url?.current?.value?.split('?')[0];
 
         if (!IsEmpty(urlBase)) {
@@ -179,107 +185,118 @@ export default function CustomURL() {
                 result.current.value = `${result.current.value}&options=${encodeOptions(URIDecodeOptions(playerOptions))}`
         }
 
+        console.debug(url?.current?.value, result.current.value, playerOptions, URIDecodeOptions(playerOptions));
+
     }, [playerOptions]);
 
     return (
         <div className={styles?.container}>
-            <div className={styles?.middle}>
-                <div className={styles?.panel}>
-                    <div className={`${styles?.panel_content} ${styles?.centered}`}>
-                        <h2>Costumize your player</h2>
-                        <input ref={url} id='url' type='text' className={`${styles?.input_text} ${styles?.full}`}
-                            defaultValue={urlValue} readOnly={params.has('url') ? true : false}
-                            placeholder='Your Player URL' onChange={e => checkOptions(e.target)}
+            <aside className={styles?.customize_panel}>
+                <header className={styles?.customize_panel_header}>
+                    <h2>Costumize your player</h2>
+                    <input ref={url} id='url' type='text' className={`${styles?.input_text} ${styles?.full}`}
+                        defaultValue={urlValue} readOnly={params.has('url') ? true : false}
+                        placeholder='Your Player URL' onChange={e => checkOptions(e.target)}
+                    />
+                </header>
+                <div className={styles?.player_customize_options}>
+                    <PlayerOption type='radio' id='compact' name='compact' value={compactMode} options={['Player Compact', 'Player Full Size']}
+                        onChange={e => changePlayerLayout(e)} disabled={disableOptions}
+                    />
+                    <div className={!disableOptions ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}>
+                        <span className={styles?.player_customize_option_name}>Sleep After (in secs):</span>
+                        <input id='sleepAfter' type='number' className={`${styles?.input_text} ${styles?.compact} ${styles?.centered}`} name='sleepAfter'
+                            min={0} defaultValue={playerOptions['sleepAfter'] || 10} max={60}
+                            onChange={e => changePlayerOptions(e)} disabled={disableOptions}
                         />
-                        <div className={styles?.player_customize_options}>
-                            <PlayerOption type='radio' id='compact' name='compact' value={compactMode} options={['Player Compact', 'Player Full Size']}
-                                onChange={e => changePlayerLayout(e)} disabled={disableOptions} 
+                    </div>
+                    {compactMode === 'off' ? (
+                        <div className={!disableOptions ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}>
+                            <span className={styles?.player_customize_option_name}>Sound Waves</span>
+                            <input id='showWaves' type='number' className={`${styles?.input_text} ${styles?.compact} ${styles?.centered}`} name='showWaves'
+                                min={0} defaultValue={playerOptions['showWaves'] || 0} max={96}
+                                onChange={e => changePlayerOptions(e)} disabled={disableOptions}
                             />
                         </div>
+                    ) : (<></>)}
+                </div>
+                <div className={`${styles?.customize_panel_content} ${styles?.overflow}`}>
+                    <div className={styles?.player_customize_options}>
                         {'solidColor' in playerOptions ? (
-                            <div className={styles?.player_customize_options}>
+                            <>
                                 <PlayerOption type='checkbox' id='vibrant' name='vibrant' value={('vibrant' in playerOptions)}
                                     onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
                                     <span className={styles?.player_customize_option_name}>Vibrant Theme</span>
                                 </PlayerOption>
                                 {'vibrant' in playerOptions ? (<></>) : (
                                     <PlayerOption type='radio' id='player_theme' name='light'
-                                    value={(!('light' in playerOptions) && playerOptions['light']) ? 'on' : 'off'}
-                                    options={['Light Theme', 'Dark Theme']} onChange={e => changePlayerOptions(e)} disabled={disableOptions} />
+                                        value={'light' in playerOptions ? 'on' : 'off'}
+                                        options={['Light Theme', 'Dark Theme']} 
+                                        onChange={e => changePlayerOptions(e)} disabled={disableOptions} />
                                 )}
-                            </div> 
+                            </>
                         ) : (<></>)}
-                        <div className={styles?.player_customize_options}>
-                            <PlayerOption type='checkbox' id='square' name='squareLayout' value={('squareLayout' in playerOptions)}
-                                onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                <span className={styles?.player_customize_option_name}>Player with Square Borders</span>
-                            </PlayerOption>
-                            <PlayerOption type='checkbox' id='shadow' name='noShadow' value={('noShadow' in playerOptions)}
-                                onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                <span className={styles?.player_customize_option_name}>Remove Drop Shadow</span>
-                            </PlayerOption>
-                            <PlayerOption type='checkbox' id='solid_color' name='solidColor' value={'solidColor' in playerOptions}
-                                onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                <span className={styles?.player_customize_option_name}>Background with Solid Color</span>
-                            </PlayerOption>
-                            <PlayerOption type='checkbox' id='hide_progressbar' name='hideProgressBar' value={('hideProgressBar' in playerOptions)}
-                                onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                <span className={styles?.player_customize_option_name}>Remove Music Progress Bar</span>
-                            </PlayerOption>
-                            <PlayerOption type='checkbox' id='show_platform_icon' name='showPlatform' value={('showPlatform' in playerOptions)}
-                                onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                <span className={styles?.player_customize_option_name}>Show Platform Logo</span>
-                            </PlayerOption>
-                            {compactMode === 'on' ? (
-                                <PlayerOption id='text_centered' className={styles?.player_customize_option} name='textCentered'
-                                    value={('textCentered' in playerOptions)} onChange={e => changePlayerOptions(e)}>
-                                    <span className={styles?.player_customize_option_name}>Align Center Music Infos</span>
-                                </PlayerOption>) : (
-                                <div className={styles?.player_customize_options}>
-                                    <PlayerOption type='checkbox' id='album_art' name='hideAlbum' value={('hideAlbum' in playerOptions)}
-                                        onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                        <span className={styles?.player_customize_option_name}>Remove Music Album Art</span>
-                                    </PlayerOption>
-                                    <PlayerOption type='checkbox' id='hide_progress' name='hideProgress' value={('hideProgress' in playerOptions)}
-                                        onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
-                                        <span className={styles?.player_customize_option_name}>Hide Music Times Progress</span>
-                                    </PlayerOption>
-                                    {!('hideProgress' in playerOptions) ? (
-                                        <PlayerOption type='radio' id='remaining_time' name='remainingTime'
-                                            value={(!('hideProgress' in playerOptions) && playerOptions['remainingTime']) ? 'on' : 'off'}
-                                            options={['Show Remaining Music Time', 'Show Duration Music Time']} onChange={e => changePlayerOptions(e)} disabled={disableOptions} />
-                                    ) : (<></>)}
-                                </div>
-                            )}
-                        </div>
-                        <div className={styles?.player_customize_options}>
-                            <div className={!disableOptions ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}>
-                                <span className={styles?.player_customize_option_name}>Sleep After (in secs):</span>
-                                <input id='sleepAfter' type='number' className={`${styles?.input_text} ${styles?.compact} ${styles?.centered}`} name='sleepAfter'
-                                    min={0} defaultValue={playerOptions['sleepAfter'] || 10} max={60}
-                                    onChange={e => changePlayerOptions(e)} disabled={disableOptions}
-                                />
-                            </div>
-                            {compactMode === 'off' ? (
-                                <div className={!disableOptions ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}>
-                                    <span className={styles?.player_customize_option_name}>Sound Waves</span>
-                                    <input id='showWaves' type='number' className={`${styles?.input_text} ${styles?.compact} ${styles?.centered}`} name='showWaves'
-                                        min={0} defaultValue={0} max={96}
-                                        onChange={e => changePlayerOptions(e)} disabled={disableOptions}
-                                    />
-                                </div>
-                            ) : (<></>)}
-                        </div>
-                        <p>Copy this URL and use it on you streaming software:</p>
-                        <input ref={result} id='result' title='URL Personalized' type='text' className={`${styles?.input_text} ${styles?.full}`}
-                            readOnly disabled={disableOptions} />
-                        <b>Enjoy!</b>
-                        <footer className={styles?.btns}>
-                            <button type='button' className={styles?.btn} onClick={() => Clipboard(result?.current?.value, result?.current)}>Copy New URL</button>
-                            <button type='button' className={styles?.btn} onClick={() => navigate('/')}>Back to Homepage</button>
-                        </footer>
+                        {compactMode === 'off' ? (
+                            <>
+                                <PlayerOption type='checkbox' id='hide_progress' name='hideProgress' value={('hideProgress' in playerOptions)}
+                                    onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                                    <span className={styles?.player_customize_option_name}>Hide Music Times Progress</span>
+                                </PlayerOption>
+                                {'hideProgress' in playerOptions ? (<></>) : (
+                                    <PlayerOption type='radio' id='time_mode' name='remainingTime'
+                                        value={'remainingTime' in playerOptions ? 'on' : 'off'}
+                                        options={['Show Remaining Music Time', 'Show Duration Music Time']} 
+                                        onChange={e => changePlayerOptions(e)} disabled={disableOptions} />
+                                )}
+                                <PlayerOption type='checkbox' id='album_art' name='hideAlbum' value={('hideAlbum' in playerOptions)}
+                                    onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                                    <span className={styles?.player_customize_option_name}>Remove Music Album Art</span>
+                                </PlayerOption>
+                            </>
+                        ) : (<></>)}
+                        {compactMode === 'on' ? (
+                            <PlayerOption id='text_centered' className={styles?.player_customize_option} name='textCentered'
+                                value={('textCentered' in playerOptions)} onChange={e => changePlayerOptions(e)}>
+                                <span className={styles?.player_customize_option_name}>Align Center Music Infos</span>
+                            </PlayerOption>) : (<></>)}
+                        <PlayerOption type='checkbox' id='square' name='squareLayout' value={('squareLayout' in playerOptions)}
+                            onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                            <span className={styles?.player_customize_option_name}>Player with Square Borders</span>
+                        </PlayerOption>
+                        <PlayerOption type='checkbox' id='shadow' name='noShadow' value={('noShadow' in playerOptions)}
+                            onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                            <span className={styles?.player_customize_option_name}>Remove Drop Shadow</span>
+                        </PlayerOption>
+                        <PlayerOption type='checkbox' id='solid_color' name='solidColor' value={'solidColor' in playerOptions}
+                            onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                            <span className={styles?.player_customize_option_name}>Background with Solid Color</span>
+                        </PlayerOption>
+                        <PlayerOption type='checkbox' id='hide_progressbar' name='hideProgressBar' value={('hideProgressBar' in playerOptions)}
+                            onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                            <span className={styles?.player_customize_option_name}>Remove Music Progress Bar</span>
+                        </PlayerOption>
+                        <PlayerOption type='checkbox' id='show_platform_icon' name='showPlatform' value={('showPlatform' in playerOptions)}
+                            onChange={e => changePlayerOptions(e)} disabled={disableOptions}>
+                            <span className={styles?.player_customize_option_name}>Show Platform Logo</span>
+                        </PlayerOption>
                     </div>
                 </div>
+                <footer className={styles?.customize_panel_footer}>
+                    <p>Copy this URL and use it on you streaming software:</p>
+                    <input ref={result} id='result' title='URL Personalized' type='text' className={`${styles?.input_text} ${styles?.full}`}
+                        readOnly disabled={disableOptions} />
+                    <footer className={styles?.btns}>
+                        <button type='button' className={styles?.btn}
+                            disabled={result?.current?.value.length <= 0 ? true : false}
+                            onClick={() => Clipboard(result?.current?.value, result?.current)}>
+                            Copy New URL
+                        </button>
+                        <button type='button' className={styles?.btn} onClick={() => navigate('/')}>Back to Homepage</button>
+                    </footer>
+                </footer>
+            </aside>
+            <div className={styles?.player_preview}>
+                <iframe title="preview" ref={preview} />
             </div>
         </div>
     )
