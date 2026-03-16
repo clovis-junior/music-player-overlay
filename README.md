@@ -1,4 +1,7 @@
 # 🎵 Music Player Overlay
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a106dd8f-0a3d-4f50-a5d9-96df8c37ba71/deploy-status)](https://app.netlify.com/projects/music-widget/deploys)
+
 Hi, thats a project made only by myself using React, SCSS and love!
 Its a FREE overlay for streaming show current music playing in your favorite platform.
 
