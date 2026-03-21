@@ -1,6 +1,11 @@
 # 🎵 Music Player Overlay
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a106dd8f-0a3d-4f50-a5d9-96df8c37ba71/deploy-status)](https://app.netlify.com/projects/music-widget/deploys)
+![GitHub package.json version (branch)](https://img.shields.io/github/package-json/v/clovis-junior/music-player-overlay/main)
+![GitHub repo size](https://img.shields.io/github/repo-size/clovis-junior/music-player-overlay)
+![GitHub License](https://img.shields.io/github/license/clovis-junior/music-player-overlay)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fmusic-widget.netlify.app%2F)
+
 
 This a project made only by myself using React, SCSS and love!
 Its a FREE overlay for streamers to show current music playing in your favorite platform.
