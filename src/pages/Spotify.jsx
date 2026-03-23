@@ -60,8 +60,8 @@ function Instructions() {
                     Fill in the following details:
                     <ol>
                         <li>
-                            <b>Redirect URIs</b> —{' '}
-                            "<span className={styles.user_select_valid}>{browserURL}</span>"
+                            <b>Redirect URIs</b> —
+                            "<span className={styles.user_select_valid}>{browserURL + window.location.pathname.slice(1)}</span>"
                         </li>
                         <li>
                             <b>Which API/SDKs are you planning to use?</b> — check Web API
@@ -123,7 +123,7 @@ function Auth({
         const urlParams = new URLSearchParams({
             client_id: clientID,
             scope: scopes,
-            redirect_uri: browserURL,
+            redirect_uri: browserURL + window.location.pathname.slice(1),
             response_type: 'code',
             show_dialog: true
         });
