@@ -1,5 +1,7 @@
-import { GetURLParams } from '../Utils.js';
+import { GetURLParams } from './Utils';
 import { io } from 'socket.io-client';
+
+import icon from '../assets/images/ytm-logo.png';
 
 const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
@@ -66,7 +68,7 @@ export async function RequestToken(code) {
   }
 }
 
-export function UpdatePlayerData(data) {
+function UpdatePlayerData(data) {
   if (data.error) return data;
 
   const player = data?.player;
@@ -77,15 +79,15 @@ export function UpdatePlayerData(data) {
   const artist = song?.author;
   const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
   const duration = {
-    elapsed: player?.videoProgress || 0,
-    remaining: (song?.durationSeconds - player?.videoProgress) || 0,
-    total: song?.durationSeconds || 0
+    elapsed: Number(player?.videoProgress) || 0,
+    remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
+    total: Number(song?.durationSeconds) || 0
   };
 
   return { isPlaying, title, artist, duration, albumCover };
 }
 
-export function GetData(debug = false) {
+function GetData(debug = false) {
   try {
     const socket = io(`${baseURL}/realtime`, {
       transports: ['websocket'],
@@ -108,5 +110,53 @@ export function GetData(debug = false) {
     console.error(e.message);
 
     return { error: JSON.stringify(e.message) }
+  }
+}
+
+export default {
+  id: 'youtube-music',
+  icon,
+
+  connect({ onConnect, onDisconnect, onData }) {
+    const socket = GetData();
+
+    const handleConnect = () => onConnect?.();
+    const handleDisconnect = () => onDisconnect?.();
+    const handleStateUpdate = state => {
+      const data = UpdatePlayerData(state);
+
+      if (!data || data?.error) return;
+
+      onData?.(current => {
+        const next = data;
+
+        const sameMetadata =
+          current?.title === next?.title &&
+          current?.artist === next?.artist &&
+          current?.albumCover === next?.albumCover;
+
+        const samePlaybackState =
+          current?.isPlaying === next?.isPlaying &&
+          current?.duration?.elapsed === next?.duration?.elapsed &&
+          current?.duration?.remaining === next?.duration?.remaining &&
+          current?.duration?.total === next?.duration?.total;
+
+        return (sameMetadata && samePlaybackState) ? current : next;
+      });
+    };
+
+    socket?.on('connect', handleConnect);
+    socket?.on('disconnect', handleDisconnect);
+    socket?.on('state-update', handleStateUpdate);
+    socket?.connect();
+
+    return () => {
+      socket?.off('connect', handleConnect);
+      socket?.off('disconnect', handleDisconnect);
+      socket?.off('state-update', handleStateUpdate);
+
+      if (socket?.connected)
+        socket?.disconnect();
+    }
   }
 }

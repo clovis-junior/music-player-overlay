@@ -1,6 +1,7 @@
-import { GetURLParams } from '../Utils.js';
+import { GetURLParams, IsEmpty } from './Utils';
 import { io } from 'socket.io-client';
-import { IsEmpty } from '../Utils.js';
+
+import icon from '../assets/images/apple-music-icon.svg';
 
 const params = GetURLParams();
 
@@ -19,22 +20,21 @@ function GetAlbumCover(url = '', size = 600) {
     return cover
 }
 
-export function UpdateMusicTime(data) {
+function UpdateMusicTime(data) {
     if (!IsEmpty(data)) {
-        const isPlaying = data?.isPlaying || false;
         const duration = {
-            elapsed: data?.currentPlaybackTime || 0,
-            remaining: data?.currentPlaybackTimeRemaining || 0,
-            total: data?.currentPlaybackDuration || 0
+            elapsed: Number(data?.currentPlaybackTime) || 0,
+            remaining: Number(data?.currentPlaybackTimeRemaining) || 0,
+            total: Number(data?.currentPlaybackDuration) || 0
         };
 
-        return { isPlaying, duration };
+        return { duration }
     }
 
     return {};
 }
 
-export function UpdateMusicData(data) {
+function UpdateMusicData(data) {
     if (!IsEmpty(data)) {
         const title = data?.name || '';
         const artist = data?.artistName || '';
@@ -46,8 +46,8 @@ export function UpdateMusicData(data) {
     return {};
 }
 
-export function UpdatePlaybackState(data) {
-    let isPlaying;
+function UpdatePlaybackState(data) {
+    let isPlaying = false;
 
     switch (data?.state) {
         case 'paused':
@@ -63,7 +63,7 @@ export function UpdatePlaybackState(data) {
     return data?.attributes ? { isPlaying, ...UpdateMusicData(data?.attributes) } : { isPlaying }
 }
 
-export function GetData(debug = false) {
+function GetData(debug = false) {
     try {
         const socket = io(`${baseURL}`, {
             transports: ['websocket'],
@@ -84,5 +84,46 @@ export function GetData(debug = false) {
         console.error(e.message);
 
         return { error: JSON.stringify(e.message) }
+    }
+}
+
+export default {
+    id: 'apple-music',
+    icon,
+
+    connect({ onConnect, onDisconnect, onData }) {
+        const socket = GetData();
+
+        const handleConnect = () => onConnect?.();
+        const handleDisconnect = () => onDisconnect?.();
+        const handleStateUpdate = ({ data, type }) => {
+            switch (type) {
+                case 'playbackStatus.playbackStateDidChange':
+                    onData?.(current => ({ ...current, ...UpdatePlaybackState(data) }));
+                    break;
+                case 'playbackStatus.nowPlayingItemDidChange':
+                    onData?.(current => ({ ...current, ...UpdateMusicData(data) }));
+                    break;
+                case 'playbackStatus.playbackTimeDidChange':
+                    onData?.(current => ({ ...current, ...UpdateMusicTime(data) }));
+                    break;
+                default:
+                    console.debug(type, data);
+            }
+        }
+
+        socket?.on('connect', handleConnect);
+        socket?.on('disconnect', handleDisconnect);
+        socket?.on('API:Playback', handleStateUpdate);
+        socket?.connect();
+
+        return () => {
+            socket?.off('connect', handleConnect);
+            socket?.off('disconnect', handleDisconnect);
+            socket?.off('API:Playback', handleStateUpdate);
+
+            if (socket?.connected)
+                socket?.disconnect();
+        }
     }
 }

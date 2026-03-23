@@ -55,16 +55,6 @@ async function GetAccessToken(clientID, clientSecret, refreshToken) {
     accessToken = data.access_token;
 
     return GetCurrentPlaying(clientID, clientSecret, refreshToken);
-
-    /*return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-      body: JSON.stringify(data)
-    }*/
   } catch (err) {
     return {
       statusCode: 500,

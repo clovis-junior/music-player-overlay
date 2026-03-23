@@ -1,51 +1,15 @@
-@use "functions.scss" as *;
-@use "reset.scss" as *;
-@use "sass:color";
+@use "global.scss" as *;
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-
-@function hexToRGB($hexColor) {
-    $red: color.channel($hexColor, "red", $space: rgb);
-    $blue: color.channel($hexColor, "blue", $space: rgb);
-    $green: color.channel($hexColor, "green", $space: rgb);
-
-    @return "#{$red},#{$green},#{$blue}";
-}
 
 /* ********************************************************
     Variables
 ******************************************************** */
-$fonts: -apple-system, BlinkMacSystemFont, Inter, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif !default;
-
-$light-color: #fafafa;
-$light-pallete-1st: #dfdfdf;
-$light-pallete-2nd: #c9c9c9;
-$light-pallete-3rd: #b1b1b1;
-$light-pallete-4th: #9f9f9f;
-
-$dark-color: #09090b;
-$dark-pallete-1st: #18181b;
-$dark-pallete-2nd: #27272a;
-$dark-pallete-3rd: #3f3f46;
-$dark-pallete-4th: #52525c;
-
-$info-color: #0284c7;
-$warning-color: #f97316;
-$danger-color: #dc2626;
-$success-color: #16a34a;
-
-$border-radius: 5px;
+$border-radius: 10px !default;
 
 /* ********************************************************
     Base
 ******************************************************** */
-$dark-theme: false !default;
-
-$amazon-color: #0077c1;
-$apple-color: #fc3c44;
-$spotify-color: #1db954;
-$youtube-color: #ff0033;
-
 :root {
     --background-color: #{hexToRGB($light-pallete-1st)};
     --foreground-color: #{hexToRGB($light-color)};
@@ -53,12 +17,10 @@ $youtube-color: #ff0033;
     --font-primary-color: #{hexToRGB($dark-pallete-1st)};
     --font-secondary-color: #{hexToRGB($dark-pallete-2nd)};
     --font-tertiary-color: #{hexToRGB($dark-pallete-3rd)};
-}
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background-color: #{hexToRGB($dark-pallete-3rd)};
-        --foreground-color: #{hexToRGB($dark-pallete-2nd)};
+    @media (prefers-color-scheme: dark) {
+        --background-color: #{hexToRGB($dark-pallete-2nd)};
+        --foreground-color: #{hexToRGB($dark-pallete-3rd)};
 
         --font-primary-color: #{hexToRGB($light-pallete-1st)};
         --font-secondary-color: #{hexToRGB($light-pallete-2nd)};
@@ -66,93 +28,21 @@ $youtube-color: #ff0033;
     }
 }
 
-html {
-    -webkit-tap-highlight-color: transparent;
-    @include text-size-adjust(100%);
-}
-
-body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-
-    &.dashboard {
-        background-color: rgb(var(--background-color));
-        font-family: $fonts !important;
-        font-size: 1rem;
-        color: rgb(var(--font-primary-color));
-    }
-}
-
-@include selection {
-    background-color: $dark-pallete-1st;
-    color: $info-color;
-}
-
-.container {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    @include display-flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    align-items: center;
-}
-
-.customize_panel {
-    height: 100vh;
-    @include display-flex;
-    flex-wrap: nowrap;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: stretch;
-    padding: 1rem;
-    overflow: hidden;
-    line-height: 130%;
-    background-color: rgb(var(--foreground-color));
+.customize_page,
+.dashboard_page {
+    width: 100%;
+    background-color: rgb(var(--background-color));
+    font-family: Inter, $fonts !important;
+    font-size: 1rem;
     color: rgb(var(--font-primary-color));
-    @include box-shadow(0 -1rem 1rem rgba(0, 0, 0, 0.4));
-    @include user-select(none);
+}
 
-    @media (max-width: 1024px) {
-        width: 100vw;
-        max-width: 600px;
-        margin: 1rem auto;
-    }
-
-    @media (min-width: 1024px) {
-        flex: 1 0;
-        max-width: 480px;
-    }
-
-    & .customize_panel_header,
-    & .customize_panel_footer {
-        padding: 1rem 0;
-    }
-
-    & .customize_panel_content {
-        flex: 1 1;
-        @include display-flex;
-        flex-wrap: nowrap;
-        flex-direction: column;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 2rem 0;
-
-        &::-webkit-scrollbar {
-            width: 0.32rem;
-            background-color: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: rgba(var(--font-primary-color), 0.25);
-        }
-    }
-
+.panel,
+.customize_panel {
     & :disabled,
     & .disabled {
         cursor: not-allowed;
-        @include filter(opacity(0.1));
+        filter: opacity(0.1);
     }
 
     & h1,
@@ -186,9 +76,252 @@ body {
             margin-bottom: 10px;
         }
     }
+}
+
+/* ********************************************************
+    Dashboard
+******************************************************** */
+.container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.dashboard_page {
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.middle {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.panel {
+    width: 100%;
+    max-width: 560px;
+    display: block;
+    margin: 2rem auto;
+    padding: 2rem 0;
+    border-radius: $border-radius;
+    overflow: hidden;
+    background-color: rgb(var(--foreground-color));
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 2rem;
+    font-size: 1.25rem;
+    color: rgb(var(--font-primary-color));
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
+    @include user-select(none);
+
+    & .panel_content {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1rem;
+
+        &.centered {
+            text-align: center;
+        }
+    }
+
+    .platform_logo {
+        max-width: calc(100% - 10rem);
+        max-height: 6rem;
+        display: block;
+        margin: 0 auto;
+        object-fit: cover;
+        -webkit-user-drag: none;
+    }
+
+    .user_select_valid {
+        cursor: text;
+        @include user-select(text);
+    }
+
+    .input_text {
+        display: block;
+        padding: 1rem 0;
+        border: 1px solid rgba(var(--font-tertiary-color), 0.6);
+        background-color: rgba(var(--font-tertiary-color), 0.05);
+        border-radius: $border-radius;
+        font-weight: 300;
+        color: rgb(var(--font-primary-color));
+        text-align: center;
+        text-overflow: ellipsis;
+        border-radius: $border-radius;
+
+        @mixin placeholder {
+            color: rgb(var(--font-primary-color));
+        }
+
+        &:not(:focus):hover {
+            background-color: rgba(var(--font-tertiary-color), 0.1);
+        }
+
+        &:focus {
+            border-color: $info-color;
+        }
+
+        &.compact {
+            margin: 6px 1rem;
+            padding: 6px 0;
+        }
+
+        &.full {
+            width: 100%;
+            margin: 1rem 0;
+        }
+    }
+
+    .btns {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0 1rem;
+
+        &.column {
+            flex-wrap: nowrap;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            & .btn {
+                width: 100%;
+            }
+        }
+
+        &.centered {
+            justify-content: center;
+        }
+    }
+
+    .btn {
+        flex: 1 0 auto;
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        border-radius: $border-radius;
+        background-color: $dark-pallete-1st;
+        font-weight: 700;
+        color: $light-color;
+        @include user-select(none);
+        transition: all 100ms ease;
+
+        &:hover {
+            background-color: $info-color;
+        }
+
+        &:disabled {
+            pointer-events: none;
+            background-color: $dark-pallete-4th;
+            color: $light-pallete-4th;
+        }
+
+        &:not(:disabled):hover {
+            cursor: pointer;
+        }
+
+        &:not(:disabled):active {
+            transform: scale(0.9);
+        }
+
+        &.success:not(:disabled):hover {
+            background-color: $success-color;
+        }
+
+        &.ytm:not(:disabled):hover {
+            background-color: $youtube-color;
+        }
+        &.spotify:not(:disabled):hover {
+            background-color: $spotify-color;
+        }
+        &.apple:not(:disabled):hover {
+            background-color: $apple-color;
+        }
+    }
+}
+
+/* ********************************************************
+    Customize Player
+******************************************************** */
+.customize_page {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+}
+
+.customize_panel {
+    height: 100vh;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 1rem;
+    overflow: hidden;
+    line-height: 130%;
+    background-color: rgb(var(--foreground-color));
+    color: rgb(var(--font-primary-color));
+    box-shadow: 0 -1rem 1rem rgba(0, 0, 0, 0.4);
+    @include user-select(none);
+
+    @media (max-width: 1024px) {
+        width: 100vw;
+        max-width: 600px;
+        margin: 1rem auto;
+    }
+
+    @media (min-width: 1024px) {
+        flex: 1 0;
+        max-width: 480px;
+    }
+
+    & .customize_panel_header,
+    & .customize_panel_footer {
+        padding: 1rem 0;
+    }
+
+    & .customize_panel_content {
+        flex: 1 1;
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 2rem 0;
+
+        &::-webkit-scrollbar {
+            width: 0.32rem;
+            background-color: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(var(--font-primary-color), 0.25);
+        }
+    }
 
     .player_customize_options {
-        @include display-flex;
+        display: flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-between;
@@ -198,13 +331,13 @@ body {
         & .player_customize_option {
             cursor: pointer;
             flex: 1 0;
-            @include display-flex;
+            display: flex;
             flex-wrap: nowrap;
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
             gap: 10px;
-            @include transition(all 120ms);
+            transition: all 120ms;
 
             &.full {
                 flex: 2 0 100%;
@@ -227,7 +360,7 @@ body {
 
             & input:checked ~ .player_customize_option_check:after,
             & input:checked ~ .player_customize_option_radio:after {
-                @include filter(opacity(1));
+                filter: opacity(1);
             }
 
             & input:checked ~ .player_customize_option_name {
@@ -244,7 +377,7 @@ body {
             }
 
             & .player_customize_option_check {
-                @include border-radius(2px);
+                border-radius: 2px;
 
                 &:after {
                     content: "";
@@ -252,9 +385,9 @@ body {
                     height: 10px;
                     border: solid $light-color;
                     border-width: 0 2px 2px 0;
-                    @include filter(opacity(0));
-                    @include transform(rotate(45deg));
-                    @include transition(filter 180ms);
+                    filter: opacity(0);
+                    transform: rotate(45deg);
+                    transition: filter 180ms;
                     position: absolute;
                     bottom: 3px;
                     right: 1px;
@@ -264,17 +397,17 @@ body {
             }
 
             & .player_customize_option_radio {
-                @include border-radius(50px);
+                border-radius: 50px;
 
                 &:after {
                     content: "";
                     width: 8px;
                     height: 8px;
-                    @include border-radius(50px);
+                    border-radius: 50px;
                     background-color: $light-color;
-                    @include filter(opacity(0));
-                    @include transform(translate(-50%, -50%));
-                    @include transition(filter 180ms);
+                    filter: opacity(0);
+                    transform: translate(-50%, -50%);
+                    transition: filter 180ms;
                     position: absolute;
                     left: 50%;
                     top: 50%;
@@ -298,12 +431,12 @@ body {
         padding: 1rem 0;
         border: 1px solid rgba(var(--font-tertiary-color), 0.6);
         background-color: rgba(var(--font-tertiary-color), 0.05);
-        @include border-radius($border-radius);
+        border-radius: $border-radius;
         font-weight: 300;
         color: rgb(var(--font-primary-color));
         text-align: center;
         text-overflow: ellipsis;
-        @include border-radius($border-radius);
+        border-radius: $border-radius;
 
         @mixin placeholder {
             color: rgb(var(--font-primary-color));
@@ -330,7 +463,7 @@ body {
 
     .btns {
         flex: 1 0;
-        @include display-flex;
+        display: flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-between;
@@ -340,17 +473,17 @@ body {
 
     .btn {
         flex: 1 0;
-        @include display-flex;
+        display: flex;
         flex-direction: row;
         justify-content: center;
         align-items: center;
         padding: 1rem;
-        @include border-radius($border-radius);
+        border-radius: $border-radius;
         background-color: $dark-pallete-1st;
         font-weight: 700;
         color: $light-color;
         @include user-select(none);
-        @include transition(all 100ms ease);
+        transition: all 100ms ease;
 
         &:hover {
             background-color: $info-color;
@@ -367,7 +500,7 @@ body {
         }
 
         &:not(:disabled):active {
-            @include transform(scale(0.9));
+            transform: scale(0.9);
         }
     }
 }
@@ -376,31 +509,20 @@ body {
     width: 0;
     height: 0;
 
+    & iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
     @media (min-width: 1024px) {
         flex: 2 0;
         height: 100vh;
-        @include display-flex;
+        display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 1rem;
-        overflow: auto;
-
-        & .player_aspect {
-            flex: 1 1;
-            width: 1200px;
-            height: 0;
-            padding-top: 75%;
-            overflow: hidden;
-            position: relative;
-            @include transform(scale(0.5));
-
-            & iframe {
-                width: 100%;
-                height: 100%;
-                display: block;
-                @include position(absolute, 0, 0);
-            }
-        }
+        overflow: hidden;
     }
 }

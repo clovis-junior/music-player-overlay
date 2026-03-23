@@ -1,26 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-function AsyncImage(props) {
-    const {animation, ...inline} = props;
+export default function AsyncImage(props) {
+    const { animation, ...inline } = props;
     const [loaded, setLoaded] = useState(null);
 
-    useEffect(()=>{
-        if(props.src) {
+    useEffect(() => {
+        if (props?.src) {
             async function handleLoad() {
                 setLoaded(props.src)
             }
 
             const image = new Image();
             image.addEventListener('load', handleLoad);
-            image.src= props.src;
-            return ()=> image.removeEventListener('load', handleLoad)
+            image.src = props.src;
+            return () => image.removeEventListener('load', handleLoad)
         }
-    }, [props.src]);
+    }, [props?.src]);
 
-    if(loaded === props.src) {
-        if(animation) {
+    if (loaded === props?.src) {
+        if (animation) {
             var classAnimation;
-            setTimeout(function(){
+            setTimeout(function () {
                 classAnimation = ''
             }, 300)
         }
@@ -32,5 +32,3 @@ function AsyncImage(props) {
 
     return null
 }
-
-export default AsyncImage;

@@ -1,0 +1,108 @@
+@use "reset.scss" as *;
+@use "sass:color";
+
+/* ********************************************************
+    Functions
+******************************************************** */
+@function hexToRGB($hexColor) {
+    $red: color.channel($hexColor, "red", $space: rgb);
+    $blue: color.channel($hexColor, "blue", $space: rgb);
+    $green: color.channel($hexColor, "green", $space: rgb);
+
+    @return "#{$red},#{$green},#{$blue}";
+}
+
+@mixin backdrop-filter($value) {
+    -webkit-backdrop-filter: $value;
+    backdrop-filter: $value;
+}
+
+@mixin user-select($value) {
+    -webkit-user-select: $value;
+    user-select: $value;
+}
+
+/* ********************************************************
+    Variables
+******************************************************** */
+$fonts: -apple-system, BlinkMacSystemFont, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif !default;
+
+$light-color: #fafafa !default;
+$light-pallete-1st: #dfdfdf !default;
+$light-pallete-2nd: #c9c9c9 !default;
+$light-pallete-3rd: #b1b1b1 !default;
+$light-pallete-4th: #9f9f9f !default;
+
+$dark-color: #09090b !default;
+$dark-pallete-1st: #18181b !default;
+$dark-pallete-2nd: #27272a !default;
+$dark-pallete-3rd: #3f3f46 !default;
+$dark-pallete-4th: #52525c !default;
+
+$info-color: #0284c7;
+$warning-color: #f97316;
+$danger-color: #dc2626;
+$success-color: #16a34a;
+
+$amazon-color: #0077c1;
+$apple-color: #fc3c44;
+$spotify-color: #1db954;
+$youtube-color: #ff0033;
+
+/* ********************************************************
+    Base
+******************************************************** */
+html {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background-color: $dark-pallete-1st;
+    color: $info-color;
+}
+
+::-webkit-scrollbar {
+    width: 0.5rem;
+    background-color: rgb(var(--background-color));
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--font-primary-color));
+}
+
+.alert {
+    --color: #{hexToRGB($info-color)};
+
+    width: calc(100% - 3rem);
+    display: block;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(var(--color), 0.6);
+    background-color: rgba(var(--color), 0.2);
+    font-weight: 600;
+    color: rgb(var(--color));
+    text-align: center;
+    @include user-select(none);
+
+    &.info {
+        --color: #{hexToRGB($info-color)};
+    }
+    &.success {
+        --color: #{hexToRGB($success-color)};
+    }
+    &.warning {
+        --color: #{hexToRGB($warning-color)};
+    }
+    &.error {
+        --color: #{hexToRGB($danger-color)};
+    }
+}
