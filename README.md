@@ -1,6 +1,14 @@
 # 🎵 Music Player Overlay
-Hi, thats a project made only by myself using React, SCSS and love!
-Its a FREE overlay for streaming show current music playing in your favorite platform.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a106dd8f-0a3d-4f50-a5d9-96df8c37ba71/deploy-status)](https://app.netlify.com/projects/music-widget/deploys)
+![GitHub package.json version (branch)](https://img.shields.io/github/package-json/v/clovis-junior/music-player-overlay/main)
+![GitHub repo size](https://img.shields.io/github/repo-size/clovis-junior/music-player-overlay)
+![GitHub License](https://img.shields.io/github/license/clovis-junior/music-player-overlay)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fmusic-widget.netlify.app%2F)
+
+
+This a project made only by myself using React, SCSS and love!
+Its a FREE overlay for streamers to show current music playing in your favorite platform.
 
 ## 🎥 Supported Streaming Softwares
 - [x] **[Open Broadcast Software (OBS)](https://obsproject.com/)**
@@ -9,17 +17,17 @@ Its a FREE overlay for streaming show current music playing in your favorite pla
 - [x] **[vMix](https://www.vmix.com/)**
 
 > [!NOTE]
-> Every softwares has tested on Windows 11.
+> All software tested on Windows 11.
 
 ## 🎧 Supported Music Platforms
 - [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
 - [ ] **Spotify (Our own app)** *(The Spotify App in "developer mode" for now)*
 - [x] **Spotify (Your own app)** *(Necessary create a Spotify App, [click here for more instructions](https://developer.spotify.com/documentation/web-api/concepts/apps))*
-- [x] **Apple Music** *(Its Necessary [Cider](https://cider.sh/))*
+- [x] **Apple Music** *(Requires [Cider](https://cider.sh/))*
 - [ ] **Amazon Music** *(Amazon Music API is in beta for now)*
 
 > [!NOTE]
-> Every platforms has tested on Windows 11 using Microsoft Edge Browser (lastest version).
+> Every platforms tested on Windows 11 using Microsoft Edge Browser (lastest version).
 
 ## 🎛️ Player Options
 - Compact Mode
@@ -48,5 +56,7 @@ Activating option named "Solid Color" you remove a background blur (with album a
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
 
 ## 👇🏻 Check it out
-- 🧑🏻‍💼 Thats my [LinkedIn](https://www.linkedin.com/in/clovis-junior-/): [Click Here](https://www.linkedin.com/in/clovis-junior-/)!
-- 👛 Support me on [Ko-Fi](https://ko-fi.com/clovao): [Click Here](https://ko-fi.com/clovao)!
+
+| 💼 Professional                                         | ☕ Support                       |
+|---------------------------------------------------------|-----------------------------------|
+| [LinkedIn](https://www.linkedin.com/in/clovis-junior-/) | [Ko-Fi](https://ko-fi.com/clovao) |
