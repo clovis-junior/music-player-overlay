@@ -7,7 +7,7 @@
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fmusic-widget.netlify.app%2F)
 
 
-This a project made only by myself using React, SCSS and love!
+This a project made only by myself using Vite with React, SCSS and love!
 Its a FREE overlay for streamers to show current music playing in your favorite platform.
 
 ## 🎥 Supported Streaming Softwares
