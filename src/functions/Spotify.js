@@ -6,10 +6,8 @@ const clientID = localStorage?.getItem('spotifyAppClientID') || params.get('clie
 const clientSecret = localStorage?.getItem('spotifyAppClientSecret') || params.get('clientSecret');
 const refreshToken = params.get('refreshToken');
 
-export async function GetAccessToken() {
+export async function GetAccessToken(uri) {
     try {
-        const redirectURI = `${window.location.protocol}//${window.location.host}/`;
-
         const response = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {
@@ -19,14 +17,14 @@ export async function GetAccessToken() {
             body: new URLSearchParams({
                 'grant_type': 'authorization_code',
                 'code': params.get('code') || '',
-                'redirect_uri': encodeURI(redirectURI),
+                'redirect_uri': encodeURI(uri),
                 'client_id': clientID,
                 'client_secret': clientSecret
             })
         });
 
         if (response.status !== 200)
-            return { error: response?.text.toString() }
+            return { error: response.text() }
 
         return await response.json();
     } catch (err) {

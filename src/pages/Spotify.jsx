@@ -141,7 +141,7 @@ function Auth({
                 setLoading(true);
                 setStep('authenticating');
 
-                const data = await GetAccessToken();
+                const data = await GetAccessToken(browserURL + window.location.pathname.slice(1).split('?')[0]);
 
                 if (data?.error) {
                     setAlert({
