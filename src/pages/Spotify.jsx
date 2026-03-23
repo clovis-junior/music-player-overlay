@@ -29,8 +29,8 @@ function ShowAlert({ alert, loading, step }) {
 
     if (alert) {
         return (
-            <Alert type={alert.type}>
-                {alert.content}
+            <Alert type={alert?.type}>
+                {alert?.content}
             </Alert>
         );
     }
@@ -164,6 +164,7 @@ function Auth({
                     setPlayerURLCreated(true);
                 }
             } catch (error) {
+                console.log(error);
                 setAlert({
                     type: 'error',
                     content: <p>{error?.message || 'Could not authenticate with Spotify.'}</p>
@@ -174,11 +175,8 @@ function Auth({
             }
         }
 
-        if (
-            params.has('spotifyToken') &&
-            !IsEmpty(savedClientID) &&
-            !IsEmpty(savedClientSecret)
-        ) {
+        if (params.has('spotifyToken') &&
+            !IsEmpty(savedClientID) && !IsEmpty(savedClientSecret)) {
             const nextParams = new URLSearchParams({
                 token: params.get('spotifyToken')
             });
@@ -188,11 +186,8 @@ function Auth({
             return;
         }
 
-        if (
-            params.has('code') &&
-            !IsEmpty(savedClientID) &&
-            !IsEmpty(savedClientSecret)
-        ) {
+        if (params.has('code') &&
+            !IsEmpty(savedClientID) && !IsEmpty(savedClientSecret)) {
             authenticate();
         }
     }, [setAlert, setPlayerParams, setPlayerURLCreated]);
@@ -214,16 +209,14 @@ function Auth({
                     onChange={(e) => setClientID(e.target.value)}
                     disabled={loading}
                 />
-
                 <input
-                    type="password"
+                    type="text"
                     className={`${styles.input_text} ${styles.full}`}
                     placeholder="Your Client Secret"
                     value={clientSecret}
                     onChange={(e) => setClientSecret(e.target.value)}
                     disabled={loading}
                 />
-
                 <button
                     type="button"
                     className={`${styles.btn} ${styles.spotify}`}
@@ -232,7 +225,6 @@ function Auth({
                 >
                     {loading ? 'Authenticating...' : 'Authenticate'}
                 </button>
-
                 <button
                     type="button"
                     className={styles.btn}
@@ -268,13 +260,11 @@ export default function Spotify() {
             ) : (
                 <>
                     <Instructions />
-
                     {alert && (
                         <div className={styles.panel_content}>
                             <ShowAlert alert={alert} />
                         </div>
                     )}
-
                     <Auth
                         clientID={clientID}
                         clientSecret={clientSecret}

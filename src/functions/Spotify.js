@@ -26,12 +26,12 @@ export async function GetAccessToken() {
         });
 
         if (response.status !== 200)
-            return { error: response?.text }
+            return { error: response?.text.toString() }
 
         return await response.json();
-    } catch (ex) {
-        console.error(ex?.message.toString());
-        return { error: ex?.message.toString() }
+    } catch (err) {
+        console.error(err?.message.toString());
+        return { error: err?.message.toString() }
     }
 }
 
