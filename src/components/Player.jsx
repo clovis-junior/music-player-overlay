@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Vibrant } from 'node-vibrant/browser'
 import { GetURLParams, ConvertTime } from '../functions/Utils'
-import { useMusicPlatform } from '../hooks/musicPlatform'
+import { useMusicPlatform } from '../hooks/MusicPlatform.js'
 import styles from '../assets/scss/player.module.scss'
 
 import AsyncImage from './AsyncImage.jsx'
