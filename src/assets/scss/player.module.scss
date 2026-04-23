@@ -165,7 +165,7 @@ $light-color: #fafafa;
 
 		@for $i from 0 through 40 {
 			&:nth-child(#{$i}) {
-				animation-duration: 1.25s + (random(600) * 1ms);
+				animation-duration: 1s + (random(600) * 1ms);
 			}
 		}
 	}
