@@ -148,6 +148,7 @@ $light-color: #fafafa;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+	gap: 5px;
 	overflow-x: hidden;
 
 	& .waveform {
@@ -164,13 +165,9 @@ $light-color: #fafafa;
 
 		@for $i from 0 through 40 {
 			&:nth-child(#{$i}) {
-				animation-duration: 1s;
+				animation-duration: (0.5s + (random(500) / 1000) * 1s);
 				animation-delay: ($i * 0.1s);
 			}
-		}
-
-		&:not(:last-child) {
-			margin-right: 5px;
 		}
 	}
 }
