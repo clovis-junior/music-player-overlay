@@ -42,12 +42,15 @@ export function ConvertTime(time = 0) {
 }
 
 export function GetURLParams(path = window.location.href) {
-  const queryIndex = path.indexOf('?');
-  const queryString = queryIndex >= 0 ? path.slice(queryIndex + 1).replace(/#/g, '&') : '';
+  const queryString = path.includes('?') 
+  ? path.split('?')[1].replace(/#/g, '&') 
+  : path.replace(/#/g, '&');
   const searchParams = new URLSearchParams(queryString);
 
   return {
-    data: Object.fromEntries(searchParams.entries()),
+    get data() {
+      return Object.fromEntries(searchParams.entries());
+    },
 
     list() {
       return Object.fromEntries(searchParams.entries());
@@ -67,6 +70,10 @@ export function GetURLParams(path = window.location.href) {
 
     delete(param) {
       searchParams.delete(param);
+    },
+
+    toString() {
+      return searchParams.toString();
     }
   };
 }

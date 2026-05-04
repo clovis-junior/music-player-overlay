@@ -55,7 +55,7 @@ function parsePlayerURL(value = '') {
   return {
     isValid: true,
     data,
-    options
+    options: options?.data || {}
   };
 }
 
@@ -160,8 +160,8 @@ export default function Customize() {
   const parsedInitialURL = parsePlayerURL(initialURL);
 
   const [urlValue, setURLValue] = useState(initialURL);
-  const [platformData, setPlatformData] = useState(parsedInitialURL.data);
-  const [playerOptions, setPlayerOptions] = useState(parsedInitialURL.options);
+  const [platformData, setPlatformData] = useState(parsedInitialURL?.data);
+  const [playerOptions, setPlayerOptions] = useState(parsedInitialURL?.options);
 
   const disableOptions = useMemo(() => {
     return IsEmpty(urlValue) || !URLValidade(urlValue);
