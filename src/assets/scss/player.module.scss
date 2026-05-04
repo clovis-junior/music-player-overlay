@@ -1,4 +1,5 @@
 @use "global.scss" as *;
+@use "sass:math";
 
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Display:ital,wght@0,100..900;1,100..900&display=swap");
 
@@ -165,7 +166,7 @@ $light-color: #fafafa;
 
 		@for $i from 0 through 40 {
 			&:nth-child(#{$i}) {
-				animation-duration: 1s + (random(600) * 1ms);
+				animation-duration: 1s + (math.random(600) * 1ms);
 			}
 		}
 	}

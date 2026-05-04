@@ -8,6 +8,7 @@ import AsyncImage from '../components/AsyncImage'
 
 import SpotifyIcon from '../assets/images/spotify-logo.png'
 import styles from '../assets/scss/dashboard.module.scss'
+import MarkdownContent from '../components/MarkdownContent'
 
 function ShowAlert({ alert, loading, step }) {
     if (loading && step === 'authenticating') {
@@ -41,44 +42,8 @@ function ShowAlert({ alert, loading, step }) {
 function Instructions() {
     return (
         <div className={styles.panel_content}>
-            <p>
-                You need to create an app in your Spotify dashboard,{' '}
-                <a
-                    rel="noopener noreferrer"
-                    href="https://developer.spotify.com/dashboard"
-                    target="_blank"
-                >
-                    click here
-                </a>.
-            </p>
-
-            <p>Follow the instructions:</p>
-
-            <ul>
-                <li>Click <b>Create App</b></li>
-                <li>
-                    Fill in the following details:
-                    <ol>
-                        <li>
-                            <b>Redirect URIs</b> —
-                            "<span className={styles.user_select_valid}>{browserURL + window.location.pathname.slice(1)}</span>"
-                        </li>
-                        <li>
-                            <b>Which API/SDKs are you planning to use?</b> — check Web API
-                        </li>
-                    </ol>
-                    The <b>App name</b> and <b>App description</b> can be whatever you want.
-                </li>
-                <li>
-                    Click <b>Settings</b>.
-                    <ol>
-                        <li>Click <b>View client secret</b></li>
-                        <li>Copy your <b>Client ID</b> and <b>Client Secret</b></li>
-                    </ol>
-                </li>
-                <li>Fill in your Client ID and Client Secret.</li>
-                <li>Click the <b>Authenticate</b> button below.</li>
-            </ul>
+            <MarkdownContent subfolder="instructions" filename="spotify"
+                variables={{url: browserURL + window.location.pathname.slice(1)}} />
         </div>
     );
 }

@@ -8,6 +8,7 @@ import AsyncImage from '../components/AsyncImage'
 import styles from '../assets/scss/dashboard.module.scss'
 
 import YouTubeMusicLogo from '../assets/images/ytm-logo.png'
+import MarkdownContent from '../components/MarkdownContent'
 
 function ShowAlert({ response, loading, step }) {
     if (loading && step === 'requesting-code') {
@@ -113,24 +114,7 @@ function Auth({ response, setResponse }) {
 function Instructions() {
     return (
         <div className={styles.panel_content}>
-            <p>
-                You need to download YouTube Music Desktop,
-                <a rel="noopener noreferrer" href="https://ytmdesktop.app/" target="_blank">click here</a>.
-            </p>
-            <p>After downloading it, follow these instructions:</p>
-            <ul>
-                <li>Open <b>YouTube Music Desktop</b></li>
-                <li>
-                    Go to <b>Settings &gt; Integrations &gt; Companion Server</b> and enable a Companion.
-                    Make sure the following options are turned on:
-                    <ol>
-                        <li><b>Companion Server</b></li>
-                        <li><b>Allow browser communication</b></li>
-                        <li><b>Enable companion authorization</b></li>
-                    </ol>
-                </li>
-                <li>Click the button below to connect.</li>
-            </ul>
+            <MarkdownContent subfolder="instructions" filename="youtube-music" />
         </div>
     )
 }

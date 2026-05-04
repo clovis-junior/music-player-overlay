@@ -2,10 +2,25 @@
 import Player from '../components/Player'
 import { GetURLParams } from '../functions/Utils'
 import style from '../assets/scss/player.module.scss'
+import { useEffect } from 'react'
 
 export default function Plugin() {
     const params = GetURLParams();
+    const theme = params.get('theme');
     const options = new URLSearchParams(atob(params?.get('options')));
+
+    useEffect(() => {
+        if (theme) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = decodeURIComponent(theme);
+            link.crossOrigin = 'anonymous';
+
+            return () => document.head.appendChild(link)
+        }
+        
+    }, [theme]);
 
     return (
         <div className={style?.music_player_page}>
