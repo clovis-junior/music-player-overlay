@@ -7,10 +7,10 @@ export default defineConfig({
   server: {
     host: true
   },
-  build: {
-    minify: false,
-    sourcemap: true
-  },
+  // build: {
+  //   minify: false,
+  //   sourcemap: true
+  // },
   plugins: [
     // netlify(),
     react()
