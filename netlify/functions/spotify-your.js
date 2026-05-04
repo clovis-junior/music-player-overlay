@@ -78,7 +78,7 @@ async function GetAccessToken(clientID, clientSecret, refreshToken) {
 
 async function GetCurrentPlaying(accessToken) {
   const response = await fetch(
-    'https://api.spotify.com/v1/me/player',
+    'https://api.spotify.com/v1/me/player/currently-playing',
     {
       method: 'GET',
       headers: {

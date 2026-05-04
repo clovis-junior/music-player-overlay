@@ -27,6 +27,9 @@ Its a FREE overlay for streamers to show current music playing in your favorite 
 - [ ] **Amazon Music** *(Amazon Music API is in beta for now)*
 
 > [!NOTE]
+> You need the premium account to use Spotify App, for more informations [click here](https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security).
+
+> [!NOTE]
 > Every platforms tested on Windows 11 using Microsoft Edge Browser (lastest version).
 
 ## 🎛️ Player Options
