@@ -1,5 +1,6 @@
 @use "reset.scss" as *;
 @use "sass:color";
+@use "sass:math";
 
 /* ********************************************************
     Functions
@@ -27,17 +28,17 @@
 ******************************************************** */
 $fonts: -apple-system, BlinkMacSystemFont, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif !default;
 
-$light-color: #fafafa !default;
-$light-pallete-1st: #dfdfdf !default;
-$light-pallete-2nd: #c9c9c9 !default;
-$light-pallete-3rd: #b1b1b1 !default;
-$light-pallete-4th: #9f9f9f !default;
+$light-color: #f9fafb !default;
+$light-pallete-1st: #e5e7eb !default;
+$light-pallete-2nd: #cbd5e1 !default;
+$light-pallete-3rd: #94a3b8 !default;
+$light-pallete-4th: #64748b !default;
 
-$dark-color: #09090b !default;
-$dark-pallete-1st: #18181b !default;
-$dark-pallete-2nd: #27272a !default;
-$dark-pallete-3rd: #3f3f46 !default;
-$dark-pallete-4th: #52525c !default;
+$dark-color: #030712 !default;
+$dark-pallete-1st: #111827 !default;
+$dark-pallete-2nd: #1f2937 !default;
+$dark-pallete-3rd: #374151 !default;
+$dark-pallete-4th: #4b5563 !default;
 
 $info-color: #0284c7;
 $warning-color: #f97316;
@@ -48,6 +49,18 @@ $amazon-color: #0077c1;
 $apple-color: #fc3c44;
 $spotify-color: #1db954;
 $youtube-color: #ff0033;
+
+/* ********************************************************
+    Animations
+******************************************************** */
+@keyframes waveform {
+	0%, 100% {
+		transform: scaleY(0.4);
+	}
+	50% {
+		transform: scaleY(1.2);
+	}
+}
 
 /* ********************************************************
     Base
@@ -105,4 +118,35 @@ body {
     &.error {
         --color: #{hexToRGB($danger-color)};
     }
+}
+
+.loader {
+	width: 100%;
+	height: 3rem;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+	overflow-x: hidden;
+
+	& .wave {
+		flex: 0 0 8px;
+		height: 2rem;
+		display: block;
+		border-radius: 50px;
+		background-color: $info-color;
+		box-shadow: 0 0 2px 0 $info-color;
+        animation-name: waveform;
+		animation-timing-function: ease-in-out;
+		animation-iteration-count: infinite;
+		transition: transform 1s ease-in-out;
+		transform: scaleY(0.4);
+
+		@for $i from 0 through 8 {
+			&:nth-child(#{$i}) {
+				animation-duration: 1s + (math.random(600) * 1ms);
+			}
+		}
+	}
 }

@@ -132,7 +132,7 @@ $border-radius: 10px !default;
     line-height: 2rem;
     font-size: 1.25rem;
     color: rgb(var(--font-primary-color));
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
     @include user-select(none);
 
     & .panel_content {

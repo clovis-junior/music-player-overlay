@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import Loader from './Loader';
 
 const files = import.meta.glob('/src/content/**/*.md', {
     query: '?raw',
@@ -30,7 +31,7 @@ export default function MarkdownContent({ subfolder, filename, variables = {}, o
     }, [subfolder, filename, onLoad]);
 
     if (!content)
-        return null;
+        return (<Loader />);
 
     return (
         <ReactMarkdown>

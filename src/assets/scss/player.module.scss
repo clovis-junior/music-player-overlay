@@ -6,15 +6,6 @@
 /* ********************************************************
     Animations
 ******************************************************** */
-@keyframes waveform {
-	0%, 100% {
-		transform: scaleY(0.4);
-	}
-	50% {
-		transform: scaleY(1.2);
-	}
-}
-
 @keyframes fade-in {
 	0% {
 		filter: opacity(0.1);
