@@ -1,23 +1,35 @@
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 
-const files = import.meta.glob('/src/content/**/*.md', { query: '?raw' });
+const files = import.meta.glob('/src/content/**/*.md', {
+    query: '?raw',
+    import: 'default'
+});
 
 export default function MarkdownContent({ subfolder, filename, variables = {} }) {
     const [content, setContent] = useState(null);
 
     useEffect(() => {
-        const fullPath = `/src/content/${subfolder}/${filename}.md`;
+        const path = `/src/content/${subfolder}/${filename}.md`;
 
-        if (files[fullPath]) {
-            files[fullPath]().then(file => setContent(file.default))
+        async function loadMarkdown() {
+            const importer = files[path];
+
+            if (!importer)
+                return;
+
+            const file = await importer();
+
+            setContent(file);
         }
+
+        loadMarkdown()
     }, [subfolder, filename]);
 
     return (
         <ReactMarkdown>
-            {content?.replace(/\{(.*?)\}/g, (match, key) => {
-                return variables[key.trim() || match]
+            {content?.replace(/\{(.*?)\}/g, (_, key) => {
+                return variables[key.trim()] ?? `{${key}}`;
             })}
         </ReactMarkdown>
     )
