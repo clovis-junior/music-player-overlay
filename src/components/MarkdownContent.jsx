@@ -6,7 +6,7 @@ const files = import.meta.glob('/src/content/**/*.md', {
     import: 'default'
 });
 
-export default function MarkdownContent({ subfolder, filename, variables = {} }) {
+export default function MarkdownContent({ subfolder, filename, variables = {}, onLoad }) {
     const [content, setContent] = useState(null);
 
     useEffect(() => {
@@ -15,16 +15,19 @@ export default function MarkdownContent({ subfolder, filename, variables = {} })
 
             const importer = files[path];
 
-            if (!importer)
+            if (!importer) {
+                if (onLoad) onLoad(false);
                 return;
-
+            }
+            
             const markdown = await importer();
+            setContent(markdown);
 
-            setContent(markdown)
+            if (onLoad) onLoad(true);
         }
 
         loadMarkdown()
-    }, [subfolder, filename]);
+    }, [subfolder, filename, onLoad]);
 
     if (!content)
         return null;

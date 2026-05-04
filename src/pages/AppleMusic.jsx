@@ -8,15 +8,20 @@ import AppleMusicIcon from '../assets/images/apple-music-icon.svg'
 import MarkdownContent from '../components/MarkdownContent'
 
 function Instructions({ onGenerate }) {
+    const [isLoaded, setIsLoaded] = useState(false);
+
     return (
         <>
             <div className={styles?.panel_content}>
-                <MarkdownContent subfolder="instructions" filename="apple-music" />
+                <MarkdownContent subfolder="instructions" filename="apple-music"
+                    onLoad={(exists) => setIsLoaded(exists)} />
             </div>
-            <footer className={`${styles?.btns} ${styles?.column} ${styles?.centered}`}>
-                <button type="button" className={`${styles?.btn} ${styles?.apple}`} onClick={onGenerate}>Generate a Browser URL</button>
-                <button type="submit" className={styles?.btn} onClick={() => window.history.back()}>Back</button>
-            </footer>
+            {isLoaded && (
+                <footer className={`${styles?.btns} ${styles?.column} ${styles?.centered}`}>
+                    <button type="button" className={`${styles?.btn} ${styles?.apple}`} onClick={onGenerate}>Generate a Browser URL</button>
+                    <button type="submit" className={styles?.btn} onClick={() => window.history.back()}>Back</button>
+                </footer>
+            )}
         </>
     )
 }
