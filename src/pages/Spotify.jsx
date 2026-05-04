@@ -43,7 +43,7 @@ function Instructions() {
     return (
         <div className={styles.panel_content}>
             <MarkdownContent subfolder="instructions" filename="spotify"
-                variables={{url: browserURL + window.location.pathname.slice(1)}} />
+                variables={{ url: browserURL + window.location.pathname.slice(1) }} />
         </div>
     );
 }
@@ -81,6 +81,7 @@ function Auth({
             'user-library-read',
             'streaming',
             'user-read-playback-state',
+            'user-read-currently-playing',
             'user-read-recently-played',
             'playlist-read-private'
         ].join(' ');
