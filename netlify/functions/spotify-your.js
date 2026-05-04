@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import fetch from 'node-fetch';
 
 var accessToken;
@@ -14,12 +15,16 @@ export async function handler(request) {
       body: JSON.stringify('Not found')
     };
 
-  const { clientID, clientSecret, refreshToken } = JSON.parse(request.body);
+  try {
+    const { clientID, clientSecret, refreshToken } = JSON.parse(request.body);
 
-  if (!clientID || !clientSecret || !refreshToken)
-    return { statusCode: 400, body: 'Missing the client credencials or refresh token.' };
+    if (!clientID || !clientSecret || !refreshToken)
+      return { statusCode: 400, body: 'Missing the client credencials or refresh token.' };
 
-  return GetCurrentPlaying(clientID, clientSecret, refreshToken);
+    return await GetCurrentPlaying(clientID, clientSecret, refreshToken);
+  } catch (err) {
+    return { statusCode: 500, body: JSON.stringify(err.message) };
+  }
 }
 
 async function GetAccessToken(clientID, clientSecret, refreshToken) {
@@ -27,10 +32,11 @@ async function GetAccessToken(clientID, clientSecret, refreshToken) {
     return { statusCode: 400, body: 'Missing the client credencials or refresh token.' };
 
   try {
+    const auth = Buffer.from(`${clientID}:${clientSecret}`).toString('base64');
     const response = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${btoa(`${clientID}:${clientSecret}`)}`,
+        'Authorization': `Basic ${auth}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
@@ -54,7 +60,7 @@ async function GetAccessToken(clientID, clientSecret, refreshToken) {
 
     accessToken = data.access_token;
 
-    return GetCurrentPlaying(clientID, clientSecret, refreshToken);
+    return await GetCurrentPlaying(clientID, clientSecret, refreshToken);
   } catch (err) {
     return {
       statusCode: 500,
@@ -70,7 +76,7 @@ async function GetAccessToken(clientID, clientSecret, refreshToken) {
 
 async function GetCurrentPlaying(clientID, clientSecret, refreshToken) {
   if (!accessToken)
-    return GetAccessToken(clientID, clientSecret, refreshToken);
+    return await GetAccessToken(clientID, clientSecret, refreshToken);
 
   try {
     const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
@@ -81,10 +87,13 @@ async function GetCurrentPlaying(clientID, clientSecret, refreshToken) {
       }
     });
 
-    const data = await response.json();
+    if (response.status === 204)
+      return { statusCode: 200, body: JSON.stringify({ is_playing: false }) };
 
-    if (!data)
-      return GetAccessToken(clientID, clientSecret, refreshToken);
+    if (response.status === 401)
+      return await GetAccessToken(clientID, clientSecret, refreshToken);
+
+    const data = await response.json();
 
     return {
       statusCode: 200,

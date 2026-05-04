@@ -68,6 +68,7 @@ async function GetData() {
                 return data;
             case 400:
             case 404:
+            case 500:
             default:
                 return { error: data?.error || JSON.stringify(data) };
         }
