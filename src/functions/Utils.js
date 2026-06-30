@@ -1,50 +1,50 @@
 export function AddZero(number = 0) {
-    return String(number).padStart(2, '0');
+  return String(number).padStart(2, '0');
 }
 
 export function IsEmpty(variable) {
-    return (typeof variable === 'undefined' || variable === null ||
-        (typeof variable === 'string' && variable.trim().length <= 0) ||
-        (Array.isArray(variable) && variable.length <= 0) ||
-        (variable instanceof Object && Object.keys(variable).length <= 0))
+  return (typeof variable === 'undefined' || variable === null ||
+    (typeof variable === 'string' && variable.trim().length <= 0) ||
+    (Array.isArray(variable) && variable.length <= 0) ||
+    (variable instanceof Object && Object.keys(variable).length <= 0))
 }
 
 export function GenerateRandomString(length = 8, uppercase = true, numbers = true, special = false) {
-    let chars = 'abcdefghijklmnopqrstuvwxyz';
-    if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    if (numbers) chars += '0123456789';
-    if (special) chars += '!@#$%&*';
+  let chars = 'abcdefghijklmnopqrstuvwxyz';
+  if (uppercase) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (numbers) chars += '0123456789';
+  if (special) chars += '!@#$%&*';
 
-    if (!chars.length || length <= 0) return '';
+  if (!chars.length || length <= 0) return '';
 
-    const array = new Uint32Array(length);
-    crypto.getRandomValues(array);
+  const array = new Uint32Array(length);
+  crypto.getRandomValues(array);
 
-    return Array.from(array, n => chars[n % chars.length]).join('');
+  return Array.from(array, n => chars[n % chars.length]).join('');
 }
 
 export function URLValidade(value) {
-    const filter = /^(https?):\/\/(?:www\.)?([a-zA-Z0-9-:]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&/=]*)$/is;
-    return (filter.test(value)) ? true : false;
+  const filter = /^(https?):\/\/(?:www\.)?([a-zA-Z0-9-:]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&/=]*)$/is;
+  return (filter.test(value)) ? true : false;
 }
 
 export function ConvertTime(time = 0) {
-    time = Number(time);
+  time = Number(time);
 
-    if (!Number.isFinite(time) || time < 0)
-        time = 0;
+  if (!Number.isFinite(time) || time < 0)
+    time = 0;
 
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = Math.floor(time % 60);
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = Math.floor(time % 60);
 
-    return (hours > 0) ? `${AddZero(hours)}:${AddZero(minutes)}:${AddZero(seconds)}` : `${AddZero(minutes)}:${AddZero(seconds)}`;
+  return (hours > 0) ? `${AddZero(hours)}:${AddZero(minutes)}:${AddZero(seconds)}` : `${AddZero(minutes)}:${AddZero(seconds)}`;
 }
 
 export function GetURLParams(path = window.location.href) {
-  const queryString = path.includes('?') 
-  ? path.split('?')[1].replace(/#/g, '&') 
-  : path.replace(/#/g, '&');
+  const queryString = path.includes('?')
+    ? path.split('?')[1].replace(/#/g, '&')
+    : path.replace(/#/g, '&');
   const searchParams = new URLSearchParams(queryString);
 
   return {

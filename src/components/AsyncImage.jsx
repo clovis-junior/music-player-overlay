@@ -1,34 +1,34 @@
 import { useEffect, useState } from 'react'
 
 export default function AsyncImage(props) {
-    const { animation, ...inline } = props;
-    const [loaded, setLoaded] = useState(null);
+  const { animation, ...inline } = props;
+  const [loaded, setLoaded] = useState(null);
 
-    useEffect(() => {
-        if (props?.src) {
-            async function handleLoad() {
-                setLoaded(props.src)
-            }
+  useEffect(() => {
+    if (props?.src) {
+      async function handleLoad() {
+        setLoaded(props.src)
+      }
 
-            const image = new Image();
-            image.addEventListener('load', handleLoad);
-            image.src = props.src;
-            return () => image.removeEventListener('load', handleLoad)
-        }
-    }, [props?.src]);
+      const image = new Image();
+      image.addEventListener('load', handleLoad);
+      image.src = props.src;
+      return () => image.removeEventListener('load', handleLoad)
+    }
+  }, [props?.src]);
 
-    if (loaded === props?.src) {
-        if (animation) {
-            var classAnimation;
-            setTimeout(function () {
-                classAnimation = ''
-            }, 300)
-        }
-
-        return (
-            <img className={classAnimation || ''} {...inline} alt={props.alt || ''} />
-        )
+  if (loaded === props?.src) {
+    if (animation) {
+      var classAnimation;
+      setTimeout(function () {
+        classAnimation = ''
+      }, 300)
     }
 
-    return null
+    return (
+      <img className={classAnimation || ''} {...inline} alt={props.alt || ''} />
+    )
+  }
+
+  return null
 }
