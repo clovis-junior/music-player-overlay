@@ -254,11 +254,17 @@ export default function Customize() {
                 onChange={handleCheckboxChange} disabled={disableOptions}>
                 <span className={styles?.player_customize_option_name}>Vibrant Theme</span>
               </PlayerOption>
+              <PlayerOption type="checkbox" id="shadow"
+                name="transparent"
+                checked={playerOptions?.transparent !== undefined}
+                onChange={handleCheckboxChange} disabled={disableOptions}>
+                <span className={styles?.player_customize_option_name}>Transparent Background</span>
+              </PlayerOption>
               {!('vibrant' in playerOptions) && (
                 <PlayerOption type="radio" id="player_theme"
                   name="light"
                   value={'light' in playerOptions ? 'on' : 'off'}
-                  options={['Light Theme', 'Dark Theme']}
+                  options={[('transparent' in playerOptions ? 'Dark Text' : 'Light Theme'), ('transparent' in playerOptions ? 'Light Text' : 'Dark Theme')]}
                   onChange={handleRadioBooleanChange} disabled={disableOptions} />
               )}
             </>

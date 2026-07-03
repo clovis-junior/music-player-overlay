@@ -37,6 +37,7 @@ export default function Plugin() {
         noShadow={options?.has('noShadow')}
         squareLayout={options?.has('squareLayout')}
         solidColor={options?.has('solidColor')}
+        transparentTheme={options?.has('transparent')}
         lightTheme={options?.has('light')}
         albumArtTheme={options?.has('vibrant')}
       />

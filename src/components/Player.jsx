@@ -90,6 +90,7 @@ export default function Player({
   noShadow = false,
   squareLayout = false,
   solidColor = false,
+  transparentTheme = false,
   lightTheme = false,
   albumArtTheme = false
 }) {
@@ -172,7 +173,8 @@ export default function Player({
     music?.isPlaying ? '' : styles?.paused,
     albumArtTheme ? styles?.album_art_theme : '',
     noShadow ? styles?.no_shadow : '',
-    solidColor && lightTheme ? styles?.light : '',
+    transparentTheme ? styles?.transparent_theme : '',
+    solidColor ? lightTheme ? styles?.light : '' : '',
     albumArtTheme ? styles?.vibrant : '',
     squareLayout ? styles?.square : ''
   ].filter(Boolean).join(' ');

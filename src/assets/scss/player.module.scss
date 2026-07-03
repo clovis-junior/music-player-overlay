@@ -205,6 +205,10 @@ $light-color: #fafafa;
 		--text-color: #{hexToRGB($dark-color)};
 	}
 
+  &.transparent_theme {
+		--background-color: transparent;
+	}
+
 	&:not(.show) {
 		filter: opacity(0);
 	}
