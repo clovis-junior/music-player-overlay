@@ -198,7 +198,7 @@ export default function Player({
           {showPlatform && (
             <div className={styles?.music_platform_icon}>
               <figure>
-                <AsyncImage src={platformIcon} />
+                <AsyncImage src={platformIcon} animation="fadeIn" />
               </figure>
             </div>
           )}
