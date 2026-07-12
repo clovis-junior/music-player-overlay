@@ -1,34 +1,71 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 
 export default function AsyncImage(props) {
-  const { animation, ...inline } = props;
+  const {
+    src,
+    alt = '',
+    animation,
+    className = '',
+    ...inline
+  } = props;
+
+  const imageRef = useRef(null);
+
   const [loaded, setLoaded] = useState(null);
+  const [animationClass, setAnimationClass] = useState('');
 
   useEffect(() => {
-    if (props?.src) {
-      async function handleLoad() {
-        setLoaded(props.src)
+    if (!src) {
+      setLoaded(null);
+      setAnimationClass('');
+      return;
+    }
+
+    const image = new Image();
+
+    function handleLoad() {
+      setLoaded(src);
+
+      if (animation) {
+        setAnimationClass(`animate__animated animate__${animation}`);
       }
-
-      const image = new Image();
-      image.addEventListener('load', handleLoad);
-      image.src = props.src;
-      return () => image.removeEventListener('load', handleLoad)
-    }
-  }, [props?.src]);
-
-  if (loaded === props?.src) {
-    if (animation) {
-      var classAnimation;
-      setTimeout(function () {
-        classAnimation = ''
-      }, 300)
     }
 
-    return (
-      <img className={classAnimation || ''} {...inline} alt={props.alt || ''} />
-    )
-  }
+    image.addEventListener('load', handleLoad);
+    image.src = src;
 
-  return null
+    return () => {
+      image.removeEventListener('load', handleLoad);
+    };
+  }, [src, animation]);
+
+  useEffect(() => {
+    const img = imageRef.current;
+
+    if (!img || !animationClass)
+      return;
+
+    function handleAnimationEnd() {
+      setAnimationClass('');
+    }
+
+    img.addEventListener('animationend', handleAnimationEnd);
+
+    return () => {
+      img.removeEventListener('animationend', handleAnimationEnd);
+    };
+  }, [animationClass]);
+
+  if (loaded !== src)
+    return null;
+
+  return (
+    <img
+      ref={imageRef}
+      src={src}
+      alt={alt}
+      className={[className, animationClass].filter(Boolean).join(' ')}
+      {...inline}
+    />
+  );
 }
