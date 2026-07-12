@@ -371,6 +371,11 @@ $light-color: #fafafa;
       align-items: stretch;
       gap: 8px;
 
+      &:empty {
+        position: absolute;
+        inset: 0;
+      }
+
 			& .music_progress_values {
 				display: flex;
 				flex-direction: row;
