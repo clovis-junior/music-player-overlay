@@ -1,28 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
-
-import styles from '../assets/scss/player.module.scss'
+import { useEffect, useState } from 'react';
 
 export default function AsyncImage({
   src,
   alt = '',
   className = '',
+  duration = 400,
   ...props
 }) {
-  const currentSrc = useRef(src || '');
-  const [displaySrc, setDisplaySrc] = useState(src || '');
-  const [fade, setFade] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(src || '');
+  const [nextSrc, setNextSrc] = useState(null);
+  const [transitioning, setTransitioning] = useState(false);
 
   useEffect(() => {
-    if (!src || src === currentSrc.current)
+    if (!src || src === currentSrc)
       return;
 
     const image = new Image();
 
     image.onload = () => {
-      currentSrc.current = src;
-
-      setDisplaySrc(src);
-      setFade(true);
+      setNextSrc(src);
+      setTransitioning(true);
     };
 
     image.src = src;
@@ -30,31 +27,68 @@ export default function AsyncImage({
     return () => {
       image.onload = null;
     };
-  }, [src]);
+  }, [src, currentSrc]);
 
   useEffect(() => {
-    if (!fade)
+    if (!transitioning)
       return;
 
     const timer = setTimeout(() => {
-      setFade(false);
-    }, 300);
+      setCurrentSrc(nextSrc);
+      setNextSrc(null);
+      setTransitioning(false);
+    }, duration);
 
     return () => clearTimeout(timer);
-  }, [fade]);
+  }, [transitioning, nextSrc, duration]);
 
-  if (!displaySrc)
+  if (!currentSrc && !nextSrc)
     return null;
 
   return (
-    <img
-      src={displaySrc}
-      alt={alt}
-      className={[
-        className,
-        fade ? styles?.smooth_transition : ''
-      ].filter(Boolean).join(' ')}
-      {...props}
-    />
+    <span
+      className={`async-image ${className}`}
+      style={{
+        position: 'relative',
+        display: 'block',
+        overflow: 'hidden'
+      }}
+    >
+      {currentSrc && (
+        <img
+          src={currentSrc}
+          alt={alt}
+          {...props}
+          style={{
+            ...props.style,
+            position: nextSrc ? 'absolute' : 'relative',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: transitioning ? 0 : 1,
+            transition: `opacity ${duration}ms ease`
+          }}
+        />
+      )}
+
+      {nextSrc && (
+        <img
+          src={nextSrc}
+          alt={alt}
+          {...props}
+          style={{
+            ...props.style,
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: transitioning ? 1 : 0,
+            transition: `opacity ${duration}ms ease`
+          }}
+        />
+      )}
+    </span>
   );
 }
