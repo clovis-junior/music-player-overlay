@@ -1,67 +1,60 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
 
-export default function AsyncImage(props) {
-  const {
-    src,
-    alt = '',
-    animation,
-    className = '',
-    ...inline
-  } = props;
+import styles from '../assets/scss/player.module.scss'
 
-  const imageRef = useRef(null);
-
+export default function AsyncImage({
+  src,
+  alt = '',
+  className = '',
+  ...props
+}) {
+  const currentSrc = useRef(src || '');
   const [displaySrc, setDisplaySrc] = useState(src || '');
-  const [animationClass, setAnimationClass] = useState('');
+  const [fade, setFade] = useState(false);
 
   useEffect(() => {
-    if (!src || src === displaySrc)
+    if (!src || src === currentSrc.current)
       return;
 
     const image = new Image();
 
-    function handleLoad() {
+    image.onload = () => {
+      currentSrc.current = src;
+
       setDisplaySrc(src);
+      setFade(true);
+    };
 
-      if (animation)
-        setAnimationClass(`animate__animated animate__${animation}`);
-    }
-
-    image.addEventListener('load', handleLoad);
     image.src = src;
 
     return () => {
-      image.removeEventListener('load', handleLoad);
+      image.onload = null;
     };
-  }, [src, displaySrc, animation]);
+  }, [src]);
 
   useEffect(() => {
-    const img = imageRef.current;
-
-    if (!img || !animationClass)
+    if (!fade)
       return;
 
-    function handleAnimationEnd() {
-      setAnimationClass('');
-    }
+    const timer = setTimeout(() => {
+      setFade(false);
+    }, 300);
 
-    img.addEventListener('animationend', handleAnimationEnd);
-
-    return () => {
-      img.removeEventListener('animationend', handleAnimationEnd);
-    };
-  }, [animationClass]);
+    return () => clearTimeout(timer);
+  }, [fade]);
 
   if (!displaySrc)
     return null;
 
   return (
     <img
-      ref={imageRef}
       src={displaySrc}
       alt={alt}
-      className={[className, animationClass].filter(Boolean).join(' ')}
-      {...inline}
+      className={[
+        className,
+        fade ? styles?.smooth_transition : ''
+      ].filter(Boolean).join(' ')}
+      {...props}
     />
   );
 }
