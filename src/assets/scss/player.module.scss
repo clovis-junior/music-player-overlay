@@ -199,7 +199,7 @@ $light-color: #fafafa;
 	transform-origin: center center;
 	text-transform: initial;
 	@include user-select(none);
-	transition: transform 120ms ease-in-out;
+	transition: transform 120ms ease-in-out, filter 240ms ease;
 
 	&.light {
 		--background-color: #{hexToRGB($light-color)};
@@ -308,7 +308,7 @@ $light-color: #fafafa;
 				top: 0;
 
         &.old, &.new {
-        	transition: opacity 400ms ease;
+        	transition: opacity 500ms ease;
         }
         
         &.old {
