@@ -236,7 +236,9 @@ export default function Player({
       <aside className={styles?.music_infos}>
         {(!solidColor && !albumArtTheme) && (
           <div className={styles?.music_album_blur_container}>
-            <div key={music?.albumCover} className={styles?.music_album_art} style={{ backgroundImage: `url(${music?.albumCover})` }}></div>
+            <figure>
+              <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
+            </figure>
           </div>
         )}
         {(!showAlbumArt && showPlatform) && (
