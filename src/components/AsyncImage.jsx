@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import styles from '../assets/scss/player.module.scss';
+
 export default function AsyncImage({
   src,
   alt = '',
@@ -53,8 +55,7 @@ export default function AsyncImage({
           alt={alt}
           className={[
             className,
-            'async-image',
-            nextSrc ? 'async-image-old' : ''
+            nextSrc ? styles?.old : ''
           ].filter(Boolean).join(' ')}
           {...props}
         />
@@ -66,8 +67,7 @@ export default function AsyncImage({
           alt={alt}
           className={[
             className,
-            'async-image',
-            'async-image-new'
+            styles?.new
           ].filter(Boolean).join(' ')}
           {...props}
         />
