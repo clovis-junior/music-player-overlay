@@ -46,29 +46,41 @@ $light-color: #fafafa;
 }
 
 /* Music/Player ------------------------------------------ */
-.music_album_blur_container:not(.hidden) {
-	animation-name: fade-in;
-	animation-duration: 300ms;
-	animation-iteration-count: 1;
+.music_album_blur_container {
+  position: absolute;
+	inset: 0;
 
-  & img {
-    object-fit: cover;
+  & > * {
+    position: absolute;
+	  inset: 0;
   }
-
-	& .music_album_art {
-		z-index: -1;
-		width: 100%;
-		height: 100%;
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-		filter: blur(10px) brightness(33%);
-    opacity: 0.9;
-		transform: translate(-50%, -50%) scale(2);
-		position: absolute;
-		left: 50%;
-		top: 50%;
-	}
+  
+  &:not(.hidden) {
+  	animation-name: fade-in;
+  	animation-duration: 300ms;
+  	animation-iteration-count: 1;
+    position: absolute;
+  	inset: 0;
+  
+    & img {
+      object-fit: cover;
+    }
+  
+  	& .music_album_art {
+  		z-index: -1;
+  		width: 100%;
+  		height: 100%;
+  		background-size: cover;
+  		background-position: center;
+  		background-repeat: no-repeat;
+  		filter: blur(10px) brightness(33%);
+      opacity: 0.9;
+  		transform: translate(-50%, -50%) scale(2);
+  		position: absolute;
+  		left: 50%;
+  		top: 50%;
+  	}
+  }
 }
 
 .music_platform_icon {
