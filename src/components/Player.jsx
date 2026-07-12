@@ -186,7 +186,9 @@ export default function Player({
       <main ref={player} className={playerClasses}>
         {(!solidColor && !albumArtTheme) && (
           <div className={styles?.music_album_blur_container}>
-            <div key={music?.albumCover} className={styles?.music_album_art} style={{ backgroundImage: `url(${music?.albumCover})` }}></div>
+            <figure>
+              <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
+            </figure>
           </div>
         )}
         {!hideProgressBar && (
@@ -198,7 +200,7 @@ export default function Player({
           {showPlatform && (
             <div className={styles?.music_platform_icon}>
               <figure>
-                <AsyncImage src={platformIcon} animation="fadeIn" />
+                <AsyncImage src={platformIcon} />
               </figure>
             </div>
           )}
