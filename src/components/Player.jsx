@@ -193,7 +193,7 @@ export default function Player({
         )}
         {!hideProgressBar && (
           <div className={styles?.music_progress_bar}>
-            <div style={{ width: `${progress}%` }} />
+            <div style={{ transform: `scaleX(${progress / 100})` }} />
           </div>
         )}
         <div className={textCentered ? 'music_infos centered' : styles?.music_infos}>
@@ -275,7 +275,7 @@ export default function Player({
           )}
           {!hideProgressBar && (
             <div className={styles?.music_progress_bar}>
-              <div style={{ width: `${progress}%` }} />
+              <div style={{ transform: `scaleX(${progress / 100})` }} />
             </div>
           )}
         </footer>
