@@ -199,11 +199,7 @@ $light-color: #fafafa;
 	transform-origin: center center;
 	text-transform: initial;
 	@include user-select(none);
-	transition: background-color 500ms ease-out, color 500ms ease-out, transform 120ms ease-in-out, filter 360ms ease;
-
-	&.album_art_theme {
-		transition: background-color 500ms ease, color 500ms ease, filter 360ms ease
-	}
+	transition: transform 120ms ease-in-out;
 
 	&.light {
 		--background-color: #{hexToRGB($light-color)};
@@ -226,6 +222,10 @@ $light-color: #fafafa;
       opacity: 0.8;
 		}
 	}
+
+  & .music_infos {
+    transition: background-color 500ms ease, color 500ms ease, filter 360ms ease;
+  }
 }
 
 /* Full ------------------------------------------ */
