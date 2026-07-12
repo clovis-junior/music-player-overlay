@@ -11,24 +11,20 @@ export default function AsyncImage(props) {
 
   const imageRef = useRef(null);
 
-  const [loaded, setLoaded] = useState(null);
+  const [displaySrc, setDisplaySrc] = useState(src || '');
   const [animationClass, setAnimationClass] = useState('');
 
   useEffect(() => {
-    if (!src) {
-      setLoaded(null);
-      setAnimationClass('');
+    if (!src || src === displaySrc)
       return;
-    }
 
     const image = new Image();
 
     function handleLoad() {
-      setLoaded(src);
+      setDisplaySrc(src);
 
-      if (animation) {
+      if (animation)
         setAnimationClass(`animate__animated animate__${animation}`);
-      }
     }
 
     image.addEventListener('load', handleLoad);
@@ -37,7 +33,7 @@ export default function AsyncImage(props) {
     return () => {
       image.removeEventListener('load', handleLoad);
     };
-  }, [src, animation]);
+  }, [src, displaySrc, animation]);
 
   useEffect(() => {
     const img = imageRef.current;
@@ -56,13 +52,13 @@ export default function AsyncImage(props) {
     };
   }, [animationClass]);
 
-  if (loaded !== src)
+  if (!displaySrc)
     return null;
 
   return (
     <img
       ref={imageRef}
-      src={src}
+      src={displaySrc}
       alt={alt}
       className={[className, animationClass].filter(Boolean).join(' ')}
       {...inline}
