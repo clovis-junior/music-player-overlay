@@ -170,7 +170,7 @@ export default function Player({
   const playerClasses = [
     compact ? styles?.music_player_compact : styles?.music_player,
     sleeping ? '' : styles?.show,
-    music?.isPlaying ? '' : styles?.paused,
+    music?.displayIsPlaying ? '' : styles?.paused,
     albumArtTheme ? styles?.album_art_theme : '',
     noShadow ? styles?.no_shadow : '',
     transparentTheme ? styles?.transparent_theme : '',
