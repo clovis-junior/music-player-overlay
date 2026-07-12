@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // const defaultTitle = document?.title;
+const PLAYBACK_STATE_DELAY = 1500;
 
 async function loadPlatformModule(platform) {
   switch (platform) {
@@ -20,6 +21,7 @@ export function useMusicPlatform(platform) {
   const [platformIcon, setPlatformIcon] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [music, setMusic] = useState({});
+  const [displayIsPlaying, setDisplayIsPlaying] = useState(false);
 
   useEffect(() => {
     let disconnect = null;
@@ -38,7 +40,9 @@ export function useMusicPlatform(platform) {
         onDisconnect: () => setIsConnected(false),
         onData: (updater) => {
           setMusic(current => {
-            return typeof updater === 'function' ? updater(current) : updater;
+            return typeof updater === 'function'
+              ? updater(current)
+              : updater;
           });
         }
       });
@@ -48,9 +52,24 @@ export function useMusicPlatform(platform) {
 
     return () => {
       cancelled = true;
-      if (typeof disconnect === 'function') disconnect();
+
+      if (typeof disconnect === 'function')
+        disconnect();
     };
   }, [platform]);
+
+  useEffect(() => {
+    if (music?.isPlaying) {
+      setDisplayIsPlaying(true);
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setDisplayIsPlaying(false);
+    }, PLAYBACK_STATE_DELAY);
+
+    return () => clearTimeout(timer);
+  }, [music?.isPlaying]);
 
   useEffect(() => {
     if (platform !== 'spotify') return;
@@ -77,7 +96,19 @@ export function useMusicPlatform(platform) {
     return () => clearInterval(update);
   }, [platform, music?.isPlaying, music?.duration?.total]);
 
-  const hasReceivedData = !!(music?.title || music?.artist || music?.albumCover);
+  const hasReceivedData = !!(
+    music?.title ||
+    music?.artist ||
+    music?.albumCover
+  );
 
-  return { platformIcon, isConnected, hasReceivedData, music };
+  return {
+    platformIcon,
+    isConnected,
+    hasReceivedData,
+    music: {
+      ...music,
+      displayIsPlaying
+    }
+  };
 }
