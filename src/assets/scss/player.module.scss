@@ -199,10 +199,10 @@ $light-color: #fafafa;
 	transform-origin: center center;
 	text-transform: initial;
 	@include user-select(none);
-	transition: background-color 300ms ease-out, color 300ms ease-out, transform 100ms ease-in-out, filter 200ms ease;
+	transition: background-color 500ms ease-out, color 500ms ease-out, transform 120ms ease-in-out, filter 360ms ease;
 
 	&.album_art_theme {
-		transition: background-color 400ms ease, color 600ms ease, filter 200ms ease
+		transition: background-color 500ms ease, color 500ms ease, filter 360ms ease
 	}
 
 	&.light {
