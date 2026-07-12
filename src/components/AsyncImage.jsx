@@ -46,7 +46,7 @@ export default function AsyncImage({
     return null;
 
   return (
-    <span
+    <figure
       className={`async-image ${className}`}
       style={{
         position: 'relative',
@@ -89,6 +89,6 @@ export default function AsyncImage({
           }}
         />
       )}
-    </span>
+    </figure>
   );
 }
