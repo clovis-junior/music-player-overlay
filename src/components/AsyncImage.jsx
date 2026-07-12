@@ -46,29 +46,17 @@ export default function AsyncImage({
     return null;
 
   return (
-    <figure
-      className={`async-image ${className}`}
-      style={{
-        position: 'relative',
-        display: 'block',
-        overflow: 'hidden'
-      }}
-    >
+    <>
       {currentSrc && (
         <img
           src={currentSrc}
           alt={alt}
+          className={[
+            className,
+            'async-image',
+            nextSrc ? 'async-image-old' : ''
+          ].filter(Boolean).join(' ')}
           {...props}
-          style={{
-            ...props.style,
-            position: nextSrc ? 'absolute' : 'relative',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: transitioning ? 0 : 1,
-            transition: `opacity ${duration}ms ease`
-          }}
         />
       )}
 
@@ -76,19 +64,14 @@ export default function AsyncImage({
         <img
           src={nextSrc}
           alt={alt}
+          className={[
+            className,
+            'async-image',
+            'async-image-new'
+          ].filter(Boolean).join(' ')}
           {...props}
-          style={{
-            ...props.style,
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: transitioning ? 1 : 0,
-            transition: `opacity ${duration}ms ease`
-          }}
         />
       )}
-    </figure>
+    </>
   );
 }
