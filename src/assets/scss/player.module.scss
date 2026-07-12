@@ -300,15 +300,23 @@ $light-color: #fafafa;
 				height: 100%;
 				display: block;
 				object-fit: cover;
+        animation-name: fade-in;
+      	animation-duration: 300ms;
+      	animation-iteration-count: 1;
 				position: absolute;
 				left: 0;
 				top: 0;
 
-        &.smooth_transition {
-          animation-name: fade-in;
-  				animation-duration: 300ms;
-  				animation-fill-mode: both;
-  				animation-iteration-count: 1;
+        &.old, &.new {
+        	transition: opacity 400ms ease;
+        }
+        
+        &.old {
+        	opacity: 0;
+        }
+        
+        &.new {
+        	opacity: 1;
         }
 			}
 		}
