@@ -185,11 +185,9 @@ export default function Player({
     return (
       <main ref={player} className={playerClasses}>
         {(!solidColor && !albumArtTheme) && (
-          <div className={styles?.music_album_blur_container}>
-            <figure>
-              <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
-            </figure>
-          </div>
+          <figure className={styles?.music_album_blur_container}>
+            <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
+          </figure>
         )}
         {!hideProgressBar && (
           <div className={styles?.music_progress_bar}>
@@ -198,11 +196,9 @@ export default function Player({
         )}
         <div className={textCentered ? 'music_infos centered' : styles?.music_infos}>
           {showPlatform && (
-            <div className={styles?.music_platform_icon}>
-              <figure>
-                <AsyncImage src={platformIcon} />
-              </figure>
-            </div>
+            <figure className={styles?.music_platform_icon}>
+              <AsyncImage src={platformIcon} />
+            </figure>
           )}
           <div className={styles?.music_info_mask}>
             <Scroll key={music?.title} id={styles?.music_title} timer={6}>
@@ -224,11 +220,9 @@ export default function Player({
       {showAlbumArt && (
         <div className={styles?.music_album_art}>
           {showPlatform && (
-            <div className={styles?.music_platform_icon}>
-              <figure>
-                <AsyncImage src={platformIcon} />
-              </figure>
-            </div>
+            <figure className={styles?.music_platform_icon}>
+              <AsyncImage src={platformIcon} />
+            </figure>
           )}
           <figure>
             <AsyncImage src={music?.albumCover} alt={music?.title} />
@@ -237,11 +231,9 @@ export default function Player({
       )}
       <aside className={styles?.music_infos}>
         {(!solidColor && !albumArtTheme) && (
-          <div className={styles?.music_album_blur_container}>
-            <figure>
-              <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
-            </figure>
-          </div>
+          <figure className={styles?.music_album_blur_container}>
+            <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
+          </figure>
         )}
         {(!showAlbumArt && showPlatform) && (
           <div className={styles?.music_platform_icon}>

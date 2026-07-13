@@ -21,14 +21,12 @@ export default function AsyncImage({
 
     image.onload = () => {
       setNextSrc(src);
-      setTransitioning(true);
+      setTransitioning(true)
     };
 
     image.src = src;
 
-    return () => {
-      image.onload = null;
-    };
+    return () => image.onload = null;
   }, [src, currentSrc]);
 
   useEffect(() => {
@@ -60,7 +58,6 @@ export default function AsyncImage({
           {...props}
         />
       )}
-
       {nextSrc && (
         <img
           src={nextSrc}
