@@ -251,12 +251,13 @@ export default function Customize() {
             <>
               <PlayerOption type="checkbox" id="vibrant"
                 name="vibrant"
+                checked={playerOptions?.vibrant !== undefined && playerOptions?.transparent === undefined}
                 onChange={handleCheckboxChange} disabled={disableOptions}>
                 <span className={styles?.player_customize_option_name}>Vibrant Theme</span>
               </PlayerOption>
               <PlayerOption type="checkbox" id="transparent"
                 name="transparent"
-                checked={playerOptions?.transparent !== undefined}
+                checked={playerOptions?.transparent !== undefined && playerOptions?.vibrant === undefined}
                 onChange={handleCheckboxChange} disabled={disableOptions}>
                 <span className={styles?.player_customize_option_name}>Transparent Background</span>
               </PlayerOption>
