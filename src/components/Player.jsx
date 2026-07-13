@@ -182,6 +182,11 @@ export default function Player({
   const progress = UpdatePercentage(music?.duration?.elapsed, music?.duration?.total);
 
   if (compact) {
+    const infosClasses = [
+      styles?.music_infos,
+      textCentered ? styles?.centered : ''
+    ].filter(Boolean).join(' ');
+
     return (
       <main ref={player} className={playerClasses}>
         {(!solidColor && !albumArtTheme) && (
@@ -194,7 +199,7 @@ export default function Player({
             <div style={{ transform: `scaleX(${progress / 100})` }} />
           </div>
         )}
-        <div className={textCentered ? 'music_infos centered' : styles?.music_infos}>
+        <div className={infosClasses}>
           {showPlatform && (
             <figure className={styles?.music_platform_icon}>
               <AsyncImage src={platformIcon} />

@@ -254,7 +254,7 @@ export default function Customize() {
                 onChange={handleCheckboxChange} disabled={disableOptions}>
                 <span className={styles?.player_customize_option_name}>Vibrant Theme</span>
               </PlayerOption>
-              <PlayerOption type="checkbox" id="shadow"
+              <PlayerOption type="checkbox" id="transparent"
                 name="transparent"
                 checked={playerOptions?.transparent !== undefined}
                 onChange={handleCheckboxChange} disabled={disableOptions}>
@@ -299,7 +299,7 @@ export default function Customize() {
                   onChange={handleCheckboxChange} disabled={disableOptions}>
                   <span className={styles?.player_customize_option_name}>Hide Music Times Progress</span>
                 </PlayerOption>
-                {"hideProgress" in playerOptions ? (<></>) : (
+                {"hideProgress" in playerOptions && (
                   <PlayerOption type="radio" id="time_mode" name="remainingTime"
                     value={'remainingTime' in playerOptions ? 'on' : 'off'}
                     options={['Show Remaining Music Time', 'Show Duration Music Time']}
