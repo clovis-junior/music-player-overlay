@@ -314,14 +314,13 @@ export default function Customize() {
                 </PlayerOption>
               </>
             )}
-            {'compact' in playerOptions && (
-              <PlayerOption type="checkbox" id="text_centered"
-                className={styles?.player_customize_option}
-                name="textCentered"
-                checked={playerOptions?.textCentered !== undefined}
-                onChange={handleCheckboxChange}>
-                <span className={styles?.player_customize_option_name}>Align Center Music Infos</span>
-              </PlayerOption>)}
+            <PlayerOption type="checkbox" id="text_centered"
+              className={styles?.player_customize_option}
+              name="textCentered"
+              checked={playerOptions?.textCentered !== undefined}
+              onChange={handleCheckboxChange}>
+              <span className={styles?.player_customize_option_name}>Align Center Music Infos</span>
+            </PlayerOption>
             <PlayerOption type="checkbox" id="square"
               name="squareLayout"
               checked={playerOptions?.squareLayout !== undefined}

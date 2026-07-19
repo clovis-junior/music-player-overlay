@@ -2,79 +2,98 @@ import { useState, useEffect, useRef } from 'react'
 import { Vibrant } from 'node-vibrant/browser'
 import { GetURLParams, ConvertTime } from '../functions/Utils'
 import { useMusicPlatform } from '../hooks/MusicPlatform.js'
-import styles from '../assets/scss/player.module.scss'
 
-import AsyncImage from './AsyncImage.jsx'
+import { AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins.jsx'
 
 const params = GetURLParams();
 
-function UpdatePercentage(elapsed = 0, total = 0) {
-  elapsed = Number(elapsed) || 0;
-  total = Number(total) || 0;
+function getThemeFromPalette(palette) {
+  const swatches = Object.values(palette)
+    .filter(Boolean);
 
-  if (total <= 0) return 0;
+  if (!swatches.length)
+    return null;
 
-  return Math.min(100, Math.max(0, (elapsed * 100) / total));
-}
+  function rgbToHsl([r, g, b]) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
 
-function DrawWaveForms({ number = 8 }) {
-  let waves = [];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
 
-  if (number > 40)
-    number = 40;
+    let h, s;
+    const l = (max + min) / 2;
 
-  if (number < 4)
-    number = 4;
+    if (max === min) {
+      h = s = 0;
+    } else {
+      const d = max - min;
 
-  for (let i = 0; i < number; i++)
-    waves.push(i);
+      s = l > .5
+        ? d / (2 - max - min)
+        : d / (max + min);
 
-  return (
-    <div className={styles?.music_waveforms}>
-      {waves.map(index => (
-        <div key={index} className={styles?.waveform} />
-      ))}
-    </div>
-  )
-}
+      switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
 
-function Scroll(props) {
-  const { children, timer, ...inline } = props;
+        case g:
+          h = (b - r) / d + 2;
+          break;
 
-  const [scrolled, setScrolled] = useState(false);
-  const [scroll, setScroll] = useState(0);
-
-  const element = useRef(null);
-
-  useEffect(() => {
-    if (!element?.current) return;
-
-    const interval = setInterval(() => setScrolled(prev => !prev), timer * 1000);
-
-    if (scrolled) {
-      const overflow = element?.current?.scrollWidth - element?.current?.offsetWidth;
-
-      return () => {
-        setScroll(overflow);
-        clearInterval(interval);
+        default:
+          h = (r - g) / d + 4;
       }
+
+      h /= 6;
     }
 
-    return () => {
-      setScroll(0);
-      clearInterval(interval);
-    }
-  }, [timer, scrolled]);
+    return [h, s, l];
+  }
 
-  return (
-    <span ref={element} {...inline} style={{
-      'transform': !scrolled
-        ? `translateX(-${(scroll)}px)`
-        : `translateX(0)`
-    }}>
-      {children}
-    </span>
-  )
+  function scoreBackground(swatch) {
+    const [, saturation, lightness] = rgbToHsl(swatch.rgb);
+
+    // Penaliza cores muito claras
+    const darkness = 1 - lightness;
+
+    return (
+      swatch.population * 2 +
+      saturation * 120 +
+      darkness * 180
+    );
+  }
+
+  const background = swatches
+    .sort((a, b) => scoreBackground(b) - scoreBackground(a))[0];
+
+  const secondary = swatches
+    .filter(s => s !== background)
+    .sort((a, b) => b.population - a.population)[0] ?? background;
+
+  const [r, g, b] = background.rgb;
+
+  const luminance =
+    (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+  return {
+    background: background.rgb,
+    backgroundSecondary: secondary.rgb,
+
+    text:
+      luminance > .55
+        ? [32, 32, 32]
+        : [245, 245, 245],
+
+    textSecondary:
+      luminance > .55
+        ? [80, 80, 80]
+        : [200, 200, 200],
+
+    accent: secondary.rgb
+  };
 }
 
 export default function Player({
@@ -108,48 +127,72 @@ export default function Player({
   } = useMusicPlatform(platform);
 
   useEffect(() => {
-    if (!player?.current) return;
+    if (!player.current)
+      return;
 
     let cancelled = false;
 
+    const clearTheme = () => {
+      [
+        '--background-color',
+        '--background-secondary-color',
+        '--text-color',
+        '--text-secondary-color',
+        '--accent-color'
+      ].forEach(property =>
+        player.current?.style.removeProperty(property)
+      );
+    };
+
     if (!albumArtTheme || !music?.albumCover) {
-      player.current?.style.removeProperty('--background-color');
-      player.current?.style.removeProperty('--text-color');
+      clearTheme();
       return;
     }
 
-    Vibrant.from(music?.albumCover)
-      .getPalette().then(palette => {
+    Vibrant.from(music.albumCover)
+      .getPalette()
+      .then(palette => {
         if (cancelled) return;
 
-        const swatch = palette?.DarkVibrant ||
-          palette?.LightVibrant || palette?.Vibrant ||
-          palette?.Muted;
+        const theme = getThemeFromPalette(palette);
 
-        if (!swatch) return;
+        if (!theme) {
+          clearTheme();
+          return
+        }
 
-        const [r, g, b] = swatch.rgb;
+        player.current.style.setProperty(
+          '--background-color',
+          theme.background.join(',')
+        );
 
-        player.current?.style.setProperty('--background-color', `${r},${g},${b}`);
+        player.current.style.setProperty(
+          '--background-secondary-color',
+          theme.backgroundSecondary.join(',')
+        );
 
-        const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+        player.current.style.setProperty(
+          '--text-color',
+          theme.text.join(',')
+        );
 
-        player.current?.style.setProperty('--text-color',
-          luminance > .6 ? '0,0,0' : '255,255,255'
-        )
-      }).catch(error => {
-        if (!cancelled)
-          console.error(error);
-      });
+        player.current.style.setProperty(
+          '--text-secondary-color',
+          theme.textSecondary.join(',')
+        );
+
+        player.current.style.setProperty(
+          '--accent-color',
+          theme.accent.join(',')
+        );
+      })
+      .catch(console.error);
 
     return () => cancelled = true;
   }, [music?.albumCover, albumArtTheme]);
 
   useEffect(() => {
-    if (music?.isPlaying) {
-      setSleeping(false);
-      return
-    }
+    if (music?.isPlaying) return;
 
     const timer = setTimeout(() => {
       console.log('Sleeping...');
@@ -164,119 +207,36 @@ export default function Player({
 
   if (!hasReceivedData) {
     console.log('Waiting to receive data....');
-    return null;
+    return null
   }
 
-  const playerClasses = [
-    compact ? styles?.music_player_compact : styles?.music_player,
-    sleeping ? '' : styles?.show,
-    music?.displayIsPlaying ? '' : styles?.paused,
-    albumArtTheme ? styles?.album_art_theme : '',
-    noShadow ? styles?.no_shadow : '',
-    transparentTheme ? styles?.transparent_theme : '',
-    solidColor ? lightTheme ? styles?.light : '' : '',
-    albumArtTheme ? styles?.vibrant : '',
-    squareLayout ? styles?.square : ''
-  ].filter(Boolean).join(' ');
+  const options = {
+    platformIcon,
+    sleepAfter,
+    showWaves,
+    showPlatform,
+    showAlbumArt,
+    remainingTime,
+    hideProgress,
+    hideProgressBar,
+    textCentered,
+    noShadow,
+    squareLayout,
+    solidColor,
+    transparentTheme,
+    lightTheme,
+    albumArtTheme
+  }
 
-  const progress = UpdatePercentage(music?.duration?.elapsed, music?.duration?.total);
+  if (music?.isPlaying && sleeping)
+    setSleeping(false);
 
-  if (compact) {
-    const infosClasses = [
-      styles?.music_infos,
-      textCentered ? styles?.centered : ''
-    ].filter(Boolean).join(' ');
-
+  if (compact)
     return (
-      <main ref={player} className={playerClasses}>
-        {(!solidColor && !albumArtTheme) && (
-          <figure className={styles?.music_album_blur_container}>
-            <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
-          </figure>
-        )}
-        {!hideProgressBar && (
-          <div className={styles?.music_progress_bar}>
-            <div style={{ transform: `scaleX(${progress / 100})` }} />
-          </div>
-        )}
-        <div className={infosClasses}>
-          {showPlatform && (
-            <figure className={styles?.music_platform_icon}>
-              <AsyncImage src={platformIcon} />
-            </figure>
-          )}
-          <div className={styles?.music_info_mask}>
-            <Scroll key={music?.title} id={styles?.music_title} timer={6}>
-              {music?.title}
-            </Scroll>
-          </div>
-          <div className={styles?.music_info_mask}>
-            <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
-              {music?.artist}
-            </Scroll>
-          </div>
-        </div>
-      </main>
-    )
-  }
+      <CompactSkin ref={player} ultra={false} music={music} options={options} sleeping={sleeping} />
+    );
 
   return (
-    <main ref={player} className={playerClasses}>
-      {showAlbumArt && (
-        <div className={styles?.music_album_art}>
-          {showPlatform && (
-            <figure className={styles?.music_platform_icon}>
-              <AsyncImage src={platformIcon} />
-            </figure>
-          )}
-          <figure>
-            <AsyncImage src={music?.albumCover} alt={music?.title} />
-          </figure>
-        </div>
-      )}
-      <aside className={styles?.music_infos}>
-        {(!solidColor && !albumArtTheme) && (
-          <figure className={styles?.music_album_blur_container}>
-            <AsyncImage className={styles?.music_album_art} src={music?.albumCover} alt={music?.title} />
-          </figure>
-        )}
-        {(!showAlbumArt && showPlatform) && (
-          <div className={styles?.music_platform_icon}>
-            <figure>
-              <AsyncImage src={platformIcon} />
-            </figure>
-          </div>
-        )}
-        <div className={styles?.music_info_mask}>
-          <Scroll key={music?.title} id={styles?.music_title} timer={6}>
-            {music?.title}
-          </Scroll>
-        </div>
-        <div className={styles?.music_info_mask}>
-          <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
-            {music?.artist}
-          </Scroll>
-        </div>
-        <footer className={styles?.music_progress}>
-          {!hideProgress && (
-            <div className={styles?.music_progress_values}>
-              <span id={styles?.music_time_elapsed}>{ConvertTime(music?.duration?.elapsed)}</span>
-              {showWaves > 0 && (<DrawWaveForms number={showWaves} />)}
-              <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? music?.duration?.remaining : music?.duration?.total)}</span>
-            </div>
-          )}
-          {hideProgress && showWaves > 0 && (
-            <div className={styles?.music_progress_values}>
-              {showWaves > 0 && (<DrawWaveForms number={showWaves} />)}
-            </div>
-          )}
-          {!hideProgressBar && (
-            <div className={styles?.music_progress_bar}>
-              <div style={{ transform: `scaleX(${progress / 100})` }} />
-            </div>
-          )}
-        </footer>
-      </aside>
-    </main>
+    <AlternativeSkin ref={player} music={music} options={options} sleeping={sleeping} />
   )
 }
