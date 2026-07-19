@@ -237,6 +237,6 @@ export default function Player({
     );
 
   return (
-    <AlternativeSkin ref={player} music={music} options={options} sleeping={sleeping} />
+    <DefaultSkin ref={player} music={music} options={options} sleeping={sleeping} />
   )
 }
