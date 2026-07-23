@@ -321,7 +321,7 @@ $radius: 10px !default;
   }
 
   &.vertical {
-    width: auto;
+    width: 100%;
     max-width: #{calc($size * 2)};
     height: auto;
     max-height: #{calc($size * 3)};
