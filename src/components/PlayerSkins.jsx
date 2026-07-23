@@ -4,7 +4,7 @@ import styles from '../assets/scss/player.module.scss'
 
 const universalClasses = (options) => {
   if (!options) return [];
-  
+
   return [
     options?.preview ? styles?.is_preview : '',
     options?.reverse ? styles?.inverted : '',
@@ -37,6 +37,24 @@ function usePlayerProps(props, baseClasses = []) {
   return { options, ultraMode, platformIcon, music, inline, playerClasses };
 }
 
+function adjustEqualizer(musicTimesAlign) {
+  let adjustment = 'center';
+
+  switch (musicTimesAlign) {
+    case 'center':
+    case 'right':
+      adjustment = 'left';
+      break;
+    case 'left':
+      adjustment = 'right';
+      break;
+    default:
+      adjustment = 'center';
+  }
+
+  return adjustment;
+}
+
 function MusicProgress({
   align = 'default' | 'left' | 'center' | 'right',
   remainingTime = false,
@@ -53,6 +71,49 @@ function MusicProgress({
       equalizer={equalizer}
       remainingTime={remainingTime}
       duration={duration} />
+  )
+}
+
+function DefaultFooter({
+  musicTimesAlign = 'default',
+  removeMusicTimes = false,
+  hideProgressBar = false,
+  showBarPointer = false,
+  timeMode = 'default',
+  equalizerSize = 0,
+  duration = {
+    remaining: 0,
+    elapsed: 0,
+    total: 0
+  }
+}) {
+  const isCenterAlign = musicTimesAlign === 'center';
+  const halfEqualizerSize = Math.round(equalizerSize / 2);
+
+  return (
+    <footer className={styles?.player_features}>
+      <div className={styles?.feature}>
+        {isCenterAlign ? (
+          <>
+            <Equalizer size={halfEqualizerSize} align="left" />
+            <Equalizer size={halfEqualizerSize} align="right" />
+          </>
+        ) : (
+          <Equalizer size={equalizerSize} align={adjustEqualizer(musicTimesAlign)} />
+        )}
+        {!removeMusicTimes && (
+          <MusicProgress
+            align={musicTimesAlign}
+            duration={duration}
+            remainingTime={timeMode === 'remaining'} />
+        )}
+      </div>
+      {!hideProgressBar && (
+        <div className={styles?.feature}>
+          <ProgressBar showPointer={showBarPointer} duration={duration} />
+        </div>
+      )}
+    </footer>
   )
 }
 
@@ -122,21 +183,14 @@ export function VerticalSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <footer className={styles?.player_features}>
-          <div className={styles?.feature}>
-            <Equalizer size={options?.equalizer} centered />
-            {!options?.removeMusicTimes && (
-              <MusicProgress
-                duration={music?.duration}
-                remainingTime={options?.timeMode === 'remaining'} />
-            )}
-          </div>
-          {!options?.hideProgressBar && (
-            <div className={styles?.feature}>
-              <ProgressBar showPointer={options?.showBarPointer} duration={music?.duration} />
-            </div>
-          )}
-        </footer>
+        <DefaultFooter
+          musicTimesAlign={options?.musicTimesAlign}
+          removeMusicTimes={options?.removeMusicTimes}
+          hideProgressBar={options?.hideProgressBar}
+          showBarPointer={options?.showBarPointer}
+          timeMode={options?.timeMode}
+          equalizerSize={options?.equalizer}
+          duration={music?.duration} />
       </div>
     </main>
   )
@@ -172,22 +226,14 @@ export function AlternativeSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <footer className={styles?.player_features}>
-          <div className={styles?.feature}>
-            <Equalizer size={options?.equalizer} centered />
-            {!options?.removeMusicTimes && (
-              <MusicProgress
-                align={options?.musicTimesAlign}
-                duration={music?.duration}
-                remainingTime={options?.timeMode === 'remaining'} />
-            )}
-          </div>
-          {!options?.hideProgressBar && (
-            <div className={styles?.feature}>
-              <ProgressBar showPointer={options?.showBarPointer} duration={music?.duration} />
-            </div>
-          )}
-        </footer>
+        <DefaultFooter
+          musicTimesAlign={options?.musicTimesAlign}
+          removeMusicTimes={options?.removeMusicTimes}
+          hideProgressBar={options?.hideProgressBar}
+          showBarPointer={options?.showBarPointer}
+          timeMode={options?.timeMode}
+          equalizerSize={options?.equalizer}
+          duration={music?.duration} />
       </div>
     </main>
   )
@@ -225,21 +271,14 @@ export function DefaultSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <footer className={styles?.player_features}>
-          <div className={styles?.feature}>
-            <Equalizer size={options?.equalizer} centered />
-            {!options?.removeMusicTimes && (
-              <MusicProgress
-                duration={music?.duration}
-                remainingTime={options?.timeMode === 'remaining'} />
-            )}
-          </div>
-          {!options?.hideProgressBar && (
-            <div className={styles?.feature}>
-              <ProgressBar showPointer={options?.showBarPointer} duration={music?.duration} />
-            </div>
-          )}
-        </footer>
+        <DefaultFooter
+          musicTimesAlign={options?.musicTimesAlign}
+          removeMusicTimes={options?.removeMusicTimes}
+          hideProgressBar={options?.hideProgressBar}
+          showBarPointer={options?.showBarPointer}
+          timeMode={options?.timeMode}
+          equalizerSize={options?.equalizer}
+          duration={music?.duration} />
       </div>
     </main>
   )
