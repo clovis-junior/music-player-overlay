@@ -1,5 +1,5 @@
 import playerSchema, { defaultPlayerOptions } from '../player.schema';
-import { GetURLParams, IsEmpty, URLValidade } from '../functions/Utils';
+import { GetURLParams, IsEmpty, SafeBase64Decode, SafeBase64Encode, URLValidade } from '../functions/Utils';
 
 export function buildPlayerURL(rawURL, platformData, options) {
   if (!URLValidade(rawURL))
@@ -25,7 +25,7 @@ export function buildPlayerURL(rawURL, platformData, options) {
   if ([...playerOptions].length > 0) {
     params.set(
       'options',
-      btoa(playerOptions.toString())
+      SafeBase64Encode(playerOptions.toString())
     );
   }
 
@@ -46,7 +46,7 @@ export function encodeOptions(options) {
   if (!Object.keys(changed).length)
     return '';
 
-  return btoa(JSON.stringify(changed))
+  return SafeBase64Encode(JSON.stringify(changed))
 }
 
 export function decodeOptions(value = '') {
@@ -54,7 +54,7 @@ export function decodeOptions(value = '') {
     return { ...defaultPlayerOptions };
 
   try {
-    const params = new URLSearchParams(atob(value));
+    const params = new URLSearchParams(SafeBase64Decode(value));
 
     const options = { ...defaultPlayerOptions };
 

@@ -116,3 +116,24 @@ export async function CopyToClipboard(text) {
     return false;
   }
 }
+
+export function SafeBase64Encode(string) {
+  const standardBase64 = btoa(encodeURIComponent(string).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode(`0x${p1}`)
+  }));
+  
+  return standardBase64
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+export function SafeBase64Decode(string) {
+  let base64 = string.replace(/-/g, '+').replace(/_/g, '/');
+  while (base64.length % 4)
+    base64 += '=';
+  
+  return decodeURIComponent(atob(base64).split('').map(c => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''))
+}
