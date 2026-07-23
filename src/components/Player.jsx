@@ -186,12 +186,14 @@ export default function Player({ options = {} }) {
     return () => clearTimeout(timer);
   }, [music?.isPlaying, options?.sleepAfter]);
 
-  if (!isConnected && !hasReceivedData)
+  if (!isConnected)
     return null;
 
-  if (!hasReceivedData)
+  if (!hasReceivedData) {
     console.log('Waiting to receive data....');
-
+    return null
+  }
+    
   if (music?.isPlaying && sleeping)
     setSleeping(false);
 
