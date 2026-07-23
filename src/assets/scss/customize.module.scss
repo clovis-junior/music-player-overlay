@@ -1,4 +1,5 @@
 @use "global.scss" as *;
+@use 'sass:math';
 
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
@@ -327,7 +328,7 @@ $border-radius: 10px !default;
     background-size: $size $size;
     background-position:
       0 0,
-      #{$size / 2} #{$size / 2};
+      math.div($size, 2) math.div($size, 2);
     position: fixed;
     left: 0;
     top: 0;

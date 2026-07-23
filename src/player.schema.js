@@ -98,7 +98,7 @@ const playerSchema = {
     default: 'default',
     values: [{
       default: true,
-      name: 'Default',
+      name: 'Between (default)',
       value: 'default'
     }, {
       default: false,
@@ -114,7 +114,7 @@ const playerSchema = {
       value: 'right'
     }],
     ui: {
-      label: 'Player Theme',
+      label: 'Music times align',
       category: 'Appearance'
     }
   },

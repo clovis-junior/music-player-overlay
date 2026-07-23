@@ -38,7 +38,7 @@ function usePlayerProps(props, baseClasses = []) {
 }
 
 function MusicProgress({
-  timesAlign = 'default' | 'left' | 'center' | 'right',
+  align = 'default' | 'left' | 'center' | 'right',
   remainingTime = false,
   equalizer = 0,
   duration = {
@@ -49,7 +49,7 @@ function MusicProgress({
 }) {
   return (
     <MusicTimes
-      align={timesAlign}
+      align={align}
       equalizer={equalizer}
       remainingTime={remainingTime}
       duration={duration} />
@@ -177,6 +177,7 @@ export function AlternativeSkin(props) {
             <Equalizer size={options?.equalizer} centered />
             {!options?.removeMusicTimes && (
               <MusicProgress
+                align={options?.musicTimesAlign}
                 duration={music?.duration}
                 remainingTime={options?.timeMode === 'remaining'} />
             )}
