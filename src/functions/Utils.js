@@ -79,16 +79,13 @@ export function GetURLParams(path = window.location.href) {
 }
 
 export async function CopyToClipboard(text) {
-  if (IsEmpty(text)) {
-    window.alert('Could not copy the URL.');
+  if (IsEmpty(text))
     return false;
-  }
 
   if (navigator?.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(text);
-      window.alert('URL copied!');
-      return true;
+      return true
     } catch (error) {
       console.error('Clipboard API failed:', error);
     }
@@ -110,16 +107,12 @@ export async function CopyToClipboard(text) {
 
     document.body.removeChild(textarea);
 
-    if (success) {
-      window.alert('URL copied!');
+    if (success)
       return true;
-    }
 
-    window.alert('Could not copy the URL.');
     return false;
   } catch (error) {
     console.error('Fallback copy failed:', error);
-    window.alert('Could not copy the URL.');
     return false;
   }
 }

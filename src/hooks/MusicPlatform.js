@@ -59,16 +59,21 @@ export function useMusicPlatform(platform) {
   }, [platform]);
 
   useEffect(() => {
+    let timer;
+
     if (music?.isPlaying) {
-      setDisplayIsPlaying(true);
-      return
+      requestAnimationFrame(() => {
+        setDisplayIsPlaying(true);
+      })
+    } else {
+      timer = setTimeout(() => {
+        setDisplayIsPlaying(false);
+      }, PLAYBACK_STATE_DELAY)
     }
 
-    const timer = setTimeout(() => {
-      setDisplayIsPlaying(false);
-    }, PLAYBACK_STATE_DELAY);
-
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    }
   }, [music?.isPlaying]);
 
   useEffect(() => {

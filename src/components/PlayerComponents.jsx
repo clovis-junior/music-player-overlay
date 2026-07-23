@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
+import { ConvertTime } from '../functions/Utils'
 import styles from '../assets/scss/player.module.scss'
 import AsyncImage from './AsyncImage.jsx'
 
-function UpdatePercentage(elapsed = 0, total = 0) {
+export function UpdatePercentage(elapsed = 0, total = 0) {
   elapsed = Number(elapsed) || 0;
   total = Number(total) || 0;
 
@@ -11,33 +12,120 @@ function UpdatePercentage(elapsed = 0, total = 0) {
   return Math.min(100, Math.max(0, (elapsed * 100) / total));
 }
 
-export function ProgressBar({ duration }) {
-  const progress = UpdatePercentage(duration?.elapsed, duration?.total);
+export function ProgressBar({
+  showPointer = false,
+  duration = {
+    elapsed: 0,
+    total: 0
+  }
+}) {
+  const oficialProgress = UpdatePercentage(duration?.elapsed, duration?.total);
+
+  const [displayProgress, setDisplayProgress] = useState(oficialProgress);
+
+  const stateRef = useRef({
+    elapsed: Number(duration?.elapsed) || 0,
+    total: Number(duration?.total) || 0,
+    lastUpdate: 0,
+    isPaused: false
+  });
+
+  const currentElapsed = Number(duration?.elapsed) || 0;
+  const currentTotal = Number(duration?.total) || 0;
+
+  if (stateRef.current.elapsed !== currentElapsed || stateRef.current.total !== currentTotal) {
+    stateRef.current = {
+      elapsed: currentElapsed,
+      total: currentTotal,
+      lastUpdate: performance.now(),
+      isPaused: stateRef.current.elapsed === currentElapsed
+    };
+  }
+
+  useEffect(() => {
+    let animationFrameId;
+
+    const tick = () => {
+      const now = performance.now();
+      const state = stateRef.current;
+
+      if (state.total > 0 && state.elapsed < state.total && !state.isPaused && state.lastUpdate > 0) {
+        const timePassedSinceUpdate = (now - state.lastUpdate) / 1000;
+        const interpolatedElapsed = state.elapsed + timePassedSinceUpdate;
+
+        setDisplayProgress(UpdatePercentage(interpolatedElapsed, state.total));
+      } else
+        setDisplayProgress(oficialProgress);
+
+      animationFrameId = requestAnimationFrame(tick)
+    };
+
+    animationFrameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [oficialProgress]);
+
+  const classes = [
+    styles?.music_progress_bar_fill,
+    showPointer ? styles?.with_pointer : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <div className={styles?.music_progress_bar}>
-      <div style={{ transform: `scaleX(${progress / 100})` }} />
+      <div className={classes} style={{ width: `${displayProgress}%` }} />
     </div>
   )
 }
 
-export function DrawWaveForms({ number = 8 }) {
+export function Equalizer({ size = 0, align = 'left'|'center'|'right' }) {
   let waves = [];
 
-  if (number > 40)
-    number = 40;
+  if (size <= 0)
+    return null;
 
-  if (number < 4)
-    number = 4;
+  if (size > 40)
+    size = 40;
 
-  for (let i = 0; i < number; i++)
+  if (size < 4)
+    size = 4;
+
+  for (let i = 0; i < size; i++)
     waves.push(i);
 
+  const classes = [
+    styles?.player_equalizer,
+    align === 'left' ? styles?.left : '',
+    align === 'right' ? styles?.right : ''
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={styles?.music_waveforms}>
+    <div className={classes}>
       {waves.map(index => (
         <div key={index} className={styles?.waveform} />
       ))}
+    </div>
+  )
+}
+
+export function MusicTimes({
+  align = 'default'|'left'|'center'|'right',
+  remainingTime = false,
+  duration = {
+    remaining: 0,
+    elapsed: 0,
+    total: 0
+  }
+}) {
+  const classes = [
+    styles?.music_time_values,
+    align === 'left' ? styles?.left : '',
+    align === 'right' ? styles?.right : '',
+    align === 'center' ? styles?.centered : ''
+  ].filter(Boolean).join(' ');
+
+  return (
+    <div className={classes}>
+      <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+      <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { Vibrant } from 'node-vibrant/browser'
 import { GetURLParams, ConvertTime } from '../functions/Utils'
 import { useMusicPlatform } from '../hooks/MusicPlatform.js'
 
-import { AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins.jsx'
+import { AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins'
 
 const params = GetURLParams();
 
@@ -47,23 +47,22 @@ function getThemeFromPalette(palette) {
           h = (r - g) / d + 4;
       }
 
-      h /= 6;
+      h /= 6
     }
 
-    return [h, s, l];
+    return [h, s, l]
   }
 
   function scoreBackground(swatch) {
     const [, saturation, lightness] = rgbToHsl(swatch.rgb);
 
-    // Penaliza cores muito claras
     const darkness = 1 - lightness;
 
     return (
       swatch.population * 2 +
       saturation * 120 +
       darkness * 180
-    );
+    )
   }
 
   const background = swatches
@@ -93,26 +92,11 @@ function getThemeFromPalette(palette) {
         : [200, 200, 200],
 
     accent: secondary.rgb
-  };
+  }
 }
 
-export default function Player({
-  sleepAfter = 10,
-  showWaves = 0,
-  compact = false,
-  showPlatform = false,
-  showAlbumArt = true,
-  remainingTime = false,
-  hideProgress = false,
-  hideProgressBar = false,
-  textCentered = false,
-  noShadow = false,
-  squareLayout = false,
-  solidColor = false,
-  transparentTheme = false,
-  lightTheme = false,
-  albumArtTheme = false
-}) {
+export default function Player({ options = {} }) {
+
   const platform = params.get('platform') || 'youtube-music';
 
   const [sleeping, setSleeping] = useState(false);
@@ -141,12 +125,12 @@ export default function Player({
         '--accent-color'
       ].forEach(property =>
         player.current?.style.removeProperty(property)
-      );
+      )
     };
 
-    if (!albumArtTheme || !music?.albumCover) {
+    if (options?.theme !== 'vibrant' || !music?.albumCover) {
       clearTheme();
-      return;
+      return
     }
 
     Vibrant.from(music.albumCover)
@@ -189,7 +173,7 @@ export default function Player({
       .catch(console.error);
 
     return () => cancelled = true;
-  }, [music?.albumCover, albumArtTheme]);
+  }, [music?.albumCover, options?.theme]);
 
   useEffect(() => {
     if (music?.isPlaying) return;
@@ -197,46 +181,39 @@ export default function Player({
     const timer = setTimeout(() => {
       console.log('Sleeping...');
       setSleeping(true);
-    }, sleepAfter * 1000);
+    }, ((options?.sleepAfter ?? 10) * 1000));
 
     return () => clearTimeout(timer);
-  }, [music?.isPlaying, sleepAfter]);
+  }, [music?.isPlaying, options?.sleepAfter]);
 
-  if (!isConnected)
+  if (!isConnected && !hasReceivedData)
     return null;
 
-  if (!hasReceivedData) {
+  if (!hasReceivedData)
     console.log('Waiting to receive data....');
-    return null
-  }
-
-  const options = {
-    platformIcon,
-    sleepAfter,
-    showWaves,
-    showPlatform,
-    showAlbumArt,
-    remainingTime,
-    hideProgress,
-    hideProgressBar,
-    textCentered,
-    noShadow,
-    squareLayout,
-    solidColor,
-    transparentTheme,
-    lightTheme,
-    albumArtTheme
-  }
 
   if (music?.isPlaying && sleeping)
     setSleeping(false);
 
-  if (compact)
-    return (
-      <CompactSkin ref={player} ultra={false} music={music} options={options} sleeping={sleeping} />
-    );
+  const attrs = {
+    ref: player,
+    music: music || {},
+    sleeping: sleeping,
+    ultraMode: options?.ultraMode,
+    options: options,
+    platformIcon
+  };
 
-  return (
-    <DefaultSkin ref={player} music={music} options={options} sleeping={sleeping} />
-  )
+  switch (options?.skin) {
+    case 'compact':
+      return (<CompactSkin {...attrs} />);
+    case 'vertical':
+    case 'card':
+      return (<VerticalSkin {...attrs} />);
+    case 'alternative':
+    case 'alternate':
+      return (<AlternativeSkin {...attrs} />);
+    default:
+      return (<DefaultSkin {...attrs} />);
+  }
 }

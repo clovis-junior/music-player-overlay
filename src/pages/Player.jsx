@@ -1,13 +1,47 @@
 
+import { useEffect } from 'react'
 import Player from '../components/Player'
+import playerSchema from '../player.schema'
 import { GetURLParams } from '../functions/Utils'
 import style from '../assets/scss/player.module.scss'
-import { useEffect } from 'react'
+
+const params = GetURLParams();
+
+const rawOptions = new URLSearchParams(
+  atob(params.get('options') || '')
+);
+
+const options = Object.fromEntries(
+  Object.entries(playerSchema).map(([key, option]) => {
+    const rawValue = rawOptions.get(key);
+
+    if (rawValue === null)
+      return [key, option.default];
+
+    let value;
+
+    switch (option.type) {
+      case 'boolean':
+        value = rawValue === 'true' || rawValue === '1';
+        break;
+      case 'number': {
+        const parsedNumber = Number(rawValue);
+        value = isNaN(parsedNumber) ? option.default : parsedNumber;
+        break;
+      }
+      case 'select':
+      case 'text':
+      default:
+        value = rawValue;
+        break;
+    }
+
+    return [key, value];
+  })
+);
 
 export default function Plugin() {
-  const params = GetURLParams();
-  const theme = params.get('theme');
-  const options = new URLSearchParams(atob(params?.get('options')));
+  const theme = params.get('css');
 
   useEffect(() => {
     if (theme) {
@@ -24,23 +58,7 @@ export default function Plugin() {
 
   return (
     <div className={style?.music_player_page}>
-      <Player
-        sleepAfter={Number(options?.get('sleepAfter')) || 10}
-        showWaves={Number(options?.get('showWaves')) || 0}
-        compact={options?.has('compact')}
-        showPlatform={options?.has('showPlatform')}
-        showAlbumArt={!options?.has('hideAlbum')}
-        remainingTime={options?.has('remainingTime')}
-        hideProgress={options?.has('hideProgress')}
-        hideProgressBar={options?.has('hideProgressBar')}
-        textCentered={options?.has('textCentered')}
-        noShadow={options?.has('noShadow')}
-        squareLayout={options?.has('squareLayout')}
-        solidColor={options?.has('solidColor')}
-        transparentTheme={options?.has('transparent')}
-        lightTheme={options?.has('light')}
-        albumArtTheme={options?.has('vibrant')}
-      />
+      <Player options={options} />
     </div>
   )
 }

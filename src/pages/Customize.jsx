@@ -1,38 +1,177 @@
 import { useMemo, useState } from 'react'
+import { GetURLParams, IsEmpty, URLValidade, CopyToClipboard, GenerateRandomString } from '../functions/Utils'
+import styles from '../assets/scss/customize.module.scss'
+import Alert from '../components/Alert'
+import playerSchema, { defaultPlayerOptions } from '../player.schema'
+import Player from '../components/Player'
+import { buildPlayerURL, decodeOptions } from '../functions/PlayerOptions'
 import { useNavigate } from 'react-router-dom'
-import { GetURLParams, IsEmpty, URLValidade, CopyToClipboard } from '../functions/Utils'
-import styles from '../assets/scss/dashboard.module.scss';
-import Alert from '../components/Alert';
 
-function URIDecodeOptions(object) {
-  let result = '';
+function WaveInput({
+  min = 0,
+  max = 40,
+  step = 1,
+  value = 0,
+  onChange
+}) {
+  function normalizeWaveValue(value) {
+    if (value === 0) return 0;
+    if (value < 2) return 0;
+    if (value < 4) return 4;
 
-  Object.entries(object).forEach(function ([key, value]) {
-    result += (result.length > 0) ? '&' : '';
-    result += (IsEmpty(value)) ? `${key}` : `${key}=${value}`
-  });
+    return value
+  }
 
-  return result
+  function handleChange(e) {
+    if (e.target.value === '')
+      return onChange('');
+
+    const value = Number(e.target.value);
+
+    if (value < min || value > max)
+      return;
+
+    onChange(value)
+  }
+
+  function handleBlur() {
+    if (value === '')
+      return onChange(0);
+
+    const normalized = normalizeWaveValue(value);
+
+    if (normalized !== value)
+      onChange(normalized);
+  }
+
+  return (
+    <input
+      type="number"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={handleChange}
+      onBlur={handleBlur} />
+  )
 }
 
-function encodeOptions(object = {}) {
-  if (!object || Object.keys(object).length === 0) return '';
+function Switch(props) {
+  const { id, checked, onChange, ...inline } = props;
+  if (!id) return null;
 
-  const uri = URIDecodeOptions(object);
-
-  return btoa(uri)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  return (
+    <label htmlFor={id} className={styles?.switch}>
+      <input
+        id={id}
+        type="checkbox"
+        checked={checked}
+        onChange={e => onChange(e.target.checked)}
+        {...inline} />
+      <span className={styles?.slider} />
+    </label>
+  )
 }
 
-function decodeOptions(value = '') {
-  if (!value) return {};
+function Settings(props) {
+  const { name = null, children } = props;
 
-  try {
-    return GetURLParams(atob(value));
-  } catch {
-    return {};
+  return (
+    <div className={styles?.widget_settings_group}>
+      {name && (<h2 className={styles?.name}>{name}</h2>)}
+      {children}
+    </div>
+  )
+}
+
+function Setting(props) {
+  const { name = '', disclaimer = '', disabled = false, children } = props;
+
+  if (!name) return null;
+
+  const classes = [
+    styles?.widget_setting_item,
+    disabled ? styles?.disabled : ''
+  ].filter(Boolean).join(' ');
+
+  return (
+    <div className={classes}>
+      <aside className={styles?.infos}>
+        <span className={styles?.label}>{name}</span>
+        {disclaimer && (<span className={styles?.disclaimer}>{disclaimer}</span>)}
+      </aside>
+      <div className={styles?.content}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function Select({ id, value, options = [], onChange }) {
+  if (!id || options.length <= 0)
+    return null;
+
+  return (
+    <select
+      id={id}
+      value={value ?? ''}
+      onChange={e => onChange(e.target.value)}>
+      {options.map((option, index) => (
+        <option key={index} value={option.value} checked={option.default}>
+          {option.name}
+        </option>
+      ))}
+    </select>
+  )
+}
+
+function Field({ option, value, onChange }) {
+  const safeValue = value ?? option?.default ?? '';
+
+  switch (option?.type) {
+    case 'boolean':
+      return (
+        <Switch
+          id={option?.key}
+          checked={Boolean(value ?? option?.default ?? false)}
+          onChange={onChange}
+        />
+      );
+    case 'equalizer-input':
+      return (
+        <WaveInput
+          min={option?.min}
+          max={option?.max}
+          value={value ?? option?.default ?? 0}
+          onChange={onChange}
+        />
+      );
+    case 'number':
+      return (
+        <input
+          type="number"
+          value={value}
+          min={option?.min}
+          max={option?.max}
+          onChange={e => onChange(Number(e.target.value))} />
+      );
+    case 'text':
+      return (
+        <input
+          type="text"
+          value={safeValue}
+          onChange={e => onChange(e.target.value)} />
+      );
+    case 'select':
+      return (
+        <Select
+          id={option?.key}
+          value={safeValue}
+          options={option?.values}
+          onChange={onChange} />
+      );
+    default:
+      return null;
   }
 }
 
@@ -41,343 +180,203 @@ function parsePlayerURL(value = '') {
     return {
       isValid: false,
       data: {},
-      options: {}
+      options: { ...defaultPlayerOptions }
     };
   }
 
   const params = GetURLParams(value);
-  const options = decodeOptions(params?.get('options'));
+  const rawOptions = params?.get('options');
+  const decoded = decodeOptions(rawOptions);
 
-  params?.delete('options');
-
-  const data = params?.list();
+  const data = params?.list ? params.list() : {};
 
   return {
     isValid: true,
     data,
-    options: options?.data || {}
-  };
-}
-
-function getBasePlayerURL(rawURL = '') {
-  if (IsEmpty(rawURL) || !URLValidade(rawURL)) return '';
-
-  return rawURL.split('?')[0];
-}
-
-function buildPlayerURL(rawURL = '', data = {}, options = {}) {
-  const baseURL = getBasePlayerURL(rawURL);
-
-  if (!baseURL) return '';
-
-  const params = new URLSearchParams();
-
-  Object.entries(data)?.forEach(([name, value]) => params.set(name, value));
-
-  const encodedOptions = encodeOptions(options);
-
-  if (encodedOptions)
-    params.set('options', encodedOptions);
-
-  const query = params.toString();
-  return `${baseURL}${query ? `?${query}` : ''}`;
-}
-
-function PlayerOption(props) {
-  const {
-    id, name, type, value,
-    options, children, ...attr
-  } = props;
-
-  if (type === 'radio') {
-    return (
-      <>
-        <label
-          className={!attr?.disabled
-            ? styles.player_customize_option
-            : `${styles.player_customize_option} ${styles.disabled}`
-          }
-          htmlFor={`${id || name}-${options[0]}`}
-        >
-          <input
-            id={`${id || name}-${options[0]}`}
-            type="radio"
-            name={name || id} value="on"
-            checked={value === 'on'}
-            {...attr}
-          />
-          <span className={styles.player_customize_option_radio}></span>
-          <span className={styles.player_customize_option_name}>{options[0]}</span>
-        </label>
-
-        <label
-          className={
-            !attr?.disabled
-              ? styles.player_customize_option
-              : `${styles.player_customize_option} ${styles.disabled}`
-          }
-          htmlFor={`${id || name}-${options[1]}`}
-        >
-          <input
-            id={`${id || name}-${options[1]}`}
-            type="radio"
-            name={name || id} value="off"
-            checked={value === 'off'}
-            {...attr}
-          />
-          <span className={styles.player_customize_option_radio}></span>
-          <span className={styles.player_customize_option_name}>{options[1]}</span>
-        </label>
-      </>
-    );
+    options: {
+      ...defaultPlayerOptions,
+      ...(decoded || {})
+    }
   }
-
-  return (
-    <label
-      className={!attr?.disabled
-        ? styles.player_customize_option
-        : `${styles.player_customize_option} ${styles.disabled}`
-      }
-      htmlFor={id || name}
-    >
-      <input id={id || name} type="checkbox"
-        name={name || id} {...attr}
-      />
-      <span className={styles.player_customize_option_check}></span>
-      {children}
-    </label>
-  );
 }
 
 export default function Customize() {
   const navigate = useNavigate();
   const params = GetURLParams();
 
+  const [alerts, setAlerts] = useState([]);
+
   const initialURL = params?.has('url')
     ? decodeURIComponent(params?.get('url'))
     : '';
 
-  const parsedInitialURL = parsePlayerURL(initialURL);
+  const [playerURL, setPlayerURL] = useState(initialURL);
 
-  const [urlValue, setURLValue] = useState(initialURL);
-  const [platformData, setPlatformData] = useState(parsedInitialURL?.data);
-  const [playerOptions, setPlayerOptions] = useState(parsedInitialURL?.options);
+  const parsed = useMemo(
+    () => parsePlayerURL(playerURL),
+    [playerURL]
+  );
 
-  const disableOptions = useMemo(() => {
-    return IsEmpty(urlValue) || !URLValidade(urlValue);
-  }, [urlValue]);
+  const [platformData, setPlatformData] = useState(parsed?.data);
+  const [options, setOptions] = useState(() => {
+    return {
+      ...defaultPlayerOptions,
+      ...(parsed?.options || {})
+    }
+  });
 
   const finalURL = useMemo(() => {
-    return buildPlayerURL(urlValue, platformData, playerOptions);
-  }, [urlValue, platformData, playerOptions]);
+    return buildPlayerURL(playerURL, platformData, options);
+  }, [playerURL, platformData, options]);
+
+  const disabled = useMemo(() => {
+    return IsEmpty(playerURL) || !URLValidade(playerURL);
+  }, [playerURL]);
+
+  const groups = useMemo(() => {
+    return Object.entries(playerSchema).reduce((result, [key, option]) => {
+      const category = option.ui.category;
+
+      if (!result[category])
+        result[category] = [];
+
+      result[category].push({
+        key,
+        ...option
+      });
+
+      return result
+    }, {})
+  }, []);
 
   function handleURLChange(event) {
     const nextURL = event.target.value;
-    setURLValue(nextURL);
+    setPlayerURL(nextURL);
 
     if (IsEmpty(nextURL) || !URLValidade(nextURL)) {
       setPlatformData({});
-      setPlayerOptions({});
-      return;
+      setOptions({ ...defaultPlayerOptions });
+      return
     }
 
     const parsed = parsePlayerURL(nextURL);
 
     setPlatformData(parsed.data);
-    setPlayerOptions(parsed.options);
+    setOptions({ ...defaultPlayerOptions, ...parsed.options });
   }
 
-  function setOption(name, nextValue) {
-    setPlayerOptions(current => {
-      const next = { ...current };
-
-      if (
-        nextValue === false ||
-        nextValue === null ||
-        nextValue === undefined ||
-        (typeof nextValue === 'number' && nextValue <= 0)
-      ) {
-        delete next[name];
-        return next;
-      }
-
-      next[name] = nextValue;
-      return next;
-    });
+  function resetOptions() {
+    setOptions({ ...defaultPlayerOptions });
   }
 
-  function handleCheckboxChange(event) {
-    const { name, checked } = event.target;
-    setOption(name, checked ? '' : false);
-  }
-
-  function handleRadioBooleanChange(event) {
-    const { name, value } = event.target;
-    setOption(name, (value === 'on' ? '' : false));
-  }
-
-  function handleNumberChange(event) {
-    const { name, value } = event.target;
-    const parsed = parseInt(value, 10);
-
-    if (Number.isNaN(parsed) || parsed <= 0) {
-      setOption(name, false);
+  function openPlayer() {
+    if (!finalURL)
       return;
-    }
 
-    setOption(name, parsed);
+    window.open(finalURL, '_blank', 'noopener,noreferrer');
+  }
+
+  function showAlert(type, message, timeout = 3000) {
+    const id = GenerateRandomString();
+
+    setAlerts(current => [
+      ...current,
+      { id, type, message }
+    ]);
+
+    setTimeout(() => {
+      setAlerts(current =>
+        current.filter(alert => alert.id !== id)
+      );
+    }, timeout)
   }
 
   return (
-    <div className={styles?.customize_page}>
-      <aside className={styles?.customize_panel}>
-        <header className={styles?.customize_panel_header}>
-          <h2>Costumize your player</h2>
-          <input id="url" type="text"
-            className={`${styles?.input_text} ${styles?.full}`}
-            value={urlValue} readOnly={params?.has('url')}
-            placeholder="Your Player URL"
-            onChange={handleURLChange}
-          />
-          {finalURL && (<Alert type="info">Play the song for preview works.</Alert>)}
-        </header>
-        <div className={styles?.player_customize_options}>
-          <PlayerOption type="radio" id="compact"
-            name="compact" value={'compact' in playerOptions ? 'on' : 'off'}
-            options={['Player Compact', 'Player Full Size']}
-            onChange={handleRadioBooleanChange} disabled={disableOptions}
-          />
-          {'solidColor' in playerOptions && (
-            <>
-              <PlayerOption type="checkbox" id="vibrant"
-                name="vibrant"
-                checked={playerOptions?.vibrant !== undefined}
-                onChange={handleCheckboxChange} disabled={disableOptions}>
-                <span className={styles?.player_customize_option_name}>Vibrant Theme</span>
-              </PlayerOption>
-              <PlayerOption type="checkbox" id="transparent"
-                name="transparent"
-                checked={playerOptions?.transparent !== undefined}
-                onChange={handleCheckboxChange} disabled={disableOptions}>
-                <span className={styles?.player_customize_option_name}>Transparent Background</span>
-              </PlayerOption>
-              {!('vibrant' in playerOptions) && (
-                <PlayerOption type="radio" id="player_theme"
-                  name="light"
-                  value={'light' in playerOptions ? 'on' : 'off'}
-                  options={[('transparent' in playerOptions ? 'Dark Text' : 'Light Theme'), ('transparent' in playerOptions ? 'Light Text' : 'Dark Theme')]}
-                  onChange={handleRadioBooleanChange} disabled={disableOptions} />
-              )}
-            </>
-          )}
-          <div className={!disableOptions ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}>
-            <span className={styles?.player_customize_option_name}>Sleep After (in secs):</span>
-            <input id="sleepAfter" type="number"
-              className={`${styles?.input_text} ${styles?.compact} ${styles?.centered}`}
-              name="sleepAfter"
-              min={0} defaultValue={playerOptions?.sleepAfter ?? 10} max={60}
-              onChange={handleNumberChange} disabled={disableOptions}
-            />
-          </div>
-          {!('compact' in playerOptions) && (
-            <div className={!disableOptions ? `${styles?.player_customize_option}` : `${styles?.player_customize_option} ${styles?.disabled}`}>
-              <span className={styles?.player_customize_option_name}>Sound Waves</span>
-              <input id="showWaves" type="number"
-                className={`${styles?.input_text} ${styles?.compact} ${styles?.centered}`}
-                name="showWaves"
-                min={0} defaultValue={playerOptions?.showWaves ?? 0} max={40}
-                onChange={handleNumberChange} disabled={disableOptions}
-              />
-            </div>
-          )}
-        </div>
-        <div className={`${styles?.customize_panel_content} ${styles?.overflow}`}>
-          <div className={styles?.player_customize_options}>
-            {!('compact' in playerOptions) && (
-              <>
-                <PlayerOption type="checkbox" id="hide_progress"
-                  name="hideProgress" value={'hideProgress' in playerOptions}
-                  onChange={handleCheckboxChange} disabled={disableOptions}>
-                  <span className={styles?.player_customize_option_name}>Hide Music Times Progress</span>
-                </PlayerOption>
-                {!('hideProgress' in playerOptions) && (
-                  <PlayerOption type="radio" id="time_mode" name="remainingTime"
-                    value={'remainingTime' in playerOptions ? 'on' : 'off'}
-                    options={['Show Remaining Music Time', 'Show Duration Music Time']}
-                    onChange={handleRadioBooleanChange} disabled={disableOptions} />
-                )}
-                <PlayerOption type="checkbox" id="album_art"
-                  name="hideAlbum"
-                  checked={playerOptions?.hideAlbum !== undefined}
-                  onChange={handleRadioBooleanChange} disabled={disableOptions}>
-                  <span className={styles?.player_customize_option_name}>Remove Music Album Art</span>
-                </PlayerOption>
-              </>
-            )}
-            <PlayerOption type="checkbox" id="text_centered"
-              className={styles?.player_customize_option}
-              name="textCentered"
-              checked={playerOptions?.textCentered !== undefined}
-              onChange={handleCheckboxChange}>
-              <span className={styles?.player_customize_option_name}>Align Center Music Infos</span>
-            </PlayerOption>
-            <PlayerOption type="checkbox" id="square"
-              name="squareLayout"
-              checked={playerOptions?.squareLayout !== undefined}
-              onChange={handleCheckboxChange} disabled={disableOptions}>
-              <span className={styles?.player_customize_option_name}>Player with Square Borders</span>
-            </PlayerOption>
-            <PlayerOption type="checkbox" id="shadow"
-              name="noShadow"
-              checked={playerOptions?.noShadow !== undefined}
-              onChange={handleCheckboxChange} disabled={disableOptions}>
-              <span className={styles?.player_customize_option_name}>Remove Drop Shadow</span>
-            </PlayerOption>
-            <PlayerOption type="checkbox" id="solid_color"
-              name="solidColor"
-              checked={playerOptions?.solidColor !== undefined}
-              onChange={handleCheckboxChange} disabled={disableOptions}>
-              <span className={styles?.player_customize_option_name}>Background with Solid Color</span>
-            </PlayerOption>
-            <PlayerOption type="checkbox" id="hide_progressbar"
-              name="hideProgressBar"
-              checked={playerOptions?.hideProgressBar !== undefined}
-              onChange={handleCheckboxChange} disabled={disableOptions}>
-              <span className={styles?.player_customize_option_name}>Remove Music Progress Bar</span>
-            </PlayerOption>
-            <PlayerOption type="checkbox" id="show_platform_icon" name="showPlatform"
-              checked={playerOptions?.showPlatform !== undefined}
-              onChange={handleCheckboxChange} disabled={disableOptions}>
-              <span className={styles?.player_customize_option_name}>Show Platform Logo</span>
-            </PlayerOption>
+    <div className={styles?.widget_page}>
+      <header className={styles?.widget_header}>
+        <input id="url" type="text"
+          className={`${styles?.input_text} ${styles?.full}`}
+          value={playerURL}
+          onChange={handleURLChange}
+          readOnly={params?.has('url')}
+          placeholder="Paste your URL Player here"
+        />
+        <aside className={styles?.buttons}>
+          <button className={styles?.button} onClick={() => {
+            if (!finalURL)
+              return false;
+
+            resetOptions();
+
+            showAlert('success', 'Default settings has loaded!')
+          }} disabled={disabled}>
+            Set Default Settings
+          </button>
+          <button className={styles?.button} onClick={() => navigate('/')}>
+            Back to Homepage
+          </button>
+        </aside>
+      </header>
+      <main className={styles?.widget_content}>
+        <aside className={styles?.widget_settings}>
+          {Object.entries(groups).map(([group, fields]) => (
+            <Settings key={group} name={group}>
+              {fields?.map(field => (
+                <Setting
+                  key={field?.key}
+                  name={field?.ui?.label}
+                  disclaimer={field?.ui?.disclaimer}
+                  disabled={disabled || field?.ui?.disabled}>
+                  <Field
+                    id={options[field.key]}
+                    option={field}
+                    value={options[field.key]}
+                    onChange={(value) =>
+                      setOptions(prev => ({
+                        ...prev,
+                        [field.key]: value
+                      }))
+                    } />
+                </Setting>
+              ))}
+            </Settings>
+          ))}
+        </aside>
+        <div className={styles?.widget_preview}>
+          {!IsEmpty(finalURL) && (<iframe src={finalURL} title="Player Preview" />)}
+          <div className={styles?.alerts}>
+            {alerts.map(alert => (
+              <Alert key={alert.id} type={alert.type}>
+                {alert.message}
+              </Alert>
+            ))}
           </div>
         </div>
-        <footer className={styles?.customize_panel_footer}>
-          <p>Copy this URL and use it on you streaming software:</p>
-          <input type="text"
-            className={`${styles?.input_text} ${styles?.full}`}
-            readOnly value={finalURL}
-            placeholder="Result URL"
-          />
-          <footer className={styles?.btns}>
-            <button type="button"
-              className={styles?.btn}
-              onClick={() => CopyToClipboard(finalURL)}
-              disabled={!finalURL}
-            >
-              Copy URL
-            </button>
-            <button type="button" className={styles?.btn} onClick={() => navigate('/')}>Back to Homepage</button>
-          </footer>
-        </footer>
-      </aside>
-      <main className={styles?.player_preview}>
-        {finalURL ? (
-          <iframe src={finalURL} title="Player Preview" />
-        ) : (
-          <code>Enter a valid player URL to preview it here.</code>
-        )}
       </main>
+      <footer className={styles?.widget_footer}>
+        <div className={styles?.widget_url_result}
+          onClick={() => {
+            if (!finalURL)
+              return false;
+
+            const copy = CopyToClipboard(finalURL);
+
+            showAlert(
+              copy ? 'success' : 'error',
+              copy
+                ? 'URL copied successfully!'
+                : 'Failed to copy URL.'
+            );
+          }}>
+          <span className={styles?.label}>Click to copy this URL and use it on you streaming software</span>
+          <input type="text" readOnly={true} value={finalURL} />
+        </div>
+        <aside className={styles?.buttons} onClick={openPlayer}>
+          <button className={styles?.button} disabled={!finalURL}>
+            Open on new Window
+          </button>
+        </aside>
+      </footer>
     </div>
   )
 }

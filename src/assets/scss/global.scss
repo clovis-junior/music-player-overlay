@@ -6,21 +6,21 @@
     Functions
 ******************************************************** */
 @function hexToRGB($hexColor) {
-    $red: color.channel($hexColor, "red", $space: rgb);
-    $blue: color.channel($hexColor, "blue", $space: rgb);
-    $green: color.channel($hexColor, "green", $space: rgb);
+  $red: color.channel($hexColor, "red", $space: rgb);
+  $blue: color.channel($hexColor, "blue", $space: rgb);
+  $green: color.channel($hexColor, "green", $space: rgb);
 
-    @return "#{$red},#{$green},#{$blue}";
+  @return "#{$red},#{$green},#{$blue}";
 }
 
 @mixin backdrop-filter($value) {
-    -webkit-backdrop-filter: $value;
-    backdrop-filter: $value;
+  -webkit-backdrop-filter: $value;
+  backdrop-filter: $value;
 }
 
 @mixin user-select($value) {
-    -webkit-user-select: $value;
-    user-select: $value;
+  -webkit-user-select: $value;
+  user-select: $value;
 }
 
 /* ********************************************************
@@ -28,17 +28,17 @@
 ******************************************************** */
 $fonts: -apple-system, BlinkMacSystemFont, Roboto, system-ui, "Segoe UI", Helvetica, Arial, sans-serif !default;
 
-$light-color: #f9fafb !default;
-$light-pallete-1st: #e5e7eb !default;
-$light-pallete-2nd: #cbd5e1 !default;
-$light-pallete-3rd: #94a3b8 !default;
-$light-pallete-4th: #64748b !default;
+$light-color: #fafafa !default;
+$light-pallete-1st: #f5f5f5 !default;
+$light-pallete-2nd: #e7e5e4 !default;
+$light-pallete-3rd: #d4d4d4 !default;
+$light-pallete-4th: #a3a3a3 !default;
 
-$dark-color: #030712 !default;
-$dark-pallete-1st: #111827 !default;
-$dark-pallete-2nd: #1f2937 !default;
-$dark-pallete-3rd: #374151 !default;
-$dark-pallete-4th: #4b5563 !default;
+$dark-color: #0a0a0a !default;
+$dark-pallete-1st: #171717 !default;
+$dark-pallete-2nd: #262626 !default;
+$dark-pallete-3rd: #404040 !default;
+$dark-pallete-4th: #525252 !default;
 
 $info-color: #0284c7;
 $warning-color: #f97316;
@@ -54,99 +54,112 @@ $youtube-color: #ff0033;
     Animations
 ******************************************************** */
 @keyframes waveform {
-	0%, 100% {
-		transform: scaleY(0.4);
-	}
-	50% {
-		transform: scaleY(1.2);
-	}
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1.2);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* ********************************************************
     Base
 ******************************************************** */
 html {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-    background-color: $dark-pallete-1st;
-    color: $info-color;
+  background-color: $dark-pallete-1st;
+  color: $info-color;
 }
 
 ::-webkit-scrollbar {
-    width: 0.5rem;
-    background-color: rgb(var(--background-color));
+  width: 0.5rem;
+  background-color: rgb(var(--background-color));
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgb(var(--font-primary-color));
+  background-color: rgb(var(--font-primary-color));
 }
 
 .alert {
+  --color: #{hexToRGB($info-color)};
+
+  width: calc(100% - 3rem);
+  display: block;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(var(--color), 0.6);
+  background-color: rgba(var(--color), 0.2);
+  font-weight: 600;
+  color: rgb(var(--color));
+  text-align: center;
+  animation-name: fade-in;
+  animation-duration: 300ms;
+  animation-iteration-count: 1;
+  @include user-select(none);
+
+  &.info {
     --color: #{hexToRGB($info-color)};
-
-    width: calc(100% - 3rem);
-    display: block;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    border: 1px solid rgba(var(--color), 0.6);
-    background-color: rgba(var(--color), 0.2);
-    font-weight: 600;
-    color: rgb(var(--color));
-    text-align: center;
-    @include user-select(none);
-
-    &.info {
-        --color: #{hexToRGB($info-color)};
-    }
-    &.success {
-        --color: #{hexToRGB($success-color)};
-    }
-    &.warning {
-        --color: #{hexToRGB($warning-color)};
-    }
-    &.error {
-        --color: #{hexToRGB($danger-color)};
-    }
+  }
+  &.success {
+    --color: #{hexToRGB($success-color)};
+  }
+  &.warning {
+    --color: #{hexToRGB($warning-color)};
+  }
+  &.error {
+    --color: #{hexToRGB($danger-color)};
+  }
 }
 
 .loader {
-	width: 100%;
-	height: 3rem;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	gap: 5px;
-	overflow-x: hidden;
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  overflow-x: hidden;
 
-	& .wave {
-		flex: 0 0 8px;
-		height: 2rem;
-		display: block;
-		border-radius: 50px;
-		background-color: $info-color;
-		box-shadow: 0 0 2px 0 $info-color;
-        animation-name: waveform;
-		animation-timing-function: ease-in-out;
-		animation-iteration-count: infinite;
-		transition: transform 1s ease-in-out;
-		transform: scaleY(0.4);
+  & .wave {
+    flex: 0 0 8px;
+    height: 2rem;
+    display: block;
+    border-radius: 50px;
+    background-color: $info-color;
+    box-shadow: 0 0 2px 0 $info-color;
+    animation-name: waveform;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    transition: transform 1s ease-in-out;
+    transform: scaleY(0.4);
 
-		@for $i from 0 through 8 {
-			&:nth-child(#{$i}) {
-				animation-duration: 1s + (math.random(600) * 1ms);
-			}
-		}
-	}
+    @for $i from 0 through 8 {
+      &:nth-child(#{$i}) {
+        animation-duration: 1s + (math.random(600) * 1ms);
+      }
+    }
+  }
 }

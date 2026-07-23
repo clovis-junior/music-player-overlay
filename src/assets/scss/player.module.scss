@@ -21,13 +21,6 @@
 $size: 8rem !default;
 $radius: 10px !default;
 
-$dark-color: #09090b;
-$dark-secondary-color: #18181b;
-$dark-tertiary-color: #27272a;
-$light-color: #f4f4f5;
-$light-secondary-color: #e4e4e7;
-$light-tertiary-color: #d4d4d8;
-
 /* ********************************************************
     Base
 ******************************************************** */
@@ -143,45 +136,22 @@ $light-tertiary-color: #d4d4d8;
 }
 
 .music_progress_bar {
-  & > * {
-    width: 100%;
+  z-index: -1;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+
+  & .music_progress_bar_fill {
+    z-index: -1;
+    min-width: 0%;
+    max-width: 100%;
     height: 100%;
     display: block;
     background-color: rgb(var(--text-color));
-    transform-origin: left center;
-    transform: scaleX(0);
-    will-change: transform;
-    transition: transform 100ms linear;
-  }
-}
-
-.music_waveforms {
-  width: 100%;
-  height: 1.25rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  overflow-x: hidden;
-
-  & .waveform {
-    flex: 0 0 4px;
-    height: 1rem;
-    display: block;
-    border-radius: 50px;
-    background-color: rgb(var(--text-color));
-    box-shadow: 0 0 1px 0 rgb(var(--text-color));
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-    transition: transform 1s ease-in-out;
-    transform: scaleY(0.4);
-
-    @for $i from 0 through 40 {
-      &:nth-child(#{$i}) {
-        animation-duration: 1s + (math.random(600) * 1ms);
-      }
-    }
+    transition: width 100ms linear;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 }
 
@@ -191,11 +161,11 @@ $light-tertiary-color: #d4d4d8;
 .music_player,
 .music_player_compact {
   --scale: 2;
-  --background-color: #{hexToRGB($dark-secondary-color)};
-  --background-secondary-color: #{hexToRGB($dark-color)};
+  --background-color: #{hexToRGB($dark-color)};
+  --background-pallete-2nd: #{hexToRGB($dark-pallete-1st)};
   --text-color: #{hexToRGB($light-color)};
-  --text-secondary-color: #{hexToRGB($light-tertiary-color)};
-  --accent-color: #{hexToRGB($light-secondary-color)};
+  --text-pallete-2nd: #{hexToRGB($light-pallete-3rd)};
+  --accent-color: #{hexToRGB($light-pallete-2nd)};
 
   @media (max-width: 1200px) {
     --scale: 1.4;
@@ -225,24 +195,44 @@ $light-tertiary-color: #d4d4d8;
     transform 120ms ease-in-out,
     filter 240ms ease;
 
+  &.is_preview {
+    --scale: 1.33;
+  }
+
   &.light {
-    --background-color: #{hexToRGB($light-secondary-color)};
-    --background-secondary-color: #{hexToRGB($light-color)};
+    --background-color: #{hexToRGB($light-pallete-2nd)};
+    --background-pallete-2nd: #{hexToRGB($light-color)};
     --text-color: #{hexToRGB($dark-color)};
-    --text-secondary-color: #{hexToRGB($dark-tertiary-color)};
-    --accent-color: #{hexToRGB($dark-secondary-color)};
+    --text-pallete-2nd: #{hexToRGB($dark-pallete-3rd)};
+    --accent-color: #{hexToRGB($dark-pallete-2nd)};
   }
 
-  &.transparent_theme {
-    --background-color: transparent;
-    --background-secondary-color: transparent;
-  }
+  &.transparent {
+    --background-color: transparent !important;
+    --background-pallete-2nd: transparent !important;
+    --text-color: #{hexToRGB($light-color)};
+    --text-pallete-2nd: #{hexToRGB($light-pallete-2nd)};
+    --accent-color: #{hexToRGB($light-pallete-3rd)};
 
-  &.album_art_theme,
-  &.light {
-    & .music_infos {
-      text-shadow: 0 0 0 transparent !important;
+    &.dark_text {
+      --text-color: #{hexToRGB($dark-pallete-1st)};
+      --text-pallete-2nd: #{hexToRGB($dark-pallete-2nd)};
+      --accent-color: #{hexToRGB($dark-color)};
     }
+
+    @include backdrop-filter(none !important);
+    box-shadow: 0 0 0 transparent !important;
+
+    & .music_album_art,
+    & .player_content {
+      @include backdrop-filter(none !important);
+      box-shadow: 0 0 0 transparent !important;
+    }
+  }
+
+  &.vibrant,
+  &.light {
+    text-shadow: 0 0 0 transparent !important;
   }
 
   &:not(.show) {
@@ -258,12 +248,14 @@ $light-tertiary-color: #d4d4d8;
     }
   }
 
-  & .music_infos {
+  & .player_content {
     transition:
       background-color 500ms ease,
       color 500ms ease,
       filter 360ms ease;
+  }
 
+  & .music_infos {
     &.centered {
       & #music_title,
       & #music_artist {
@@ -291,8 +283,13 @@ $light-tertiary-color: #d4d4d8;
   align-items: center;
   gap: 1rem;
 
+  &.inverted {
+    flex-direction: row-reverse;
+  }
+
   &.alternative,
   &.vertical {
+    gap: 10px;
     overflow: hidden;
     padding: 12px;
     border-radius: $radius;
@@ -318,31 +315,36 @@ $light-tertiary-color: #d4d4d8;
       border-radius: #{calc($radius / 2)};
     }
 
-    & .music_infos {
+    & .player_content {
       padding: 14px 0;
     }
   }
 
   &.vertical {
+    width: auto;
     max-width: #{calc($size * 2)};
-    height: #{calc($size * 3)};
+    height: auto;
     max-height: #{calc($size * 3)};
-    flex-wrap: nowrap;
     flex-direction: column;
+    justify-content: stretch;
     align-items: normal;
-    gap: 0;
 
     & .music_platform_icon {
-      width: 3rem;
+      width: 2rem;
+    }
+
+    &.inverted {
+      flex-direction: column-reverse;
     }
 
     & .music_album_art {
-      flex: 1 1 #{$size};
+      flex: 0 1 auto;
     }
 
-    & .music_infos {
-      flex: 0 1 #{calc(calc($size * 2) - $size)};
+    & .player_content {
+      flex: 0 1 auto;
       padding: 0;
+      border-radius: 0;
     }
   }
 
@@ -352,33 +354,33 @@ $light-tertiary-color: #d4d4d8;
 
   &:not(.alternative, .vertical).no_shadow {
     & .music_album_art,
-    & .music_infos {
+    & .player_content {
       box-shadow: 0 0 0 0 transparent;
     }
   }
 
   &.square {
     & .music_album_art,
-    & .music_infos {
+    & .player_content {
       border-radius: 2px;
     }
 
-    .waveform {
+    & .waveform {
       border-radius: 1px;
     }
 
-    .music_progress_bar {
+    & .music_progress_bar {
       --radius: 2px !important;
     }
   }
 
   & .music_album_art,
-  & .music_infos {
+  & .player_content {
     border-radius: $radius;
   }
 
   &:not(.alternative, .vertical) .music_album_art,
-  &:not(.alternative, .vertical) .music_infos {
+  &:not(.alternative, .vertical) .player_content {
     background-color: rgba(var(--background-color), 0.9);
     color: rgb(var(--text-color));
     @include backdrop-filter(blur(8px));
@@ -430,22 +432,11 @@ $light-tertiary-color: #d4d4d8;
   }
 
   & .music_infos {
-    flex: 1 0 calc(100% - #{$size});
-    height: #{$size};
+    flex: 1 0;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
     justify-content: center;
-    gap: 6px;
-    overflow: hidden;
-    padding: 14px;
-    position: relative;
-
-    & .music_platform_icon {
-      left: initial;
-      right: 10px;
-      top: 10px;
-    }
 
     & #music_title {
       letter-spacing: 1px;
@@ -456,64 +447,196 @@ $light-tertiary-color: #d4d4d8;
     & #music_artist {
       font-weight: 500;
       font-size: 1.2rem;
-      color: rgb(var(--text-secondary-color));
+      color: rgb(var(--text-pallete-2nd));
+    }
+  }
+
+  & .player_content {
+    flex: 1 0 calc(100% - #{$size});
+    height: #{$size};
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 4px;
+    padding: 14px;
+    overflow: hidden;
+    position: relative;
+
+    & .music_platform_icon {
+      left: initial;
+      right: 10px;
+      top: 10px;
     }
 
-    & .music_progress {
+    & .music_time_values {
+      flex: 1 0;
+      height: 1rem;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       flex-wrap: nowrap;
-      align-items: stretch;
-      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+
+      &.left,
+      &.right,
+      &.centered {
+        gap: 14px;
+
+        & #music_time_elapsed::after {
+          content: "/";
+          width: 1rem;
+          height: 1rem;
+          display: block;
+          margin-left: 4px;
+          font-size: 10px;
+          text-align: center;
+          opacity: 0.5;
+        }
+
+        &.left {
+          justify-content: flex-start;
+        }
+
+        &.right {
+          justify-content: flex-end;
+        }
+
+        &.centered {
+          justify-content: center;
+        }
+      }
+
+      & #music_time_elapsed,
+      & #music_time_total {
+        width: 3rem;
+        height: 1rem;
+        line-height: 1rem;
+        display: flex;
+        align-content: center;
+        letter-spacing: 2px;
+        font-weight: 400;
+        font-size: 1rem;
+        color: rgb(var(--text-pallete-2nd));
+      }
+    }
+
+    & .music_progress_bar {
+      --radius: 50px;
+
+      flex: 2 0;
+      height: 10px;
+      border-radius: var(--radius);
+      background-color: rgba(var(--accent-color), 0.24);
+      @include backdrop-filter(blur(8px));
+
+      &:has(.with_pointer) {
+        overflow: initial;
+      }
+
+      & .music_progress_bar_fill {
+        border-radius: var(--radius);
+        background-color: rgb(var(--accent-color));
+
+        &.with_pointer::after {
+          content: "";
+          z-index: 2;
+          width: 14px;
+          height: 14px;
+          display: block;
+          border-radius: 100%;
+          background-color: rgb(var(--accent-color));
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+          transform: translate(-50%, -50%);
+          position: absolute;
+          left: 100%;
+          top: 50%;
+        }
+      }
+    }
+  }
+
+  & .player_features {
+    flex: 1 0;
+    height: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+
+    &:empty {
+      position: absolute;
+      inset: 0;
+    }
+
+    & .feature {
+      flex: 1 0;
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+
+      &:empty {
+        position: absolute;
+        inset: 0;
+      }
+    }
+
+    .player_equalizer {
+      flex: 2 0;
+      height: 1.25rem;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      padding: 0 2px;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      left: 50%;
+      top: 50%;
 
       &:empty {
         position: absolute;
         inset: 0;
       }
 
-      & .music_progress_values {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: center;
+      &.left,
+      & .right {
+        transform: translateY(-50%);
       }
 
-      & .music_progress_bar {
-        --radius: 50px;
-
-        height: 10px;
-        overflow: hidden;
-        border-radius: var(--radius);
-        background-color: rgba(var(--accent-color), 0.24);
-        @include backdrop-filter(blur(8px));
-
-        & > * {
-          height: 100%;
-          border-radius: var(--radius);
-          background-color: rgb(var(--accent-color));
-        }
+      &.left {
+        left: 0;
       }
 
-      & #music_time_elapsed,
-      & #music_time_total {
-        flex: 1 0 3rem;
+      &.left .right {
+        right: 0;
+      }
+
+      & .waveform {
+        flex: 0 0 4px;
         height: 1rem;
-        line-height: 1rem;
         display: block;
-        letter-spacing: 2px;
-        font-weight: 400;
-        font-size: 1rem;
-        color: rgb(var(--text-secondary-color));
-      }
+        border-radius: 50px;
+        background-color: rgb(var(--text-color));
+        box-shadow: 0 0 1px 0 rgb(var(--text-color));
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        transition: transform 1s ease-in-out;
+        transform: scaleY(0.4);
 
-      & #music_time_elapsed {
-        text-align: left;
-        margin-right: 5px;
-      }
-      & #music_time_total {
-        text-align: right;
-        margin-left: 5px;
+        @for $i from 0 through 40 {
+          &:nth-child(#{$i}) {
+            animation-duration: 1s + (math.random(600) * 1ms);
+          }
+        }
       }
     }
   }
@@ -544,8 +667,8 @@ $light-tertiary-color: #d4d4d8;
   }
 
   &.ultra {
-    height: #{calc($size * 0.30)};
-    max-height: #{calc($size * 0.30)};
+    height: #{calc($size * 0.3)};
+    max-height: #{calc($size * 0.3)};
 
     & .music_infos {
       flex-direction: row;
@@ -567,8 +690,8 @@ $light-tertiary-color: #d4d4d8;
   &.square {
     border-radius: $radius;
 
-    & .music_progress_bar > * {
-      border-radius: 4px;
+    & .music_progress_bar .music_progress_bar_fill {
+      border-radius: #{$radius / 2};
     }
   }
 
@@ -584,13 +707,12 @@ $light-tertiary-color: #d4d4d8;
     height: 100%;
     display: block;
     overflow: hidden;
-    @include backdrop-filter(blur(8px));
     position: absolute;
     inset: 0;
     left: 0;
     top: 0;
 
-    & > * {
+    & .music_progress_bar_fill {
       filter: opacity(0.1);
       border-radius: 100px;
     }
