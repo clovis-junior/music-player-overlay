@@ -85,6 +85,14 @@ const playerSchema = {
       category: 'Appearance'
     }
   },
+  progressBarOnTop: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Progress bar above',
+      category: 'Appearance'
+    }
+  },
   hideProgressBar: {
     type: 'boolean',
     default: false,
@@ -149,7 +157,7 @@ const playerSchema = {
     default: 'default',
     values: [{
       default: true,
-      name: 'Album Theme',
+      name: 'Default',
       value: 'default'
     }, {
       default: false,
@@ -161,8 +169,12 @@ const playerSchema = {
       value: 'light'
     }, {
       default: false,
-      name: 'Vibrant Theme',
-      value: 'vibrant'
+      name: 'Vibrant (Light)',
+      value: 'vibrant-light'
+    }, {
+      default: false,
+      name: 'Vibrant (Dark)',
+      value: 'vibrant-dark'
     }, {
       default: false,
       name: 'Transparent',

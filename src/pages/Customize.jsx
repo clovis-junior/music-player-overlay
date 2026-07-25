@@ -343,7 +343,7 @@ export default function Customize() {
           ))}
         </aside>
         <div className={styles?.widget_preview}>
-          {!IsEmpty(finalURL) && (<iframe src={finalURL} title="Player Preview" />)}
+          {!IsEmpty(finalURL) && (<iframe key={JSON.stringify(options)} src={finalURL} title="Player Preview" />)}
           <div className={styles?.alerts}>
             {alerts.map(alert => (
               <Alert key={alert.id} type={alert.type}>
