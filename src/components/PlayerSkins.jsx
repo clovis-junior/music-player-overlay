@@ -1,4 +1,4 @@
-import { Equalizer, MusicAlbumArt, MusicAlbumBackground, MusicInfo, MusicTimes, PlayerInfos, ProgressBar, Scroll, Streaming } from './PlayerComponents'
+import { Equalizer, MusicAlbumArt, MusicAlbumBackground, MusicInfo, MusicTimes, MusicTimesWithEqualizer, MusicTimesWithProgressBar, PlayerInfos, ProgressBar, Scroll, Streaming } from './PlayerComponents'
 import { GetURLParams, ConvertTime } from '../functions/Utils'
 import styles from '../assets/scss/player.module.scss'
 
@@ -37,20 +37,8 @@ function usePlayerProps(props, baseClasses = []) {
   return { options, ultraMode, platformIcon, music, inline, playerClasses };
 }
 
-function adjustEqualizer(musicTimesAlign) {
-  switch (musicTimesAlign) {
-    case 'left':
-      return 'right';
-    case 'center':
-    case 'right':
-      return 'left';
-    default:
-      return 'center';
-  }
-}
-
 function MusicProgress({
-  align = 'default' | 'left' | 'center' | 'right',
+  align = 'default',
   remainingTime = false,
   equalizer = 0,
   duration = {
@@ -69,57 +57,51 @@ function MusicProgress({
 }
 
 function DefaultFooter({
-  musicTimesAlign = 'default',
-  progressBarOnTop = false,
-  removeMusicTimes = false,
-  hideProgressBar = false,
-  showBarPointer = false,
-  timeMode = 'default',
-  equalizerSize = 0,
+  options = {},
   duration = {
     remaining: 0,
     elapsed: 0,
     total: 0
   }
 }) {
-  const isCenterAlign = musicTimesAlign === 'center';
-  const halfEqualizerSize = Math.round(equalizerSize / 2);
-
-  const musicTimeEqualizer = (!removeMusicTimes && equalizerSize <= 0) && (
-    <div key="equalizer-and-music-progress" className={styles?.feature}>
-      {isCenterAlign ? (
-        <>
-          <Equalizer size={halfEqualizerSize} align="left" />
-          <Equalizer size={halfEqualizerSize} align="right" />
-        </>
-      ) : (
-        <Equalizer size={equalizerSize} align={adjustEqualizer(musicTimesAlign)} />
-      )}
-      {!removeMusicTimes && (
-        <MusicProgress
-          align={musicTimesAlign}
-          duration={duration}
-          remainingTime={timeMode === 'remaining'} />
-      )}
-    </div>
+  const progressBarComponent = (
+    <ProgressBar
+      showPointer={options?.showBarPointer}
+      duration={duration}
+    />
   )
 
-  const progressBar = !hideProgressBar && (
-    <div key="progress-bar" className={styles.feature}>
-      <ProgressBar
-        showPointer={showBarPointer}
+  const musicTime = !options?.removeMusicTimes && options?.swap ? (
+    <div key="music-time-progress" className={styles?.feature}>
+      <MusicTimesWithProgressBar
+        align={options?.musicTimesAlign}
         duration={duration}
-      />
+        progressBar={!options?.hideProgressBar ? progressBarComponent : null}
+        remainingTime={options?.timeMode === 'remaining'} />
+    </div>
+  ) : (
+    <div key="music-time-equalizer" className={styles?.feature}>
+      <MusicTimesWithEqualizer
+        align={options?.musicTimesAlign}
+        duration={duration}
+        equalizer={<Equalizer size={options?.equalizer} />}
+        remainingTime={options?.timeMode === 'remaining'} />
     </div>
   )
 
-  const content = progressBarOnTop
-    ? [progressBar, musicTimeEqualizer]
-    : [musicTimeEqualizer, progressBar];
+  const classes = [
+    styles?.player_features,
+    options?.invertContent && styles?.inverted
+  ].filter(Boolean).join(' ');
 
   return (
-    <footer className={styles?.player_features}>
-      {content}
+    <footer className={classes}>
+      {musicTime}
+      <div className={styles?.feature}>
+        {options?.swap ? (
+          <Equalizer size={options?.equalizer} />
+        ) : !options?.hideProgressBar && progressBarComponent}
+      </div>
     </footer>
   )
 }
@@ -136,7 +118,7 @@ export function CompactSkin(props) {
         <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
       )}
       {!options?.hideProgressBar && (
-        <ProgressBar showPointer={options?.showBarPointer} duration={music?.duration} />
+        <ProgressBar onBackground={true} showPointer={options?.showBarPointer} duration={music?.duration} />
       )}
       {options?.showPlatformIcon && (
         <Streaming pathIcon={platformIcon} />
@@ -190,15 +172,7 @@ export function VerticalSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <DefaultFooter
-          musicTimesAlign={options?.musicTimesAlign}
-          removeMusicTimes={options?.removeMusicTimes}
-          progressBarOnTop={options?.progressBarOnTop}
-          hideProgressBar={options?.hideProgressBar}
-          showBarPointer={options?.showBarPointer}
-          timeMode={options?.timeMode}
-          equalizerSize={options?.equalizer}
-          duration={music?.duration} />
+        <DefaultFooter options={options} duration={music?.duration} />
       </div>
     </main>
   )
@@ -234,15 +208,7 @@ export function AlternativeSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <DefaultFooter
-          musicTimesAlign={options?.musicTimesAlign}
-          removeMusicTimes={options?.removeMusicTimes}
-          progressBarOnTop={options?.progressBarOnTop}
-          hideProgressBar={options?.hideProgressBar}
-          showBarPointer={options?.showBarPointer}
-          timeMode={options?.timeMode}
-          equalizerSize={options?.equalizer}
-          duration={music?.duration} />
+        <DefaultFooter options={options} duration={music?.duration} />
       </div>
     </main>
   )
@@ -280,15 +246,7 @@ export function DefaultSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <DefaultFooter
-          musicTimesAlign={options?.musicTimesAlign}
-          removeMusicTimes={options?.removeMusicTimes}
-          progressBarOnTop={options?.progressBarOnTop}
-          hideProgressBar={options?.hideProgressBar}
-          showBarPointer={options?.showBarPointer}
-          timeMode={options?.timeMode}
-          equalizerSize={options?.equalizer}
-          duration={music?.duration} />
+        <DefaultFooter options={options} duration={music?.duration} />
       </div>
     </main>
   )

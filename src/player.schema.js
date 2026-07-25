@@ -85,14 +85,6 @@ const playerSchema = {
       category: 'Appearance'
     }
   },
-  progressBarOnTop: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Progress bar above',
-      category: 'Appearance'
-    }
-  },
   hideProgressBar: {
     type: 'boolean',
     default: false,
@@ -211,6 +203,24 @@ const playerSchema = {
     ui: {
       label: 'Show Waves',
       disclaimer: 'Not compatible with compact skin',
+      category: 'Theme'
+    }
+  },
+  swap: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Swap Progress bar and wave positions',
+      disclaimer: 'Progress bar aside/between with music times',
+      category: 'Theme'
+    }
+  },
+  invertContent: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Invert features order',
+      disclaimer: 'This invert progress bar, waves and music times order',
       category: 'Theme'
     }
   },

@@ -13,6 +13,7 @@ export function UpdatePercentage(elapsed = 0, total = 0) {
 }
 
 export function ProgressBar({
+  onBackground = false,
   showPointer = false,
   duration = {
     elapsed: 0,
@@ -64,19 +65,24 @@ export function ProgressBar({
     return () => cancelAnimationFrame(animationFrameId);
   }, [oficialProgress]);
 
-  const classes = [
+  const baseClasses = [
+    styles?.music_progress_bar,
+    onBackground && styles?.on_background
+  ].filter(Boolean).join(' ');
+
+  const fillClasses = [
     styles?.music_progress_bar_fill,
-    showPointer ? styles?.with_pointer : '',
+    showPointer && styles?.with_pointer
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={styles?.music_progress_bar}>
-      <div className={classes} style={{ width: `${displayProgress}%` }} />
+    <div className={baseClasses}>
+      <div className={fillClasses} style={{ width: `${displayProgress}%` }} />
     </div>
   )
 }
 
-export function Equalizer({ size = 0, align = 'left'|'center'|'right' }) {
+export function Equalizer({ size = 0 }) {
   let waves = [];
 
   if (size <= 0)
@@ -91,14 +97,9 @@ export function Equalizer({ size = 0, align = 'left'|'center'|'right' }) {
   for (let i = 0; i < size; i++)
     waves.push(i);
 
-  const classes = [
-    styles?.player_equalizer,
-    align === 'left' ? styles?.left : '',
-    align === 'right' ? styles?.right : ''
-  ].filter(Boolean).join(' ');
 
   return (
-    <div className={classes}>
+    <div className={styles?.player_equalizer}>
       {waves.map(index => (
         <div key={index} className={styles?.waveform} />
       ))}
@@ -107,7 +108,7 @@ export function Equalizer({ size = 0, align = 'left'|'center'|'right' }) {
 }
 
 export function MusicTimes({
-  align = 'default'|'left'|'center'|'right',
+  align = 'default',
   remainingTime = false,
   duration = {
     remaining: 0,
@@ -117,16 +118,87 @@ export function MusicTimes({
 }) {
   const classes = [
     styles?.music_time_values,
-    align === 'left' ? styles?.left : '',
-    align === 'right' ? styles?.right : '',
-    align === 'center' ? styles?.centered : ''
+    align === 'left' && styles?.left,
+    align === 'right' && styles?.right,
+    align === 'center' && styles?.centered
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={classes}>
-      <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
-      <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
-    </div>
+    <>
+      <div className={classes}>
+        <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+        <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
+      </div>
+    </>
+  )
+}
+
+export function MusicTimesWithEqualizer({
+  align = 'default',
+  remainingTime = false,
+  duration = {
+    remaining: 0,
+    elapsed: 0,
+    total: 0
+  },
+  equalizer = null
+}) {
+
+  console.log(equalizer);
+
+  const isCenterAlign = align === 'center';
+  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2);
+
+  const classes = [
+    styles?.music_time_values,
+    align === 'left' && styles?.left,
+    align === 'right' && styles?.right,
+    align === 'center' && styles?.centered
+  ].filter(Boolean).join(' ');
+
+  return (
+    <>
+      {align === 'right' && equalizer }
+      {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
+      <div className={classes}>
+        <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+        {align === 'default' && equalizer}
+        <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
+      </div>
+      {align === 'left' &&equalizer}
+      {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
+    </>
+  )
+}
+
+export function MusicTimesWithProgressBar({
+  align = 'default',
+  remainingTime = false,
+  duration = {
+    remaining: 0,
+    elapsed: 0,
+    total: 0
+  },
+  progressBar = null
+}) {
+  const classes = [
+    styles?.music_time_values,
+    align === 'left' && styles?.left,
+    align === 'right' && styles?.right,
+    align === 'center' && styles?.centered
+  ].filter(Boolean).join(' ');
+
+  return (
+    <>
+      {align === 'right' && progressBar}
+      {(align === 'center' && progressBar) && <ProgressBar onBackground={true} {...progressBar?.props} />}
+      <div className={classes}>
+        <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+        {align === 'default' && progressBar}
+        <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
+      </div>
+      {align === 'left' && progressBar}
+    </>
   )
 }
 

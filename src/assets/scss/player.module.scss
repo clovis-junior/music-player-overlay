@@ -136,22 +136,35 @@ $radius: 10px !default;
 }
 
 .music_progress_bar {
-  z-index: -1;
   max-width: 100%;
   overflow: hidden;
   position: relative;
 
+  &.on_background {
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute !important;
+    inset: 0 !important;
+    left: 0;
+    top: 0;
+
+    & .music_progress_bar_fill {
+      opacity: 0.2;
+    }
+  }
+
   & .music_progress_bar_fill {
-    z-index: -1;
     min-width: 0%;
     max-width: 100%;
-    height: 100%;
+    height: 100% !important;
     display: block;
     background-color: rgb(var(--text-color));
     transition: width 100ms linear;
-    position: absolute;
-    left: 0;
-    top: 0;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
   }
 }
 
@@ -352,7 +365,7 @@ $radius: 10px !default;
       border-radius: 0;
     }
 
-    & .player_features {
+    & .feature {
       height: auto;
       gap: 12px;
     }
@@ -508,13 +521,15 @@ $radius: 10px !default;
     }
 
     & .music_time_values {
-      flex: 1 0;
+      flex-grow: 1;
       height: 1rem;
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
+      position: relative;
 
       &.left,
       &.right,
@@ -533,10 +548,12 @@ $radius: 10px !default;
         }
 
         &.left {
+          flex-grow: 0;
           justify-content: flex-start;
         }
 
         &.right {
+          flex-grow: 0;
           justify-content: flex-end;
         }
 
@@ -572,6 +589,21 @@ $radius: 10px !default;
         overflow: initial;
       }
 
+      &.on_background {
+        height: 1rem;
+        background-color: transparent !important;
+        transform: translateY(-50%);
+        top: 50% !important;
+
+         & .music_progress_bar_fill.with_pointer::after {
+          width: 1rem;
+          height: 1rem;
+          background-color: rgb(var(--text-color));
+          box-shadow: 0 0 0 transparent;
+          transform: translate(-1rem, -50%);
+         }
+      }
+
       & .music_progress_bar_fill {
         border-radius: var(--radius);
         background-color: rgb(var(--accent-color));
@@ -596,16 +628,19 @@ $radius: 10px !default;
 
   & .player_features {
     flex: 1 0;
-    height: 2rem;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
 
     &:empty {
       position: absolute;
       inset: 0;
+    }
+
+    &.inverted {
+      flex-direction: column-reverse;
     }
 
     & .feature {
@@ -615,6 +650,7 @@ $radius: 10px !default;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+      gap: 4px;
       position: relative;
 
       &:empty {
@@ -623,8 +659,8 @@ $radius: 10px !default;
       }
     }
 
-    .player_equalizer {
-      width: 100%;
+    & .player_equalizer {
+      flex: 1 0;
       height: 20px;
       overflow-x: hidden;
       display: flex;
@@ -633,22 +669,10 @@ $radius: 10px !default;
       align-items: center;
       gap: 2px;
       padding: 0 2px;
-      transform: translate(-50%, -50%);
-      position: absolute;
-      left: 50%;
-      top: 50%;
 
       &:empty {
         position: absolute;
         inset: 0;
-      }
-
-      &.left {
-        justify-content: flex-start;
-      }
-
-      &.right {
-        justify-content: flex-end;
       }
 
       & .waveform {
@@ -729,21 +753,8 @@ $radius: 10px !default;
     top: 1rem;
   }
 
-  & .music_progress_bar {
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    overflow: hidden;
-    position: absolute;
-    inset: 0;
-    left: 0;
-    top: 0;
-
-    & .music_progress_bar_fill {
-      filter: opacity(0.1);
-      border-radius: 100px;
-    }
+  & .music_progress_bar .music_progress_bar_fill {
+    border-radius: 100px;
   }
 
   & .music_infos {
