@@ -15,33 +15,36 @@ export function UpdatePercentage(elapsed = 0, total = 0) {
 export function ProgressBar({
   onBackground = false,
   showPointer = false,
+  isPaused = false,
   duration = {
     elapsed: 0,
     total: 0
-  }
+  },
+  children = null
 }) {
-  const oficialProgress = UpdatePercentage(duration?.elapsed, duration?.total);
+  const currentElapsed = Number(duration?.elapsed) || 0;
+  const currentTotal = Number(duration?.total) || 0;
+  const oficialProgress = UpdatePercentage(currentElapsed, currentTotal);
 
   const [displayProgress, setDisplayProgress] = useState(oficialProgress);
 
   const stateRef = useRef({
-    elapsed: Number(duration?.elapsed) || 0,
-    total: Number(duration?.total) || 0,
-    lastUpdate: 0,
-    isPaused: false
+    elapsed: currentElapsed,
+    total: currentTotal,
+    lastUpdate: performance.now(),
+    isPaused: isPaused
   });
 
-  const currentElapsed = Number(duration?.elapsed) || 0;
-  const currentTotal = Number(duration?.total) || 0;
-
-  if (stateRef.current.elapsed !== currentElapsed || stateRef.current.total !== currentTotal) {
+  useEffect(() => {
     stateRef.current = {
       elapsed: currentElapsed,
       total: currentTotal,
       lastUpdate: performance.now(),
-      isPaused: stateRef.current.elapsed === currentElapsed
+      isPaused: isPaused
     };
-  }
+
+    setDisplayProgress(oficialProgress);
+  }, [currentElapsed, currentTotal, isPaused, oficialProgress]);
 
   useEffect(() => {
     let animationFrameId;
@@ -50,20 +53,20 @@ export function ProgressBar({
       const now = performance.now();
       const state = stateRef.current;
 
-      if (state.total > 0 && state.elapsed < state.total && !state.isPaused && state.lastUpdate > 0) {
+      if (!state.isPaused && state.total > 0 && state.elapsed < state.total && state.lastUpdate > 0) {
         const timePassedSinceUpdate = (now - state.lastUpdate) / 1000;
         const interpolatedElapsed = state.elapsed + timePassedSinceUpdate;
 
         setDisplayProgress(UpdatePercentage(interpolatedElapsed, state.total));
       } else
-        setDisplayProgress(oficialProgress);
+        setDisplayProgress(UpdatePercentage(state.elapsed, state.total));
 
-      animationFrameId = requestAnimationFrame(tick)
+      animationFrameId = requestAnimationFrame(tick);
     };
 
     animationFrameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [oficialProgress]);
+  }, []);
 
   const baseClasses = [
     styles?.music_progress_bar,
@@ -77,7 +80,9 @@ export function ProgressBar({
 
   return (
     <div className={baseClasses}>
-      <div className={fillClasses} style={{ width: `${displayProgress}%` }} />
+      <div className={fillClasses} style={{ width: `${displayProgress}%` }}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -158,29 +163,47 @@ export function MusicTimesWithEqualizer({
 
   return (
     <>
-      {align === 'right' && equalizer }
+      {align === 'right' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
       <div className={classes}>
         <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
         {align === 'default' && equalizer}
         <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
       </div>
-      {align === 'left' &&equalizer}
+      {align === 'left' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
     </>
   )
 }
 
-export function MusicTimesWithProgressBar({
-  align = 'default',
-  remainingTime = false,
-  duration = {
-    remaining: 0,
-    elapsed: 0,
-    total: 0
-  },
-  progressBar = null
-}) {
+export function MusicTimesWithProgressBar(props) {
+  const {
+    align = 'default',
+    remainingTime = false,
+    duration = {
+      remaining: 0,
+      elapsed: 0,
+      total: 0
+    },
+    progressBar = null
+  } = props;
+
+  const containerRef = useRef(null);
+  const [featureWidth, setFeatureWidth] = useState(0);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries)
+        setFeatureWidth(entry.contentRect.width);
+
+    });
+
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
   const classes = [
     styles?.music_time_values,
     align === 'left' && styles?.left,
@@ -188,17 +211,29 @@ export function MusicTimesWithProgressBar({
     align === 'center' && styles?.centered
   ].filter(Boolean).join(' ');
 
+  if (align === 'center') {
+    return progressBar ? (
+      <div ref={containerRef} className={styles?.feature} style={{ '--feature-width': `${featureWidth}px` }}>
+        <MusicTimes  {...props} />
+        <ProgressBar onBackground={true} {...progressBar?.props}>
+          <MusicTimes {...props} />
+        </ProgressBar>
+      </div>
+    ) : (
+      <MusicTimes {...props} />
+    )
+  }
+
   return (
-    <>
+    <div className={styles?.feature}>
       {align === 'right' && progressBar}
-      {(align === 'center' && progressBar) && <ProgressBar onBackground={true} {...progressBar?.props} />}
       <div className={classes}>
         <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
         {align === 'default' && progressBar}
         <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
       </div>
       {align === 'left' && progressBar}
-    </>
+    </div>
   )
 }
 

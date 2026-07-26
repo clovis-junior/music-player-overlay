@@ -64,7 +64,7 @@ const playerSchema = {
     type: 'boolean',
     default: false,
     ui: {
-      label: 'Square Border',
+      label: 'Square Layout',
       category: 'Appearance'
     }
   },

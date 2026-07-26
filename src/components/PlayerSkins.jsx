@@ -58,32 +58,27 @@ function MusicProgress({
 
 function DefaultFooter({
   options = {},
-  duration = {
-    remaining: 0,
-    elapsed: 0,
-    total: 0
-  }
+  music = {}
 }) {
   const progressBarComponent = (
     <ProgressBar
+      isPaused={music?.displayIsPlaying}
       showPointer={options?.showBarPointer}
-      duration={duration}
+      duration={music?.duration}
     />
   )
 
   const musicTime = !options?.removeMusicTimes && options?.swap ? (
-    <div key="music-time-progress" className={styles?.feature}>
-      <MusicTimesWithProgressBar
-        align={options?.musicTimesAlign}
-        duration={duration}
-        progressBar={!options?.hideProgressBar ? progressBarComponent : null}
-        remainingTime={options?.timeMode === 'remaining'} />
-    </div>
+    <MusicTimesWithProgressBar
+      align={options?.musicTimesAlign}
+      duration={music?.duration}
+      progressBar={!options?.hideProgressBar ? progressBarComponent : null}
+      remainingTime={options?.timeMode === 'remaining'} />
   ) : (
     <div key="music-time-equalizer" className={styles?.feature}>
       <MusicTimesWithEqualizer
         align={options?.musicTimesAlign}
-        duration={duration}
+        duration={music?.duration}
         equalizer={<Equalizer size={options?.equalizer} />}
         remainingTime={options?.timeMode === 'remaining'} />
     </div>
@@ -110,7 +105,22 @@ export function CompactSkin(props) {
   const { options, platformIcon, music, inline, playerClasses } = usePlayerProps(props, [
     styles?.music_player_compact,
     props.ultraMode ? styles?.ultra : ''
-  ]);
+  ])
+
+  const infos = (
+    <PlayerInfos centered={options?.textAlignCenter}>
+      <MusicInfo>
+        <Scroll key={music?.title} id={styles?.music_title} timer={6}>
+          {music?.title}
+        </Scroll>
+      </MusicInfo>
+      <MusicInfo>
+        <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
+          {music?.artist}
+        </Scroll>
+      </MusicInfo>
+    </PlayerInfos>
+  )
 
   return (
     <main {...inline} className={playerClasses}>
@@ -118,23 +128,18 @@ export function CompactSkin(props) {
         <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
       )}
       {!options?.hideProgressBar && (
-        <ProgressBar onBackground={true} showPointer={options?.showBarPointer} duration={music?.duration} />
+        <ProgressBar 
+        onBackground={true}
+        isPaused={!music?.displayIsPlaying}
+        showPointer={options?.showBarPointer}
+        duration={music?.duration}>
+          {infos}
+        </ProgressBar>
       )}
       {options?.showPlatformIcon && (
         <Streaming pathIcon={platformIcon} />
       )}
-      <PlayerInfos centered={options?.textAlignCenter}>
-        <MusicInfo>
-          <Scroll key={music?.title} id={styles?.music_title} timer={6}>
-            {music?.title}
-          </Scroll>
-        </MusicInfo>
-        <MusicInfo>
-          <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
-            {music?.artist}
-          </Scroll>
-        </MusicInfo>
-      </PlayerInfos>
+      {infos}
     </main>
   )
 }
@@ -172,7 +177,7 @@ export function VerticalSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <DefaultFooter options={options} duration={music?.duration} />
+        <DefaultFooter options={options} music={music} />
       </div>
     </main>
   )
@@ -208,7 +213,7 @@ export function AlternativeSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <DefaultFooter options={options} duration={music?.duration} />
+        <DefaultFooter options={options} music={music} />
       </div>
     </main>
   )
@@ -246,7 +251,7 @@ export function DefaultSkin(props) {
             </Scroll>
           </MusicInfo>
         </PlayerInfos>
-        <DefaultFooter options={options} duration={music?.duration} />
+        <DefaultFooter options={options} music={music} />
       </div>
     </main>
   )
