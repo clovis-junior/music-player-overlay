@@ -250,27 +250,27 @@ const playerSchema = {
       category: 'Advanced'
     }
   },
-  host: {
-    type: 'text',
-    default: 'localhost',
-    ui: {
-      label: 'Address',
-      disabled: true,
-      disclaimer: 'Bridge websocket server address',
-      category: 'Advanced'
-    }
-  },
-  port: {
-    type: 'text',
-    default: '1997',
-    values: '1997',
-    ui: {
-      label: 'Host',
-      disabled: true,
-      disclaimer: 'Bridge websocket server port',
-      category: 'Advanced'
-    }
-  }
+  // host: {
+  //   type: 'text',
+  //   default: 'localhost',
+  //   ui: {
+  //     label: 'Address',
+  //     disabled: true,
+  //     disclaimer: 'Bridge websocket server address',
+  //     category: 'Advanced'
+  //   }
+  // },
+  // port: {
+  //   type: 'text',
+  //   default: '1997',
+  //   values: '1997',
+  //   ui: {
+  //     label: 'Host',
+  //     disabled: true,
+  //     disclaimer: 'Bridge websocket server port',
+  //     category: 'Advanced'
+  //   }
+  // }
 };
 
 export const defaultPlayerOptions = Object.fromEntries(

@@ -114,7 +114,7 @@ $radius: 10px !default;
 
 #music_title,
 #music_artist {
-  height: 2rem;
+  height: auto;
   display: block;
   line-height: 120%;
   padding: 0 2px;
@@ -127,12 +127,13 @@ $radius: 10px !default;
 
 .music_info_mask {
   width: 100%;
-  min-height: 1rem;
+  min-height: 20px;
   display: block;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%);
   text-overflow: ellipsis;
+  position: relative;
 }
 
 .music_progress_bar {
@@ -157,6 +158,7 @@ $radius: 10px !default;
 
   & .music_progress_bar_fill {
     min-width: 0%;
+    width: var(--progress);
     max-width: 100%;
     height: 100% !important;
     display: block;
@@ -234,6 +236,10 @@ $radius: 10px !default;
       --accent-color: #{hexToRGB($dark-color)};
     }
 
+    &:not(.dark_text) {
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8) !important;
+    }
+
     @include backdrop-filter(none !important);
     box-shadow: 0 0 0 transparent !important;
 
@@ -244,8 +250,7 @@ $radius: 10px !default;
     }
   }
 
-  &.vibrant,
-  &.light {
+  &.vibrant {
     text-shadow: 0 0 0 transparent !important;
   }
 
@@ -291,6 +296,14 @@ $radius: 10px !default;
   }
 }
 
+.music_player_surface {
+  background-color: rgba(var(--background-color), 0.9);
+  color: rgb(var(--text-color));
+  @include backdrop-filter(blur(8px));
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+  box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
 /* Full ------------------------------------------ */
 .music_player {
   max-width: calc(#{$size} * 4);
@@ -314,6 +327,10 @@ $radius: 10px !default;
     @include backdrop-filter(blur(8px));
     box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
 
+    &:not(:has(.music_album_blur_container)) {
+      text-shadow: 0 0 0 transparent !important;
+    }
+
     &.square {
       border-radius: 2px;
 
@@ -323,7 +340,6 @@ $radius: 10px !default;
     }
 
     & .music_album_art {
-      
       border-radius: #{calc($radius / 2)};
     }
 
@@ -340,7 +356,7 @@ $radius: 10px !default;
     flex-direction: column;
     justify-content: stretch;
     align-items: normal;
-    gap: 10px;
+    gap: 8px;
     padding: 12px;
 
     & .music_platform_icon {
@@ -359,15 +375,20 @@ $radius: 10px !default;
     }
 
     & .player_content {
-      max-width: unset;
-      height: auto;
+      max-width: 100%;
+      overflow: hidden;
       padding: 0 4px;
       border-radius: 0;
+      gap: 8px;
     }
 
-    & .feature {
-      height: auto;
-      gap: 12px;
+    & .player_features {
+      gap: 8px;
+
+      & .feature {
+        height: auto;
+        gap: 8px;
+      }
     }
   }
 
@@ -383,14 +404,14 @@ $radius: 10px !default;
       flex-grow: 0;
       flex-basis: $alternate-size;
     }
-    
+
     & .player_content {
       flex-basis: calc(100% - calc($size + $padding-gap));
       max-width: calc(100% - calc($size + $padding-gap));
       height: $alternate-size;
       padding: $padding-gap calc($padding-gap * 0.5);
     }
-  }  
+  }
 
   &:not(.paused) .waveform {
     animation-name: waveform;
@@ -424,12 +445,15 @@ $radius: 10px !default;
     transition: all 220ms ease-out;
   }
 
-  &:not(.alternative, .vertical) .music_album_art,
-  &:not(.alternative, .vertical) .player_content {
-    background-color: rgba(var(--background-color), 0.9);
-    color: rgb(var(--text-color));
-    @include backdrop-filter(blur(8px));
-    box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
+  &:not(.alternative, .vertical) {
+    & .music_album_art,
+    & .player_content {
+      @extend .music_player_surface;
+
+      &:not(:has(.music_album_blur_container)) {
+        text-shadow: 0 0 0 transparent !important;
+      }
+    }
   }
 
   & .music_album_art {
@@ -478,12 +502,19 @@ $radius: 10px !default;
     }
   }
 
-  & .music_infos {
+  & .music_infos,
+  & .player_features {
     flex: 1 0;
+    max-width: 100%;
+    height: auto;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
     justify-content: center;
+  }
+
+  & .music_infos {
+    gap: 6px;
 
     & #music_title {
       letter-spacing: 1px;
@@ -509,7 +540,7 @@ $radius: 10px !default;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: 4px;
+    gap: 8px;
     padding: 14px;
     overflow: hidden;
     position: relative;
@@ -595,13 +626,13 @@ $radius: 10px !default;
         transform: translateY(-50%);
         top: 50% !important;
 
-         & .music_progress_bar_fill.with_pointer::after {
+        & .music_progress_bar_fill.with_pointer::after {
           width: 1rem;
           height: 1rem;
           background-color: rgb(var(--text-color));
           box-shadow: 0 0 0 transparent;
           transform: translate(-1rem, -50%);
-         }
+        }
       }
 
       & .music_progress_bar_fill {
@@ -627,12 +658,7 @@ $radius: 10px !default;
   }
 
   & .player_features {
-    flex: 1 0;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
+    gap: 4px;
 
     &:empty {
       position: absolute;
@@ -645,6 +671,9 @@ $radius: 10px !default;
 
     & .feature {
       flex: 1 0;
+      max-width: 100%;
+      min-height: 10px;
+      max-height: 20px;
       display: flex;
       flex-wrap: nowrap;
       flex-direction: row;
@@ -662,7 +691,7 @@ $radius: 10px !default;
     & .player_equalizer {
       flex: 1 0;
       height: 20px;
-      overflow-x: hidden;
+      overflow: hidden;
       display: flex;
       flex-direction: row;
       justify-content: center;
@@ -709,17 +738,23 @@ $radius: 10px !default;
   align-items: center;
   overflow: hidden;
   border-radius: 100px;
-  background-color: rgba(var(--background-color), 0.9);
-  color: rgb(var(--text-color));
-  @include backdrop-filter(blur(8px));
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
-  box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
+  @extend .music_player_surface;
   position: relative;
 
   & #music_title,
   & #music_artist {
     height: auto;
     font-style: italic;
+  }
+
+  &:not(:has(.music_album_blur_container)),
+  &.vibrant {
+    text-shadow: 0 0 0 transparent !important;
+
+    & .music_progress_bar .music_progress_bar_fill {
+      opacity: initial !important;
+      background-color: rgb(var(--text-color));
+    }
   }
 
   &.ultra {
@@ -736,6 +771,11 @@ $radius: 10px !default;
       left: initial;
       right: 8px;
       top: 8px;
+    }
+
+    & #music_title,
+    & #music_artist {
+      font-size: 14px;
     }
   }
 
