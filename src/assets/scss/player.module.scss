@@ -356,7 +356,7 @@ $radius: 10px !default;
     flex-direction: column;
     justify-content: stretch;
     align-items: normal;
-    gap: 8px;
+    gap: 4px;
     padding: 12px;
 
     & .music_platform_icon {
@@ -369,24 +369,26 @@ $radius: 10px !default;
 
     & .music_album_art,
     & .player_content {
-      flex-grow: 0;
-      flex-shrink: 1;
-      flex-basis: auto;
+      flex-grow: 0 !important;
+      flex-shrink: 1 !important;
+      flex-basis: auto !important;
+    }
+
+    & .music_infos,
+    & .player_content,
+    & .player_features {
+      flex: 0 1 auto;
     }
 
     & .player_content {
       max-width: 100%;
+      max-height: calc($size - 1rem);
       overflow: hidden;
-      padding: 0 4px;
+      padding: 8px 4px;
       border-radius: 0;
-      gap: 8px;
-    }
+      gap: 12px;
 
-    & .player_features {
-      gap: 8px;
-
-      & .feature {
-        height: auto;
+      & .player_features {
         gap: 8px;
       }
     }
@@ -409,7 +411,7 @@ $radius: 10px !default;
       flex-basis: calc(100% - calc($size + $padding-gap));
       max-width: calc(100% - calc($size + $padding-gap));
       height: $alternate-size;
-      padding: $padding-gap calc($padding-gap * 0.5);
+      padding: math.div($padding-gap, 2) 0;
     }
   }
 
@@ -510,10 +512,10 @@ $radius: 10px !default;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
-    justify-content: center;
   }
 
   & .music_infos {
+    justify-content: flex-start;
     gap: 6px;
 
     & #music_title {
@@ -598,8 +600,7 @@ $radius: 10px !default;
         width: 3rem;
         height: 1rem;
         line-height: 1rem;
-        display: flex;
-        align-content: center;
+        display: block;
         letter-spacing: 2px;
         font-weight: 400;
         font-size: 1rem;
@@ -658,6 +659,7 @@ $radius: 10px !default;
   }
 
   & .player_features {
+    justify-content: flex-end;
     gap: 4px;
 
     &:empty {
