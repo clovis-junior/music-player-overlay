@@ -232,7 +232,7 @@ $radius: 10px !default;
     --accent-color: #{hexToRGB($light-pallete-3rd)} !important;
 
     &.dark_text {
-      --background-pallete-2nd: #{hexToRGB($dark-pallete-3rd)} !important;
+      --background-pallete-2nd: #{hexToRGB($light-pallete-3rd)} !important;
       --text-color: #{hexToRGB($dark-pallete-1st)} !important;
       --text-pallete-2nd: #{hexToRGB($dark-pallete-2nd)} !important;
       --accent-color: #{hexToRGB($dark-color)} !important;
@@ -816,6 +816,7 @@ $radius: 10px !default;
   }
 
   &:not(:has(.music_album_blur_container)),
+  &.transparent,
   &.vibrant {
     text-shadow: 0 0 0 transparent !important;
 
@@ -829,6 +830,7 @@ $radius: 10px !default;
         background-color: rgb(var(--text-color));
         color: rgb(var(--background-pallete-2nd)) !important;
         opacity: initial !important;
+        text-shadow: 0 0 0 transparent !important;
       }
     }
   }
