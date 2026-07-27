@@ -480,7 +480,6 @@ $radius: 10px !default;
       overflow: hidden;
       padding: 8px 4px;
       border-radius: 0;
-      gap: 12px;
 
       & .player_features {
         gap: 8px;
@@ -640,10 +639,14 @@ $radius: 10px !default;
 
   & .music_infos {
     justify-content: flex-start;
-    gap: 6px;
 
     &.inverted {
       flex-direction: column-reverse;
+    }
+
+    & #music_title,
+    & #music_artist {
+      padding: 6px 2px;
     }
 
     & #music_title {
