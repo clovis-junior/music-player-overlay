@@ -136,8 +136,10 @@ $radius: 10px !default;
 
 .music_info_mask {
   width: 100%;
-  min-height: 20px;
+  min-height: 1rem;
+  max-height: 2rem;
   display: block;
+  padding: 4px 0;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%);
@@ -644,11 +646,6 @@ $radius: 10px !default;
       flex-direction: column-reverse;
     }
 
-    & #music_title,
-    & #music_artist {
-      padding: 6px 2px;
-    }
-
     & #music_title {
       letter-spacing: 1px;
       font-weight: 600;
@@ -674,7 +671,7 @@ $radius: 10px !default;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: 8px;
+    gap: 6px;
     padding: 14px;
     overflow: hidden;
     position: relative;

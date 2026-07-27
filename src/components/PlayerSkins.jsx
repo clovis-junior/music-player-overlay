@@ -36,25 +36,6 @@ function usePlayerProps(props, baseClasses = []) {
   return { options, ultraMode, platformIcon, music, inline, playerClasses };
 }
 
-function MusicProgress({
-  align = 'default',
-  remainingTime = false,
-  equalizer = 0,
-  duration = {
-    remaining: 0,
-    elapsed: 0,
-    total: 0
-  },
-}) {
-  return (
-    <MusicTimes
-      align={align}
-      equalizer={equalizer}
-      remainingTime={remainingTime}
-      duration={duration} />
-  )
-}
-
 export function MusicArt({
   showPlatformIcon = false,
   platformIcon = null,
@@ -120,7 +101,7 @@ function DefaultFooter({
     />
   )
 
-  const musicTime = !options?.removeMusicTimes && options?.swapProgressBar ? (
+  const musicTime = options?.swapProgressBar ? (
     <MusicTimesWithProgressBar
       align={options?.musicTimesAlign}
       duration={music?.duration}
@@ -143,7 +124,8 @@ function DefaultFooter({
 
   return (
     <footer className={classes}>
-      {musicTime}
+      {!options?.removeMusicTimes && musicTime}
+      {(options?.removeMusicTimes && !options?.hideProgressBar) && progressBarComponent}
       <div className={styles?.feature}>
         {options?.swapProgressBar ? (
           <Equalizer size={options?.equalizer} />
