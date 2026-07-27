@@ -319,7 +319,14 @@ export function MusicAlbumArt({
   )
 }
 
-export function Vinyl({ isPlaying = false, albumImage = null, altText = '' }) {
+export function Vinyl(props) {
+  const {
+    isPlaying = false,
+    albumImage = null,
+    altText = '',
+    ...inline
+  } = props;
+
   if (!albumImage)
     return null;
 
@@ -329,7 +336,7 @@ export function Vinyl({ isPlaying = false, albumImage = null, altText = '' }) {
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={style}>
+    <div {...inline} className={style}>
       <div className={styles?.vinyl_body}>
         <div className={styles?.vinyl_grooves} />
         <div className={styles?.vinyl_label}>

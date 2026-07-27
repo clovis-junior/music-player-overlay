@@ -1,7 +1,7 @@
 @use "global.scss" as *;
 @use 'sass:math';
 
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 
 /* ********************************************************
     Variables
@@ -37,7 +37,7 @@ $border-radius: 10px !default;
   flex-wrap: nowrap;
   flex-direction: column;
   background-color: transparent;
-  font-family: $fonts !important;
+  font-family: Manrope, $fonts !important;
   font-size: 1rem;
   color: rgb(var(--font-primary-color));
 
