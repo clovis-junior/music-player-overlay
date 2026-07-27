@@ -24,75 +24,6 @@ const playerSchema = {
       category: 'Appearance'
     }
   },
-  timeMode: {
-    type: 'select',
-    default: 'default',
-    values: [{
-      default: true,
-      name: 'Total (default)',
-      value: 'default'
-    }, {
-      default: false,
-      name: 'Remaining',
-      value: 'remaining'
-    }],
-    ui: {
-      label: 'Music time mode',
-      disclaimer: 'Not compatible with compact skin',
-      category: 'Appearance'
-    }
-  },
-  reverse: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Reverse',
-      disclaimer: 'Not compatible with compact skin',
-      category: 'Appearance'
-    }
-  },
-  ultraMode: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Ultra Compact',
-      disclaimer: 'Only compatible with compact skin',
-      category: 'Appearance'
-    }
-  },
-  squareBorder: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Square Layout',
-      category: 'Appearance'
-    }
-  },
-  textAlignCenter: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Text align center',
-      category: 'Appearance'
-    }
-  },
-  showBarPointer: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Show pointer on progress bar',
-      disclaimer: 'Not compatible with compact skin',
-      category: 'Appearance'
-    }
-  },
-  hideProgressBar: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Hide progress bar',
-      category: 'Appearance'
-    }
-  },
   musicTimesAlign: {
     type: 'select',
     default: 'default',
@@ -115,6 +46,69 @@ const playerSchema = {
     }],
     ui: {
       label: 'Music times align',
+      category: 'Appearance'
+    }
+  },
+  equalizer: {
+    type: 'number',
+    default: 0,
+    max: 40,
+    min: 0,
+    ui: {
+      label: 'Show Waves',
+      disclaimer: 'Not compatible with compact skin',
+      category: 'Appearance'
+    }
+  },
+  showVinyl: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Replace album art with vinyl',
+      disclaimer: 'Only compatible with compact skin',
+      category: 'Appearance'
+    }
+  },
+  reverse: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Album art on right',
+      disclaimer: 'Not compatible with compact skin',
+      category: 'Appearance'
+    }
+  },
+  ultraMode: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Ultra Compact',
+      disclaimer: 'Only compatible with compact skin',
+      category: 'Appearance'
+    }
+  },
+  squareBorder: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Square Layout',
+      category: 'Appearance'
+    }
+  },
+  showBarPointer: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Show pointer on progress bar',
+      disclaimer: 'Not compatible with compact skin',
+      category: 'Appearance'
+    }
+  },
+  hideProgressBar: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Hide progress bar',
       category: 'Appearance'
     }
   },
@@ -195,18 +189,34 @@ const playerSchema = {
       category: 'Theme'
     }
   },
-  equalizer: {
-    type: 'number',
-    default: 0,
-    max: 40,
-    min: 0,
+  timeMode: {
+    type: 'select',
+    default: 'default',
+    values: [{
+      default: true,
+      name: 'Total (default)',
+      value: 'default'
+    }, {
+      default: false,
+      name: 'Remaining',
+      value: 'remaining'
+    }],
     ui: {
-      label: 'Show Waves',
+      label: 'Music time mode',
       disclaimer: 'Not compatible with compact skin',
       category: 'Theme'
     }
   },
-  swap: {
+  removeContent: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Remove all content',
+      disclaimer: 'Except album art/vinyl;\nNot compatible with compact skin',
+      category: 'Theme'
+    }
+  },
+  swapProgressBar: {
     type: 'boolean',
     default: false,
     ui: {
@@ -215,7 +225,32 @@ const playerSchema = {
       category: 'Theme'
     }
   },
+  textAlignCenter: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Music infos align center',
+      category: 'Theme'
+    }
+  },
+  invertInfos: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Swap music infos',
+      category: 'Theme'
+    }
+  },
   invertContent: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Invert content',
+      disclaimer: 'This invert content order (not include album art);\nNot compatible with compact skin',
+      category: 'Theme'
+    }
+  },
+  invertFooterContent: {
     type: 'boolean',
     default: false,
     ui: {

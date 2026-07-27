@@ -284,10 +284,11 @@ export function MusicInfo({ children }) {
   )
 }
 
-export function PlayerInfos({ children, centered = false }) {
+export function PlayerInfos({ children, inverted = false, centered = false }) {
   const style = [
     styles?.music_infos,
-    centered ? styles?.centered : ''
+    inverted && styles?.inverted,
+    centered && styles?.centered
   ].filter(Boolean).join(' ');
 
   return (
@@ -307,16 +308,39 @@ export function MusicAlbumArt({
     return null;
 
   return (
-    <aside className={styles?.music_album_art}>
+    <div className={styles?.music_album_art}>
       {showPlatform && (
         <Streaming pathIcon={platformIcon} />
       )}
       <figure>
         <AsyncImage src={albumImage} alt={altText} />
       </figure>
-    </aside>
+    </div>
   )
 }
+
+export function Vinyl({ isPlaying = false, albumImage = null, altText = '' }) {
+  if (!albumImage)
+    return null;
+
+  const style = [
+    styles?.vinyl,
+    isPlaying && styles?.playing
+  ].filter(Boolean).join(' ');
+
+  return (
+    <div className={style}>
+      <div className={styles?.vinyl_body}>
+        <div className={styles?.vinyl_grooves} />
+        <div className={styles?.vinyl_label}>
+          <AsyncImage src={albumImage} alt={altText} />
+          <div className={styles?.vinyl_center_hole} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 export function MusicAlbumBackground({ albumImage = null, altText = '' }) {
   return (

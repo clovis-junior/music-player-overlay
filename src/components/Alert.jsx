@@ -7,6 +7,10 @@ export default function Alert({ type = 'info', children }) {
     case 'success':
       styleClass = styles?.success;
       break;
+    case 'warn':
+    case 'warning':
+      styleClass = styles?.warning;
+      break;
     case 'error':
     case 'danger':
       styleClass = styles?.error;

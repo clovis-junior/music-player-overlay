@@ -15,6 +15,15 @@
   }
 }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* ********************************************************
     Variables
 ******************************************************** */
@@ -212,10 +221,6 @@ $radius: 10px !default;
     transform 120ms ease-in-out,
     filter 240ms ease;
 
-  &.is_preview {
-    --scale: 1.33;
-  }
-
   &.light {
     --background-color: #{hexToRGB($light-pallete-2nd)};
     --background-pallete-2nd: #{hexToRGB($light-color)};
@@ -230,6 +235,9 @@ $radius: 10px !default;
     --text-color: #{hexToRGB($light-color)} !important;
     --text-pallete-2nd: #{hexToRGB($light-pallete-2nd)} !important;
     --accent-color: #{hexToRGB($light-pallete-3rd)} !important;
+
+    padding: unset !important;
+    overflow: unset !important;
 
     &.dark_text {
       --background-pallete-2nd: #{hexToRGB($light-pallete-3rd)} !important;
@@ -309,6 +317,85 @@ $radius: 10px !default;
   @include backdrop-filter(blur(8px));
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
   box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.vinyl {
+  width: 100%;
+  height: 0;
+  padding-top: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  animation: spin 4s linear infinite;
+  animation-play-state: paused;
+  transition: animation-play-state 0.3s ease;
+
+  &.playing {
+    animation-play-state: running;
+  }
+
+  & .vinyl_body {
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    border-radius: 50%;
+    box-shadow:
+      0 0 1rem rgba(0, 0, 0, 0.6),
+      inset 0 0 10px rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  & .vinyl_grooves {
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+      circle,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.05) 3px,
+      transparent 4px
+    );
+    position: absolute;
+  }
+
+  & .vinyl_label {
+    z-index: 3;
+
+    width: 36%;
+    height: 36%;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    position: relative;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  & .vinyl_center_hole {
+    z-index: 4;
+    width: 4%;
+    height: 4%;
+    background-color: #1a1a2e;
+    border-radius: 50%;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+    position: absolute;
+  }
 }
 
 /* Full ------------------------------------------ */
@@ -469,10 +556,36 @@ $radius: 10px !default;
     }
   }
 
+  &:not(.vertical) {
+    & .vinyl {
+      padding-top: initial;
+    }
+
+    &:has(.player_content) {
+      & .vinyl {
+        width: $size;
+        height: $size;
+      }
+    }
+
+    &:not(:has(.player_content)) {
+      & .vinyl {
+        flex-grow: 0;
+        flex-basis: initial;
+        width: calc(#{$size} * 2);
+        height: calc(#{$size} * 2);
+      }
+    }
+  }
+
+  & .vinyl,
   & .music_album_art {
     flex-grow: 1;
     flex-shrink: 0;
     flex-basis: $size;
+  }
+
+  & .music_album_art {
     display: block;
     overflow: hidden;
     position: relative;
@@ -529,6 +642,10 @@ $radius: 10px !default;
     justify-content: flex-start;
     gap: 6px;
 
+    &.inverted {
+      flex-direction: column-reverse;
+    }
+
     & #music_title {
       letter-spacing: 1px;
       font-weight: 600;
@@ -558,6 +675,10 @@ $radius: 10px !default;
     padding: 14px;
     overflow: hidden;
     position: relative;
+
+    &.inverted {
+      flex-direction: column-reverse;
+    }
 
     & .music_platform_icon {
       left: initial;
@@ -671,10 +792,11 @@ $radius: 10px !default;
           }
 
           &.with_pointer::after {
-            width: 1rem;
-            height: 1rem;
-            background-color: rgb(var(--accent-color));
-            transform: translate(-1rem, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: rgb(var(--text-pallete-2nd));
+            box-shadow: 0 0 0 transparent;
+            transform: translate(-20px, -50%);
           }
         }
       }
@@ -690,7 +812,7 @@ $radius: 10px !default;
           height: 14px;
           display: block;
           border-radius: 100%;
-          background-color: rgb(var(--text-pallete-2nd));
+          background-color: rgb(var(--accent-color));
           box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
           transform: translate(-50%, -50%);
           position: absolute;
@@ -844,6 +966,10 @@ $radius: 10px !default;
       justify-content: center;
       align-items: center;
       gap: 1rem;
+
+      &.inverted {
+        flex-direction: row-reverse;
+      }
 
       & .music_info_mask {
         min-height: initial;

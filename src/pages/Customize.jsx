@@ -345,6 +345,11 @@ export default function Customize() {
         <div className={styles?.widget_preview}>
           {!IsEmpty(finalURL) && (<iframe key={JSON.stringify(options)} src={finalURL} title="Player Preview" />)}
           <div className={styles?.alerts}>
+            {(!finalURL || !platformData) && (
+              <Alert type="warn">
+                You need the player url and play any song!
+              </Alert>
+            )}
             {alerts.map(alert => (
               <Alert key={alert.id} type={alert.type}>
                 {alert.message}
