@@ -494,7 +494,7 @@ $radius: 10px !default;
     $alternate-size: calc($size - $padding-gap);
 
     height: auto;
-    gap: $padding-gap;
+    gap: calc($padding-gap + 4px);
     padding: calc($padding-gap * 1.25) $padding-gap;
 
     & .music_album_art {
