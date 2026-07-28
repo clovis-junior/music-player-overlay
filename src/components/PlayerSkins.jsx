@@ -93,21 +93,22 @@ function DefaultFooter({
   options = {},
   music = {}
 }) {
-  const progressBarComponent = !options?.hideProgressBar && (
+  const progressBarComponent = !options?.hideProgressBar ? (
     <ProgressBar
       isPaused={music?.displayIsPlaying}
       showPointer={options?.showBarPointer}
       duration={music?.duration}
     />
-  )
+  ) : null
 
   const musicTimes = options?.swapProgressBar ? (
     <MusicTimesWithProgressBar
       align={options?.musicTimesAlign}
       duration={music?.duration}
+      hideTimes={options?.removeMusicTimes}
       progressBar={progressBarComponent}
       remainingTime={options?.timeMode === 'remaining'} />
-  ) : (
+  ) : !options?.removeMusicTimes && (
     <div key="music-time-equalizer" className={styles?.feature}>
       <MusicTimesWithEqualizer
         align={options?.musicTimesAlign}
@@ -124,11 +125,9 @@ function DefaultFooter({
 
   return (
     <footer className={classes}>
-      {!options?.removeMusicTimes ? musicTimes : progressBarComponent}
+      {musicTimes}
       <div className={styles?.feature}>
-        {options?.swapProgressBar ? (
-          <Equalizer size={options?.equalizer} />
-        ) : progressBarComponent}
+        {options?.swapProgressBar ? (<Equalizer size={options?.equalizer} />) : progressBarComponent}
       </div>
     </footer>
   )

@@ -119,7 +119,8 @@ export function MusicTimes({
     remaining: 0,
     elapsed: 0,
     total: 0
-  }
+  },
+  children = null
 }) {
   const classes = [
     styles?.music_time_values,
@@ -129,63 +130,37 @@ export function MusicTimes({
   ].filter(Boolean).join(' ');
 
   return (
-    <>
-      <div className={classes}>
-        <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
-        <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
-      </div>
-    </>
+    <div className={classes}>
+      <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+      {children}
+      <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
+    </div>
   )
 }
 
-export function MusicTimesWithEqualizer({
-  align = 'default',
-  remainingTime = false,
-  duration = {
-    remaining: 0,
-    elapsed: 0,
-    total: 0
-  },
-  equalizer = null
-}) {
-
-  console.log(equalizer);
+export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
+  const { align = 'default' } = props;
 
   const isCenterAlign = align === 'center';
-  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2);
+  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2)
 
-  const classes = [
-    styles?.music_time_values,
-    align === 'left' && styles?.left,
-    align === 'right' && styles?.right,
-    align === 'center' && styles?.centered
-  ].filter(Boolean).join(' ');
 
   return (
     <>
       {align === 'right' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
-      <div className={classes}>
-        <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+      <MusicTimes {...props}>
         {align === 'default' && equalizer}
-        <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
-      </div>
+      </MusicTimes>
       {align === 'left' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
     </>
   )
 }
 
-export function MusicTimesWithProgressBar(props) {
+export function MusicTimesWithProgressBar({ hideTimes = false, progressBar = null, ...props }) {
   const {
-    align = 'default',
-    remainingTime = false,
-    duration = {
-      remaining: 0,
-      elapsed: 0,
-      total: 0
-    },
-    progressBar = null
+    align = 'default'
   } = props;
 
   const containerRef = useRef(null);
@@ -204,34 +179,38 @@ export function MusicTimesWithProgressBar(props) {
     return () => resizeObserver.disconnect();
   }, []);
 
-  const classes = [
-    styles?.music_time_values,
-    align === 'left' && styles?.left,
-    align === 'right' && styles?.right,
-    align === 'center' && styles?.centered
-  ].filter(Boolean).join(' ');
-
   if (align === 'center') {
+    const musicTimesComponent = !hideTimes && (
+      <MusicTimes {...props} />
+    )
+
     return progressBar ? (
       <div ref={containerRef} className={styles?.feature} style={{ '--feature-width': `${featureWidth}px` }}>
-        <MusicTimes  {...props} />
+        {musicTimesComponent}
         <ProgressBar onBackground={true} {...progressBar?.props}>
-          <MusicTimes {...props} />
+          {musicTimesComponent}
         </ProgressBar>
       </div>
     ) : (
-      <MusicTimes {...props} />
+      <div className={styles?.feature}>
+        {musicTimesComponent}
+      </div>
     )
   }
+
+  if (hideTimes)
+    return (
+      <div className={styles?.feature}>
+        {progressBar}
+      </div>
+    );
 
   return (
     <div className={styles?.feature}>
       {align === 'right' && progressBar}
-      <div className={classes}>
-        <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+      <MusicTimes {...props}>
         {align === 'default' && progressBar}
-        <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
-      </div>
+      </MusicTimes>
       {align === 'left' && progressBar}
     </div>
   )
