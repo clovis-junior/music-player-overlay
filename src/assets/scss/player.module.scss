@@ -233,10 +233,10 @@ $radius: 10px !default;
 
   &.transparent {
     --background-color: transparent !important;
-    --background-pallete-2nd: #{hexToRGB($dark-pallete-2nd)} !important;
-    --text-color: #{hexToRGB($light-color)} !important;
-    --text-pallete-2nd: #{hexToRGB($light-pallete-2nd)} !important;
-    --accent-color: #{hexToRGB($light-pallete-3rd)} !important;
+    --background-pallete-2nd: #{hexToRGB($dark-pallete-2nd)};
+    --text-color: #{hexToRGB($light-color)};
+    --text-pallete-2nd: #{hexToRGB($light-pallete-2nd)};
+    --accent-color: #{hexToRGB($light-pallete-3rd)};
 
     padding: unset !important;
     overflow: unset !important;
@@ -247,9 +247,14 @@ $radius: 10px !default;
       --text-pallete-2nd: #{hexToRGB($dark-pallete-2nd)} !important;
       --accent-color: #{hexToRGB($dark-color)} !important;
 
-      & .music_time_values {
-        --text-color: #{hexToRGB($light-pallete-3rd)} !important;
-        --background-color: #{hexToRGB($light-pallete-2nd)} !important;
+      & .music_time_values.centered {
+        --text-color: #{hexToRGB($light-pallete-4th)} !important;
+      }
+
+      & .music_progress_bar.on_background .music_progress_bar_fill {
+        & .music_time_values {
+          --background-color: #{hexToRGB($light-pallete-3rd)} !important;
+        }
       }
     }
 
@@ -265,6 +270,10 @@ $radius: 10px !default;
       @include backdrop-filter(none !important);
       box-shadow: 0 0 0 transparent !important;
     }
+
+    & .player_content {
+      overflow: initial !important;
+    }
   }
 
   &.vibrant {
@@ -279,7 +288,6 @@ $radius: 10px !default;
     opacity: 1;
 
     &.paused {
-      filter: opacity(0.8);
       opacity: 0.8;
     }
   }
@@ -329,12 +337,14 @@ $radius: 10px !default;
   justify-content: center;
   align-items: center;
   position: relative;
-  animation: spin 4s linear infinite;
-  animation-play-state: paused;
+  animation:
+    fade-in 500ms ease-out forwards,
+    spin 4s linear infinite;
+  animation-play-state: running, paused;
   transition: animation-play-state 0.3s ease;
 
   &.playing {
-    animation-play-state: running;
+    animation-play-state: running, running;
   }
 
   & .vinyl_body {
@@ -787,7 +797,7 @@ $radius: 10px !default;
             & #music_time_elapsed,
             & #music_time_total {
               flex-shrink: 0;
-              color: rgb(var(--background-color)) !important;
+              color: rgb(var(--background-color));
             }
           }
 

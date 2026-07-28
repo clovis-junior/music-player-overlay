@@ -73,7 +73,7 @@ const playerSchema = {
     type: 'boolean',
     default: false,
     ui: {
-      label: 'Album art on right',
+      label: 'Swap album art (or vinyl) position',
       disclaimer: 'Not compatible with compact skin',
       category: 'Appearance'
     }
