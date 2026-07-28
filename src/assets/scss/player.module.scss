@@ -221,7 +221,7 @@ $radius: 10px !default;
     color 500ms ease,
     box-shadow 240ms ease-out,
     transform 120ms ease-in-out,
-    filter 240ms ease;
+    opacity 240ms ease;
 
   &.light {
     --background-color: #{hexToRGB($light-pallete-2nd)};
