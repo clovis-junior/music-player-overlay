@@ -101,7 +101,7 @@ function DefaultFooter({
     />
   )
 
-  const musicTime = options?.swapProgressBar ? (
+  const musicTimes = options?.swapProgressBar ? (
     <MusicTimesWithProgressBar
       align={options?.musicTimesAlign}
       duration={music?.duration}
@@ -124,7 +124,12 @@ function DefaultFooter({
 
   return (
     <footer className={classes}>
-      {!options?.removeMusicTimes && musicTime}
+      {!options?.removeMusicTimes ? musicTimes : 
+      !options?.hideProgressBar && (
+        <div className={styles?.feature}>
+          {progressBarComponent}}
+        </div>
+      )}
       <div className={styles?.feature}>
         {options?.swapProgressBar ? (
           <Equalizer size={options?.equalizer} />
