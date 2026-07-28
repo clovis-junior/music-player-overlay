@@ -294,28 +294,32 @@ export default function Customize() {
   return (
     <div className={styles?.widget_page}>
       <header className={styles?.widget_header}>
-        <input id="url" type="text"
-          className={`${styles?.input_text} ${styles?.full}`}
-          value={playerURL}
-          onChange={handleURLChange}
-          readOnly={params?.has('url')}
-          placeholder="Paste your URL Player here"
-        />
-        <aside className={styles?.buttons}>
-          <button className={styles?.button} onClick={() => {
-            if (!finalURL)
-              return false;
+        <div className={styles?.container}>
+          <h2>Customize</h2>
+          <div className={styles?.scroll}>
+            <input id="url" type="text"
+              value={playerURL}
+              onChange={handleURLChange}
+              readOnly={params?.has('url')}
+              placeholder="Paste your URL Player here"
+            />
+            <aside className={styles?.buttons}>
+              <button className={styles?.button} onClick={() => {
+                if (!finalURL)
+                  return false;
 
-            resetOptions();
+                resetOptions();
 
-            showAlert('success', 'Default settings has loaded!')
-          }} disabled={disabled}>
-            Set Default Settings
-          </button>
-          <button className={styles?.button} onClick={() => navigate('/')}>
-            Back to Homepage
-          </button>
-        </aside>
+                showAlert('success', 'Default settings has loaded!')
+              }} disabled={disabled}>
+                Set Default Settings
+              </button>
+              <button className={styles?.button} onClick={() => navigate('/')}>
+                Back to Homepage
+              </button>
+            </aside>
+          </div>
+        </div>
       </header>
       <main className={styles?.widget_content}>
         <aside className={styles?.widget_settings}>
@@ -359,28 +363,30 @@ export default function Customize() {
         </div>
       </main>
       <footer className={styles?.widget_footer}>
-        <div className={styles?.widget_url_result}
-          onClick={() => {
-            if (!finalURL)
-              return false;
+        <div className={styles?.container}>
+          <div className={styles?.widget_url_result}
+            onClick={() => {
+              if (!finalURL)
+                return false;
 
-            const copy = CopyToClipboard(finalURL);
+              const copy = CopyToClipboard(finalURL);
 
-            showAlert(
-              copy ? 'success' : 'error',
-              copy
-                ? 'URL copied successfully!'
-                : 'Failed to copy URL.'
-            );
-          }}>
-          <span className={styles?.label}>Click to copy this URL and use it on you streaming software</span>
-          <input type="text" readOnly={true} value={finalURL} />
+              showAlert(
+                copy ? 'success' : 'error',
+                copy
+                  ? 'URL copied successfully!'
+                  : 'Failed to copy URL.'
+              );
+            }}>
+            <span className={styles?.label}>Click to copy this URL and use it on you streaming software</span>
+            <input type="text" readOnly={true} value={finalURL} />
+          </div>
+          <aside className={styles?.buttons} onClick={openPlayer}>
+            <button className={styles?.button} disabled={!finalURL}>
+              Open on new Window
+            </button>
+          </aside>
         </div>
-        <aside className={styles?.buttons} onClick={openPlayer}>
-          <button className={styles?.button} disabled={!finalURL}>
-            Open on new Window
-          </button>
-        </aside>
       </footer>
     </div>
   )
