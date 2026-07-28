@@ -125,7 +125,6 @@ function DefaultFooter({
   return (
     <footer className={classes}>
       {!options?.removeMusicTimes && musicTime}
-      {(options?.removeMusicTimes && !options?.swapProgressBar && !options?.hideProgressBar) && progressBarComponent}
       <div className={styles?.feature}>
         {options?.swapProgressBar ? (
           <Equalizer size={options?.equalizer} />
