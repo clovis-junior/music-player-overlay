@@ -32,41 +32,45 @@ export function ProgressBar({
     elapsed: currentElapsed,
     total: currentTotal,
     lastUpdate: performance.now(),
-    isPaused: isPaused
   });
 
+  // Atualiza a referência sempre que o tempo original mudar
   useEffect(() => {
     stateRef.current = {
       elapsed: currentElapsed,
       total: currentTotal,
       lastUpdate: performance.now(),
-      isPaused: isPaused
     };
 
     setDisplayProgress(oficialProgress);
-  }, [currentElapsed, currentTotal, isPaused, oficialProgress]);
+  }, [currentElapsed, currentTotal, oficialProgress]);
 
   useEffect(() => {
+    if (isPaused) {
+      setDisplayProgress(UpdatePercentage(stateRef.current.elapsed, stateRef.current.total));
+      return;
+    }
+
     let animationFrameId;
 
     const tick = () => {
       const now = performance.now();
       const state = stateRef.current;
 
-      if (!state.isPaused && state.total > 0 && state.elapsed < state.total && state.lastUpdate > 0) {
+      if (state.total > 0 && state.elapsed < state.total && state.lastUpdate > 0) {
         const timePassedSinceUpdate = (now - state.lastUpdate) / 1000;
         const interpolatedElapsed = state.elapsed + timePassedSinceUpdate;
 
         setDisplayProgress(UpdatePercentage(interpolatedElapsed, state.total));
-      } else
-        setDisplayProgress(UpdatePercentage(state.elapsed, state.total));
+      }
 
       animationFrameId = requestAnimationFrame(tick);
     };
 
     animationFrameId = requestAnimationFrame(tick);
+
     return () => cancelAnimationFrame(animationFrameId);
-  }, []);
+  }, [isPaused]);
 
   const baseClasses = [
     styles?.music_progress_bar,
@@ -84,7 +88,7 @@ export function ProgressBar({
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 export function Equalizer({ size = 0 }) {
@@ -158,7 +162,7 @@ export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
   )
 }
 
-export function MusicTimesWithProgressBar({ hideTimes = false, progressBar = null, ...props }) {
+export function MusicTimesWithProgressBar({ hideTimes = false, isPaused = false, progressBar = null, ...props }) {
   const {
     align = 'default'
   } = props;
