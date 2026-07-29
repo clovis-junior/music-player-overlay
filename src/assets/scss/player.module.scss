@@ -458,7 +458,7 @@ $radius: 10px !default;
     width: 100%;
     max-width: #{calc($size * 2)};
     height: auto;
-    max-height: #{calc($size * 3)};
+    max-height: #{calc($size * 4)};
     flex-direction: column;
     justify-content: stretch;
     align-items: normal;
@@ -488,7 +488,6 @@ $radius: 10px !default;
 
     & .player_content {
       max-width: 100%;
-      max-height: calc($size - 1rem);
       overflow: hidden;
       padding: 8px 4px;
       border-radius: 0;
