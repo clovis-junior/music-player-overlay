@@ -865,7 +865,7 @@ $radius: 10px !default;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       position: relative;
 
       &:empty {
@@ -875,7 +875,7 @@ $radius: 10px !default;
     }
 
     & .player_equalizer {
-      flex: 1 0;
+      flex: 0 0 auto;
       height: 20px;
       overflow: hidden;
       display: flex;
