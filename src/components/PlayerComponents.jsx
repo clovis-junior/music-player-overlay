@@ -142,15 +142,21 @@ export function MusicTimes({
   )
 }
 
-export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
+export function MusicTimesWithEqualizer({ hideTimes = false, equalizer = null, ...props }) {
   const { align = 'default' } = props;
 
   const isCenterAlign = align === 'center';
-  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2)
+  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2);
 
+  if (hideTimes)
+    return (
+      <div className={styles?.feature}>
+        {equalizer}
+      </div>
+    );
 
   return (
-    <>
+    <div className={styles?.feature}>
       {align === 'right' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
       <MusicTimes {...props}>
@@ -158,11 +164,11 @@ export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
       </MusicTimes>
       {align === 'left' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
-    </>
+    </div>
   )
 }
 
-export function MusicTimesWithProgressBar({ hideTimes = false, isPaused = false, progressBar = null, ...props }) {
+export function MusicTimesWithProgressBar({ hideTimes = false, progressBar = null, ...props }) {
   const {
     align = 'default'
   } = props;
@@ -176,7 +182,6 @@ export function MusicTimesWithProgressBar({ hideTimes = false, isPaused = false,
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries)
         setFeatureWidth(entry.contentRect.width);
-
     });
 
     resizeObserver.observe(containerRef.current);
