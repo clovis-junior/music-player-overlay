@@ -495,6 +495,10 @@ $radius: 10px !default;
 
       & .player_features {
         gap: 8px;
+
+        & .feature {
+          gap: 4px;
+        }
       }
     }
   }
@@ -579,6 +583,10 @@ $radius: 10px !default;
   &:not(.vertical) {
     & .vinyl {
       padding-top: initial;
+    }
+
+    & .feature {
+      gap: 12px;
     }
 
     &:has(.player_content) {
@@ -865,7 +873,6 @@ $radius: 10px !default;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
       position: relative;
 
       &:empty {
