@@ -882,15 +882,22 @@ $radius: 10px !default;
     }
 
     & .player_equalizer {
-      max-width: #{calc(4px + 2px * 40)};
+      $padding-gap: 2px;
+      
       height: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: 2px;
-      padding: 0 2px;
+      gap: $padding-gap;
+      padding: 0 $padding-gap;
+      
+      @for $i from 1 through 40 {
+        &:has(.waveform:nth-child(#{$i}):last-child) {
+          max-width: calc(#{calc(4px + calc($padding-gap * 2))} * #{$i});
+        }
+      }
 
       &:empty {
         position: absolute;
