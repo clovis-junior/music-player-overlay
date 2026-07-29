@@ -760,6 +760,7 @@ $player-equalizer-gap: 2px;
           &:has(.waveform:nth-child(#{$i}):last-child) {
             max-width: calc(#{calc($player-equalizer-size + calc($player-equalizer-gap * 2))} * #{$i});
           }
+        }
       }
 
       & #music_time_elapsed,
