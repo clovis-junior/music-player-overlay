@@ -713,6 +713,12 @@ $radius: 10px !default;
       top: 10px;
     }
 
+    &:has(.equalizer):not(:has(.on_background)) {
+      & .music_time_values.centered {
+        inset: initial !important;
+      }
+    }
+
     & .music_time_values {
       flex-grow: 1;
       height: 1rem;
