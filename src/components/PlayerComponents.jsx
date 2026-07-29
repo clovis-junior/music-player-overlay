@@ -149,7 +149,7 @@ export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
     <>
       {align === 'right' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
-      <MusicTimes align={align} {...props}>
+      <MusicTimes {...props}>
         {align === 'default' && equalizer}
       </MusicTimes>
       {align === 'left' && equalizer}
@@ -181,7 +181,7 @@ export function MusicTimesWithProgressBar({ hideTimes = false, progressBar = nul
 
   if (align === 'center') {
     const musicTimesComponent = !hideTimes && (
-      <MusicTimes align={align} {...props} />
+      <MusicTimes {...props} />
     )
 
     return progressBar ? (
