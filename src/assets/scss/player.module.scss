@@ -29,6 +29,8 @@
 ******************************************************** */
 $size: 8rem !default;
 $radius: 10px !default;
+$player-equalizer-size: 4px;
+$player-equalizer-gap: 2px;
 
 /* ********************************************************
     Base
@@ -458,7 +460,6 @@ $radius: 10px !default;
     width: 100%;
     max-width: #{calc($size * 2)};
     height: auto;
-    max-height: #{calc($size * 4)};
     flex-direction: column;
     justify-content: stretch;
     align-items: normal;
@@ -488,6 +489,7 @@ $radius: 10px !default;
 
     & .player_content {
       max-width: 100%;
+      max-height: #{calc($size * 2)};
       overflow: hidden;
       padding: 8px 4px;
       border-radius: 0;
@@ -753,6 +755,13 @@ $radius: 10px !default;
         inset: 0;
       }
 
+      & .player_equalizer {
+        @for $i from 1 through 40 {
+          &:has(.waveform:nth-child(#{$i}):last-child) {
+            max-width: calc(#{calc($player-equalizer-size + calc($player-equalizer-gap * 2))} * #{$i});
+          }
+      }
+
       & #music_time_elapsed,
       & #music_time_total {
         width: 3rem;
@@ -884,8 +893,6 @@ $radius: 10px !default;
     }
 
     & .player_equalizer {
-      $padding-gap: 2px;
-
       flex-grow: 1;
       height: 20px;
       overflow: hidden;
@@ -893,14 +900,8 @@ $radius: 10px !default;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: $padding-gap;
-      padding: 0 $padding-gap;
-      
-      @for $i from 1 through 40 {
-        &:has(.waveform:nth-child(#{$i}):last-child) {
-          max-width: calc(#{calc(4px + calc($padding-gap * 2))} * #{$i});
-        }
-      }
+      gap: $player-equalizer-gap;
+      padding: 0 $player-equalizer-gap;
 
       &:empty {
         position: absolute;
@@ -908,7 +909,7 @@ $radius: 10px !default;
       }
 
       & .waveform {
-        width: 4px;
+        width: $player-equalizer-size;
         height: 1rem;
         display: block;
         border-radius: 50px;
