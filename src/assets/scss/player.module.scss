@@ -713,12 +713,6 @@ $radius: 10px !default;
       top: 10px;
     }
 
-    &:has(.equalizer):not(:has(.on_background)) {
-      & .music_time_values.centered {
-        inset: initial !important;
-      }
-    }
-
     & .music_time_values {
       flex-grow: 1;
       height: 1rem;
@@ -880,6 +874,12 @@ $radius: 10px !default;
       justify-content: space-between;
       align-items: center;
       position: relative;
+
+      &:has(.player_equalizer):not(:has(.music_progress_bar_fill.on_background)) {
+        & .music_time_values.centered {
+          inset: initial !important;
+        }
+      }
 
       &:empty {
         position: absolute;
