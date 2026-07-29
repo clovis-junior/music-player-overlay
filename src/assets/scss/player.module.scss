@@ -734,12 +734,10 @@ $radius: 10px !default;
       }
 
       &.left {
-        flex-grow: 0;
         justify-content: flex-start;
       }
 
       &.right {
-        flex-grow: 0;
         justify-content: flex-end;
       }
 
