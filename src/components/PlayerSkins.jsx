@@ -109,13 +109,12 @@ function DefaultFooter({
       progressBar={progressBarComponent}
       remainingTime={options?.timeMode === 'remaining'} />
   ) : !options?.removeMusicTimes && (
-    <div key="music-time-equalizer" className={styles?.feature}>
       <MusicTimesWithEqualizer
         align={options?.musicTimesAlign}
         duration={music?.duration}
+        hideTimes={options?.removeMusicTimes}
         equalizer={<Equalizer size={options?.equalizer} />}
         remainingTime={options?.timeMode === 'remaining'} />
-    </div>
   )
 
   const classes = [
