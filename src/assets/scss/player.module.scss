@@ -495,10 +495,6 @@ $radius: 10px !default;
 
       & .player_features {
         gap: 8px;
-
-        & .feature {
-          gap: 4px;
-        }
       }
     }
   }
@@ -583,10 +579,6 @@ $radius: 10px !default;
   &:not(.vertical) {
     & .vinyl {
       padding-top: initial;
-    }
-
-    & .feature {
-      gap: 12px;
     }
 
     &:has(.player_content) {
@@ -721,7 +713,7 @@ $radius: 10px !default;
       flex-wrap: nowrap;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       position: relative;
 
       &.left,
@@ -753,6 +745,7 @@ $radius: 10px !default;
       &.centered {
         z-index: 1;
         justify-content: center !important;
+        gap: 6px !important;
         text-shadow: 0 0 0 transparent !important;
         transform: translateY(-50%);
         position: absolute;
@@ -873,6 +866,7 @@ $radius: 10px !default;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+      gap: 4px;
       position: relative;
 
       &:has(.player_equalizer):not(:has(.music_progress_bar_fill.on_background)) {
