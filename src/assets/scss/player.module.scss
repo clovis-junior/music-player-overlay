@@ -885,7 +885,8 @@ $radius: 10px !default;
 
     & .player_equalizer {
       $padding-gap: 2px;
-      
+
+      flex-grow: 1;
       height: 20px;
       overflow: hidden;
       display: flex;
