@@ -877,6 +877,7 @@ $radius: 10px !default;
 
       &:has(.player_equalizer):not(:has(.music_progress_bar_fill.on_background)) {
         & .music_time_values.centered {
+          height: 0;
           position: initial !important;
           inset: initial !important;
         }
