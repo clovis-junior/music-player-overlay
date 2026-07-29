@@ -707,6 +707,7 @@ $radius: 10px !default;
 
     & .music_time_values {
       flex-grow: 1;
+      max-width: #{calc(calc(3rem * 2) + 12px)};
       height: 1rem;
       display: flex;
       flex-direction: row;
@@ -719,6 +720,7 @@ $radius: 10px !default;
       &.left,
       &.right,
       &.centered {
+        max-width: #{calc(calc(3rem * 2) + 14px)};
         gap: 14px;
 
         & #music_time_elapsed::after {
