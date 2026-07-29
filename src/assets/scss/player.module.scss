@@ -719,7 +719,7 @@ $radius: 10px !default;
       &.left,
       &.right,
       &.centered {
-        flex-glow: 0;
+        flex-grow: 0;
         gap: 14px;
 
         & #music_time_elapsed::after {
