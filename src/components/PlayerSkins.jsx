@@ -108,7 +108,7 @@ function DefaultFooter({
       hideTimes={options?.removeMusicTimes}
       progressBar={progressBarComponent}
       remainingTime={options?.timeMode === 'remaining'} />
-  ) : !options?.removeMusicTimes && (
+  ) : (
       <MusicTimesWithEqualizer
         align={options?.musicTimesAlign}
         duration={music?.duration}
