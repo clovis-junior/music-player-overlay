@@ -95,7 +95,7 @@ function DefaultFooter({
 }) {
   const progressBarComponent = !options?.hideProgressBar ? (
     <ProgressBar
-      isPaused={music?.displayIsPlaying}
+      isPaused={!music?.displayIsPlaying}
       showPointer={options?.showBarPointer}
       duration={music?.duration}
     />
