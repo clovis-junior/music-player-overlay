@@ -882,7 +882,7 @@ $radius: 10px !default;
     }
 
     & .player_equalizer {
-      flex: 0 0 auto;
+      max-width: #{calc(4px + 2px * 40)};
       height: 20px;
       overflow: hidden;
       display: flex;
@@ -898,7 +898,7 @@ $radius: 10px !default;
       }
 
       & .waveform {
-        flex: 0 0 4px;
+        width: 4px;
         height: 1rem;
         display: block;
         border-radius: 50px;
