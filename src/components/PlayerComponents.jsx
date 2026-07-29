@@ -33,8 +33,7 @@ export function ProgressBar({
     total: currentTotal,
     lastUpdate: performance.now(),
   });
-
-  // Atualiza a referência sempre que o tempo original mudar
+  
   useEffect(() => {
     stateRef.current = {
       elapsed: currentElapsed,
@@ -145,7 +144,6 @@ export function MusicTimes({
 export function MusicTimesWithEqualizer({ hideTimes = false, equalizer = null, ...props }) {
   const { align = 'default' } = props;
 
-  const isCenterAlign = align === 'center';
   const halfEqualizerSize = Math.round(equalizer?.props?.size / 2);
 
   if (hideTimes)
@@ -158,7 +156,7 @@ export function MusicTimesWithEqualizer({ hideTimes = false, equalizer = null, .
   return (
     <div className={styles?.feature}>
       {align === 'right' && equalizer}
-      {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
+      {align === 'center' && (<Equalizer size={halfEqualizerSize} />)}
       <MusicTimes {...props}>
         {align === 'default' && equalizer}
       </MusicTimes>
