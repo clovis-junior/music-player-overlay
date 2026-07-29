@@ -707,7 +707,6 @@ $radius: 10px !default;
 
     & .music_time_values {
       flex-grow: 1;
-      max-width: #{calc(calc(3rem * 2) + 12px)};
       height: 1rem;
       display: flex;
       flex-direction: row;
@@ -720,7 +719,7 @@ $radius: 10px !default;
       &.left,
       &.right,
       &.centered {
-        max-width: #{calc(calc(3rem * 2) + 14px)};
+        flex-glow: 0;
         gap: 14px;
 
         & #music_time_elapsed::after {
@@ -736,16 +735,16 @@ $radius: 10px !default;
       }
 
       &.left {
-        justify-content: flex-start;
+        justify-content: flex-start !important;
       }
 
       &.right {
-        justify-content: flex-end;
+        justify-content: flex-end !important;
       }
 
       &.centered {
         z-index: 1;
-        justify-content: center;
+        justify-content: center !important;
         text-shadow: 0 0 0 transparent !important;
         transform: translateY(-50%);
         position: absolute;
