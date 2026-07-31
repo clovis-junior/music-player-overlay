@@ -24,6 +24,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(150%) rotate(25deg);
+  }
+}
+
 /* ********************************************************
     Variables
 ******************************************************** */
@@ -209,7 +218,7 @@ $player-equalizer-gap: 2px;
       stroke: rgb(var(--accent-color));
       stroke-width: 2px;
       stroke-linecap: round;
-      filter: drop-shadow(0 0 1px rgba(var(--accent-color), 0.9));
+      filter: drop-shadow(0 0 2px rgba(var(--accent-color), 1));
       transition: stroke-dashoffset 100ms linear;
     }
   }
@@ -577,17 +586,41 @@ $player-equalizer-gap: 2px;
   }
 
   &.card {
+    --radius: 10px;
     max-width: calc(#{$size} * 2) !important;
     height: auto;
     overflow: hidden !important;
-    border-radius: $radius;
-    box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
-    transition: box-shadow 360ms ease;
     position: relative;
 
     &:not(:has(.vinyl)) {
+      border-radius: var(--radius);
+      border: 1px solid rgba(var(--background-color), 0.5);
       background-color: rgba(var(--background-color), 0.35) !important;
       @include backdrop-filter(blur(12px));
+      box-shadow:
+        0 15px 30px -5px rgba(0, 0, 0, 0.5),
+        0 8px 12px -6px rgba(0, 0, 0, 0.3);
+      transition: box-shadow 360ms ease;
+
+      &::after {
+        content: "";
+        z-index: 2;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0) 40%,
+          rgba(255, 255, 255, 0.18) 50%,
+          rgba(255, 255, 255, 0) 60%,
+          transparent 100%
+        );
+        animation: shimmer 4s infinite linear;
+        pointer-events: none;
+        position: absolute;
+        left: -50%;
+        top: -50%;
+      }
     }
 
     &.transparent {
@@ -613,7 +646,7 @@ $player-equalizer-gap: 2px;
     }
 
     &.square {
-      border-radius: 4px;
+      --radius: 4px;
     }
 
     & .music_album_art,
@@ -644,6 +677,7 @@ $player-equalizer-gap: 2px;
     }
 
     & .player_content {
+      z-index: 6;
       max-width: unset !important;
       height: auto !important;
       gap: 0 !important;
@@ -669,15 +703,14 @@ $player-equalizer-gap: 2px;
         top: 0;
 
         & .music_progress_bar_fill {
-          border-top-left-radius: 0 !important;
-          border-bottom-left-radius: 0 !important;
+          border-radius: 0 var(--radius) var(--radius) 0 !important;
           box-shadow: 0 0 2px rgb(var(--accent-color));
 
           &.with_pointer::after {
             content: "";
             z-index: 2;
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             box-shadow:
               0 0 2px rgb(var(--accent-color)),
               0 0 6px rgba(0, 0, 0, 0.6);
@@ -880,6 +913,11 @@ $player-equalizer-gap: 2px;
       gap: 8px;
       position: relative;
 
+      &:has(.music_progress_bar) {
+        flex-basis: 100%;
+        gap: 6px;
+      }
+
       &.left,
       &.right,
       &.centered {
@@ -1019,7 +1057,6 @@ $player-equalizer-gap: 2px;
   }
 
   & .player_features {
-    justify-content: flex-end;
     gap: 4px;
 
     &:empty {
@@ -1052,8 +1089,6 @@ $player-equalizer-gap: 2px;
           &:not(.centered) {
             flex-grow: 0;
           }
-          
-          
         }
       }
 
