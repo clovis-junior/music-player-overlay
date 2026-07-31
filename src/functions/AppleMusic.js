@@ -28,39 +28,74 @@ function UpdateMusicTime(data) {
       total: Number(data?.currentPlaybackDuration) || 0
     };
 
-    return { duration }
+    const result = { duration };
+
+    if (typeof data?.isPlaying === 'boolean')
+      result.isPlaying = data.isPlaying;
+
+    return result
   }
 
-  return {};
+  return {}
 }
 
 function UpdateMusicData(data) {
-  if (!IsEmpty(data)) {
-    const title = data?.name || '';
-    const artist = data?.artistName || '';
-    const albumCover = GetAlbumCover(data?.artwork?.url, data?.artwork?.width || 600);
+  if (IsEmpty(data)) return {};
 
-    return { title, artist, albumCover }
-  }
+  const title = data?.name || data?.title || '';
+  const artist = data?.artistName || data?.artist || '';
+  const albumCover = GetAlbumCover(
+    data?.artwork?.url,
+    data?.artwork?.width || 600
+  );
 
-  return {};
+  return { title, artist, albumCover };
 }
 
 function UpdatePlaybackState(data) {
-  let isPlaying = false;
+  if (IsEmpty(data)) return { isPlaying: false };
 
-  switch (data?.state) {
-    case 'paused':
-    case 'stopped':
-    default:
-      isPlaying = false;
-      break;
-    case 'playing':
-      isPlaying = true;
-      break;
+  const rawState = data?.state ?? data?.status ?? data;
+  const stateStr = String(rawState).toLowerCase().trim();
+  const isPlaying = stateStr === 'playing' || stateStr === '2' || rawState === true;
+  const targetData = data?.attributes || (data?.name ? data : null);
+
+  return targetData
+    ? { isPlaying, ...UpdateMusicData(targetData) }
+    : { isPlaying };
+}
+
+async function FetchInitialState(onData) {
+  try {
+    const [nowPlayingRes, statusRes] = await Promise.allSettled([
+      fetch(`${baseURL}/api/v1/playback/now-playing`),
+      fetch(`${baseURL}/api/v1/playback/active`)
+    ]);
+
+    let initialData = {};
+
+    if (nowPlayingRes.status === 'fulfilled' && nowPlayingRes.value.ok) {
+      const nowPlaying = await nowPlayingRes.value.json();
+      const track = nowPlaying?.info || nowPlaying;
+
+      initialData = { ...initialData, ...UpdateMusicData(track) };
+    }
+
+    if (statusRes.status === 'fulfilled' && statusRes.value.ok) {
+      const status = await statusRes.value.json();
+      const isPlaying = status?.isConnecting || status?.status === 'playing' || status === true;
+
+      initialData = { ...initialData, isPlaying };
+    }
+
+    if (Object.keys(initialData).length > 0)
+      onData?.(current => ({ ...current, ...initialData }));
+
+    console.log(initialData);
+
+  } catch (err) {
+    console.warn('Failed to get initial state:', err.message);
   }
-
-  return data?.attributes ? { isPlaying, ...UpdateMusicData(data?.attributes) } : { isPlaying }
 }
 
 function GetData(debug = false) {
@@ -94,9 +129,13 @@ export default {
   connect({ onConnect, onDisconnect, onData }) {
     const socket = GetData();
 
-    const handleConnect = () => onConnect?.();
+    const handleConnect = () => {
+      onConnect?.();
+      FetchInitialState(onData)
+    };
     const handleDisconnect = () => onDisconnect?.();
     const handleStateUpdate = ({ data, type }) => {
+      console.log('[Cider Event]', type, data);
       switch (type) {
         case 'playbackStatus.playbackStateDidChange':
           onData?.(current => ({ ...current, ...UpdatePlaybackState(data) }));
