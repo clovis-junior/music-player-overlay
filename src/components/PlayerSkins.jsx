@@ -145,8 +145,8 @@ export function AlbumArtCardSkin(props) {
       <div className={styles?.aspect}>
         <MusicArt
           music={music}
-          vinylStopped={options?.notRollVinyl}
-          vinyl={options?.showVinyl} />
+          vinyl={options?.showVinyl} 
+          vinylStopped={options?.notRollVinyl} />
         {(options?.showVinyl && !options?.hideProgressBar) && (
           <ProgressBar
             isCircular={true}
@@ -242,6 +242,7 @@ export function VerticalSkin(props) {
         <MusicArt
           music={music}
           vinyl={options?.showVinyl}
+          vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
           platformIcon={platformIcon} />
       )}
@@ -267,6 +268,7 @@ export function AlternativeSkin(props) {
         <MusicArt
           music={music}
           vinyl={options?.showVinyl}
+          vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
           platformIcon={platformIcon} />
       )}
@@ -288,6 +290,7 @@ export function DefaultSkin(props) {
         <MusicArt
           music={music}
           vinyl={options?.showVinyl}
+          vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
           platformIcon={platformIcon} />
       )}
