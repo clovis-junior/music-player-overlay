@@ -397,7 +397,9 @@ $player-equalizer-gap: 2px;
       fade-in 500ms ease-out forwards,
       spin 4s linear infinite;
     animation-play-state: running, paused;
-    transition: transform 360ms ease, animation-play-state 360ms ease;
+    transition:
+      transform 360ms ease,
+      animation-play-state 360ms ease;
 
     &.playing {
       animation-play-state: running, running;
@@ -660,6 +662,7 @@ $player-equalizer-gap: 2px;
     }
 
     & .music_album_art {
+      z-index: 0;
       border-radius: inherit !important;
       top: 0;
     }
@@ -719,9 +722,27 @@ $player-equalizer-gap: 2px;
       }
     }
 
+    & .player_equalizer {
+      z-index: 4;
+      height: 2rem;
+
+      & > .waveform {
+        background-color: rgb(var(--text-pallete-2nd));
+        box-shadow: 0 0 0 0 transparent !important;
+      }
+    }
+
+    & .music_platform_icon {
+      width: 22px;
+      position: absolute;
+      left: initial;
+      right: 8px;
+      top: 8px;
+    }
+
     & #music_title,
     & #music_artist {
-      font-size: 1rem !important;
+      font-size: 13px !important;
     }
   }
 
@@ -1104,40 +1125,40 @@ $player-equalizer-gap: 2px;
         inset: 0;
       }
     }
+  }
 
-    & .player_equalizer {
-      flex-grow: 1;
-      height: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: $player-equalizer-gap;
-      padding: 0 $player-equalizer-gap;
+  & .player_equalizer {
+    flex-grow: 1;
+    height: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: $player-equalizer-gap;
+    padding: 0 $player-equalizer-gap;
 
-      &:empty {
-        position: absolute;
-        inset: 0;
-      }
+    &:empty {
+      position: absolute;
+      inset: 0;
+    }
 
-      & .waveform {
-        width: $player-equalizer-size;
-        height: 1rem;
-        display: block;
-        border-radius: 50px;
-        background-color: rgb(var(--accent-color));
-        box-shadow: 0 0 1px 0 rgb(var(--accent-color));
-        animation-timing-function: ease-in-out;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-        transition: transform 1s ease-in-out;
-        transform: scaleY(0.4);
+    & > .waveform {
+      width: $player-equalizer-size;
+      height: 1rem;
+      display: block;
+      border-radius: 50px;
+      background-color: rgb(var(--accent-color));
+      box-shadow: 0 0 1px 0 rgb(var(--accent-color));
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+      transition: transform 1s ease-in-out;
+      transform: scaleY(0.4);
 
-        @for $i from 0 through 40 {
-          &:nth-child(#{$i}) {
-            animation-duration: 1s + (math.random(600) * 1ms);
-          }
+      @for $i from 0 through 40 {
+        &:nth-child(#{$i}) {
+          animation-duration: 1s + (math.random(600) * 1ms);
         }
       }
     }

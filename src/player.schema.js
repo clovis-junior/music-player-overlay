@@ -64,7 +64,7 @@ const playerSchema = {
     min: 0,
     ui: {
       label: 'Show Waves',
-      disclaimer: 'Not compatible with compact and album art skins',
+      disclaimer: 'Not compatible with compact skin',
       category: 'Appearance'
     }
   },
@@ -90,7 +90,7 @@ const playerSchema = {
     default: false,
     ui: {
       label: 'Swap album art (or vinyl) position',
-      disclaimer: 'Not compatible with compact skin',
+      disclaimer: 'Not compatible with compact and album art skin',
       category: 'Appearance'
     }
   },

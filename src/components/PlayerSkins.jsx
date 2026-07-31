@@ -111,12 +111,12 @@ function DefaultFooter({
       progressBar={progressBarComponent}
       remainingTime={options?.timeMode === 'remaining'} />
   ) : (
-      <MusicTimesWithEqualizer
-        align={options?.musicTimesAlign}
-        duration={music?.duration}
-        hideTimes={options?.removeMusicTimes}
-        equalizer={<Equalizer size={options?.equalizer} />}
-        remainingTime={options?.timeMode === 'remaining'} />
+    <MusicTimesWithEqualizer
+      align={options?.musicTimesAlign}
+      duration={music?.duration}
+      hideTimes={options?.removeMusicTimes}
+      equalizer={<Equalizer size={options?.equalizer} />}
+      remainingTime={options?.timeMode === 'remaining'} />
   )
 
   const classes = [
@@ -145,8 +145,11 @@ export function AlbumArtCardSkin(props) {
       <div className={styles?.aspect}>
         <MusicArt
           music={music}
-          vinyl={options?.showVinyl} 
+          vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl} />
+        {options?.showPlatformIcon && (
+          <Streaming pathIcon={platformIcon} />
+        )}
         {(options?.showVinyl && !options?.hideProgressBar) && (
           <ProgressBar
             isCircular={true}
@@ -163,9 +166,6 @@ export function AlbumArtCardSkin(props) {
                 duration={music?.duration} />
             )}
             <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
-              {options?.showPlatformIcon && (
-                <Streaming pathIcon={platformIcon} />
-              )}
               <MusicInfo>
                 <Scroll key={music?.title} id={styles?.music_title} timer={6}>
                   {music?.title}
@@ -177,6 +177,7 @@ export function AlbumArtCardSkin(props) {
                 </Scroll>
               </MusicInfo>
             </PlayerInfos>
+            <Equalizer size={options?.equalizer} />
           </div>
         )}
       </div>
