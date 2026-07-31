@@ -936,6 +936,7 @@ $player-equalizer-gap: 2px;
         font-weight: 400;
         font-size: 1rem;
         color: rgb(var(--text-color));
+        text-align: center;
       }
     }
 
@@ -958,25 +959,29 @@ $player-equalizer-gap: 2px;
         height: 100%;
         overflow: hidden;
         background-color: rgba(var(--accent-color), 0.24);
-        @include backdrop-filter(initial);
-        position: absolute;
+        @include backdrop-filter(initial !important);
 
-        & .music_progress_bar_fill {
+        & > .music_progress_bar_fill {
           z-index: 2;
+          overflow: hidden !important;
           opacity: initial !important;
           background-color: rgb(var(--accent-color));
 
           & > .music_time_values {
             z-index: 1;
             width: var(--feature-width, 100%) !important;
+            max-width: unset;
             height: 100% !important;
             background-color: transparent !important;
             position: absolute;
             inset: 0;
+            left: 0;
+            top: 0;
 
             & #music_time_elapsed,
             & #music_time_total {
               flex-shrink: 0;
+              min-width: initial !important;
               color: rgb(var(--background-color));
             }
           }
@@ -1039,6 +1044,18 @@ $player-equalizer-gap: 2px;
       align-items: center;
       gap: 4px;
       position: relative;
+
+      &:has(.music_progress_bar) {
+        gap: 8px;
+
+        & .music_time_values {
+          &:not(.centered) {
+            flex-grow: 0;
+          }
+          
+          
+        }
+      }
 
       &:has(.player_equalizer):not(:has(.music_progress_bar_fill.on_background)) {
         & .music_time_values.centered {

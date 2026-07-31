@@ -82,15 +82,10 @@ export function ProgressBar({
         <svg viewBox="0 0 100 100">
           <circle 
             className={styles?.bg_circle} 
-            cx="50" 
-            cy="50" 
-            r={radius} 
-          />
+            cx="50" cy="50" r={radius} />
           <circle
             className={styles?.fill_circle}
-            cx="50"
-            cy="50"
-            r={radius}
+            cx="50" cy="50" r={radius}
             style={{
               strokeDasharray: circumference,
               strokeDashoffset: strokeDashoffset
