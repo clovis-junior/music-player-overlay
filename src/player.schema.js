@@ -77,6 +77,14 @@ const playerSchema = {
       category: 'Appearance'
     }
   },
+  notRollVinyl: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Vinyl always stopped',
+      category: 'Appearance'
+    }
+  },
   reverse: {
     type: 'boolean',
     default: false,
@@ -99,7 +107,7 @@ const playerSchema = {
     default: false,
     ui: {
       label: 'Show pointer on progress bar',
-      disclaimer: 'Not compatible with compact skin',
+      disclaimer: 'Not compatible with compact and album art skin',
       category: 'Appearance'
     }
   },

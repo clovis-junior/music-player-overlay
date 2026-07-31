@@ -40,11 +40,13 @@ export function MusicArt({
   showPlatform = false,
   platformIcon = null,
   music = {},
+  vinylStopped = false,
   vinyl = false
 }) {
   if (vinyl) {
     return (
       <Vinyl key={music?.albumCover}
+        alwaysStopped={vinylStopped}
         isPlaying={music?.displayIsPlaying}
         albumImage={music?.albumCover} />
     )
@@ -138,16 +140,12 @@ export function AlbumArtCardSkin(props) {
     styles?.card
   ]);
 
-  const contentClasses = [
-    styles?.player_content,
-    options?.invertContent && styles?.inverted
-  ].filter(Boolean).join(' ');
-
   return (
     <main {...inline} className={playerClasses}>
       <div className={styles?.aspect}>
         <MusicArt
           music={music}
+          vinylStopped={options?.notRollVinyl}
           vinyl={options?.showVinyl} />
         {(options?.showVinyl && !options?.hideProgressBar) && (
           <ProgressBar
@@ -157,7 +155,7 @@ export function AlbumArtCardSkin(props) {
             duration={music?.duration} />
         )}
         {(!options?.removeContent && !options?.showVinyl) && (
-          <div className={contentClasses}>
+          <div className={styles?.player_content}>
             {!options?.hideProgressBar && (
               <ProgressBar
                 isPaused={!music?.displayIsPlaying}

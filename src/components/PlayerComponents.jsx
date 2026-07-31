@@ -71,7 +71,6 @@ export function ProgressBar({
 
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPaused]);
-<<<<<<< HEAD
 
   if (isCircular) {
     const radius = 48;
@@ -102,8 +101,6 @@ export function ProgressBar({
       </div>
     );
   }
-=======
->>>>>>> 68049856ef02d1edf29a043c3e01799e759fde97
 
   const baseClasses = [
     styles?.music_progress_bar,
@@ -343,6 +340,7 @@ export function MusicAlbumArt({
 
 export function Vinyl(props) {
   const {
+    alwaysStopped = false,
     isPlaying = false,
     albumImage = null,
     altText = '',
@@ -354,6 +352,7 @@ export function Vinyl(props) {
 
   const style = [
     styles?.vinyl,
+    alwaysStopped && styles?.not_roll,
     isPlaying && styles?.playing
   ].filter(Boolean).join(' ');
 
