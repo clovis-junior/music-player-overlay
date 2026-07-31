@@ -37,7 +37,7 @@ function usePlayerProps(props, baseClasses = []) {
 }
 
 export function MusicArt({
-  showPlatformIcon = false,
+  showPlatform = false,
   platformIcon = null,
   music = {},
   vinyl = false
@@ -52,7 +52,7 @@ export function MusicArt({
 
   return (
     <MusicAlbumArt
-      showPlatform={showPlatformIcon}
+      showPlatform={showPlatform}
       platformIcon={platformIcon}
       albumImage={music?.albumCover} />
   )
@@ -69,7 +69,7 @@ function PlayerContent({ platformIcon = null, options = {}, music = {} }) {
       {(options?.skin === 'default' && options?.theme === 'default') && (
         <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
       )}
-      <PlayerInfos inverted={options?.invertInfos} centered={options?.textAlignCenter}>
+      <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
         {((options?.removeAlbumArt || options?.showVinyl) && options?.showPlatformIcon) && (
           <Streaming pathIcon={platformIcon} />
         )}
@@ -133,6 +133,60 @@ function DefaultFooter({
   )
 }
 
+export function AlbumArtCardSkin(props) {
+  const { options, platformIcon, music, inline, playerClasses } = usePlayerProps(props, [
+    styles?.music_player,
+    styles?.card
+  ]);
+
+  const contentClasses = [
+    styles?.player_content,
+    options?.invertContent && styles?.inverted
+  ].filter(Boolean).join(' ');
+
+  return (
+    <main {...inline} className={playerClasses}>
+      <div className={styles?.aspect}>
+        <MusicArt
+          music={music}
+          vinyl={options?.showVinyl} />
+        {(options?.showVinyl && !options?.hideProgressBar) && (
+          <ProgressBar
+            isCircular={true}
+            isPaused={!music?.displayIsPlaying}
+            showPointer={options?.showBarPointer}
+            duration={music?.duration} />
+        )}
+        {(!options?.removeContent && !options?.showVinyl) && (
+          <div className={contentClasses}>
+            {!options?.hideProgressBar && (
+              <ProgressBar
+                isPaused={!music?.displayIsPlaying}
+                showPointer={options?.showBarPointer}
+                duration={music?.duration} />
+            )}
+            <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
+              {options?.showPlatformIcon && (
+                <Streaming pathIcon={platformIcon} />
+              )}
+              <MusicInfo>
+                <Scroll key={music?.title} id={styles?.music_title} timer={6}>
+                  {music?.title}
+                </Scroll>
+              </MusicInfo>
+              <MusicInfo>
+                <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
+                  {music?.artist}
+                </Scroll>
+              </MusicInfo>
+            </PlayerInfos>
+          </div>
+        )}
+      </div>
+    </main>
+  )
+}
+
 export function CompactSkin(props) {
   const { options, platformIcon, music, inline, playerClasses } = usePlayerProps(props, [
     styles?.music_player_compact,
@@ -140,7 +194,7 @@ export function CompactSkin(props) {
   ])
 
   const infos = (
-    <PlayerInfos inverted={options?.invertInfos} centered={options?.textAlignCenter}>
+    <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
       <MusicInfo>
         <Scroll key={music?.title} id={styles?.music_title} timer={6}>
           {music?.title}

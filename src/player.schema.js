@@ -16,8 +16,16 @@ const playerSchema = {
       value: 'vertical'
     }, {
       default: false,
+      name: 'Card (Album Art)',
+      value: 'card'
+    }, {
+      default: false,
       name: 'Compact',
       value: 'compact'
+    }, {
+      default: false,
+      name: 'Ultra Compact',
+      value: 'compact-ultra'
     }],
     ui: {
       label: 'Player Skin',
@@ -56,7 +64,7 @@ const playerSchema = {
     min: 0,
     ui: {
       label: 'Show Waves',
-      disclaimer: 'Not compatible with compact skin',
+      disclaimer: 'Not compatible with compact and album art skins',
       category: 'Appearance'
     }
   },
@@ -65,7 +73,7 @@ const playerSchema = {
     default: false,
     ui: {
       label: 'Replace album art with vinyl',
-      disclaimer: 'Only compatible with compact skin',
+      disclaimer: 'Not compatible with compact skin',
       category: 'Appearance'
     }
   },
@@ -75,15 +83,6 @@ const playerSchema = {
     ui: {
       label: 'Swap album art (or vinyl) position',
       disclaimer: 'Not compatible with compact skin',
-      category: 'Appearance'
-    }
-  },
-  ultraMode: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Ultra Compact',
-      disclaimer: 'Only compatible with compact skin',
       category: 'Appearance'
     }
   },
@@ -133,8 +132,8 @@ const playerSchema = {
     type: 'boolean',
     default: false,
     ui: {
-      label: 'Remove musica album art',
-      disclaimer: 'Not compatible with compact skin',
+      label: 'Remove music album art',
+      disclaimer: 'Not compatible with compact and album art skin',
       category: 'Appearance'
     }
   },
@@ -207,6 +206,27 @@ const playerSchema = {
       category: 'Theme'
     }
   },
+  musicInfosAlign: {
+    type: 'select',
+    default: 'left',
+    values: [{
+      default: true,
+      name: 'Align Left (default)',
+      value: 'left'
+    }, {
+      default: false,
+      name: 'Align Center',
+      value: 'center'
+    }, {
+      default: false,
+      name: 'Align Right',
+      value: 'right'
+    }],
+    ui: {
+      label: 'Music infos align',
+      category: 'Theme'
+    }
+  },
   removeContent: {
     type: 'boolean',
     default: false,
@@ -225,14 +245,6 @@ const playerSchema = {
       category: 'Theme'
     }
   },
-  textAlignCenter: {
-    type: 'boolean',
-    default: false,
-    ui: {
-      label: 'Music infos align center',
-      category: 'Theme'
-    }
-  },
   invertInfos: {
     type: 'boolean',
     default: false,
@@ -246,7 +258,7 @@ const playerSchema = {
     default: false,
     ui: {
       label: 'Invert content',
-      disclaimer: 'This invert content order (not include album art);\nNot compatible with compact skin',
+      disclaimer: 'Not include album art and not compatible with compact skin',
       category: 'Theme'
     }
   },

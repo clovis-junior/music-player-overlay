@@ -3,7 +3,7 @@ import { Vibrant } from 'node-vibrant/browser'
 import { GetURLParams, ConvertTime } from '../functions/Utils'
 import { useMusicPlatform } from '../hooks/MusicPlatform.js'
 
-import { AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins'
+import { AlbumArtCardSkin, AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins'
 import { getThemeFromPalette } from '../functions/ThemeFromPallete.js'
 
 const params = GetURLParams();
@@ -96,23 +96,25 @@ export default function Player({ options = {} }) {
   if (music?.isPlaying && sleeping)
     setSleeping(false);
 
+  const skins = {
+    'default': DefaultSkin,
+    'compact': CompactSkin,
+    'compact-ultra': CompactSkin,
+    'card': AlbumArtCardSkin,
+    'vertical': VerticalSkin,
+    'alternative': AlternativeSkin
+  };
+
   const attrs = {
     ref: player,
     music: music || {},
     sleeping: sleeping,
-    ultraMode: options?.ultraMode,
+    ultraMode: options?.skin?.includes('ultra') || false,
     options: options,
     platformIcon
   };
 
-  const skins = {
-    default: DefaultSkin,
-    compact: CompactSkin,
-    vertical: VerticalSkin,
-    alternative: AlternativeSkin
-  };
-
-  const Skin = skins[options?.skin];
+  const Skin = skins[options?.skin] || skins['default'];
 
   return <Skin {...attrs} />
 }
