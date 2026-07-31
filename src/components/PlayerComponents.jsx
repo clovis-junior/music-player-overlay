@@ -34,7 +34,7 @@ export function ProgressBar({
     total: currentTotal,
     lastUpdate: performance.now(),
   });
-
+  
   useEffect(() => {
     stateRef.current = {
       elapsed: currentElapsed,
@@ -68,8 +68,10 @@ export function ProgressBar({
     };
 
     animationFrameId = requestAnimationFrame(tick);
+
     return () => cancelAnimationFrame(animationFrameId);
   }, [isPaused]);
+<<<<<<< HEAD
 
   if (isCircular) {
     const radius = 48;
@@ -100,6 +102,8 @@ export function ProgressBar({
       </div>
     );
   }
+=======
+>>>>>>> 68049856ef02d1edf29a043c3e01799e759fde97
 
   const baseClasses = [
     styles?.music_progress_bar,
@@ -171,15 +175,21 @@ export function MusicTimes({
   )
 }
 
-export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
+export function MusicTimesWithEqualizer({ hideTimes = false, equalizer = null, ...props }) {
   const { align = 'default' } = props;
 
-  const isCenterAlign = align === 'center';
-  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2)
+  const isCenterAlign = (align === 'center');
+  const halfEqualizerSize = Math.round(equalizer?.props?.size / 2);
 
+  if (hideTimes)
+    return (
+      <div className={styles?.feature}>
+        {equalizer}
+      </div>
+    );
 
   return (
-    <>
+    <div className={styles?.feature}>
       {align === 'right' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
       <MusicTimes {...props}>
@@ -187,7 +197,7 @@ export function MusicTimesWithEqualizer({ equalizer = null, ...props }) {
       </MusicTimes>
       {align === 'left' && equalizer}
       {isCenterAlign && (<Equalizer size={halfEqualizerSize} />)}
-    </>
+    </div>
   )
 }
 
@@ -205,7 +215,6 @@ export function MusicTimesWithProgressBar({ hideTimes = false, progressBar = nul
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries)
         setFeatureWidth(entry.contentRect.width);
-
     });
 
     resizeObserver.observe(containerRef.current);
