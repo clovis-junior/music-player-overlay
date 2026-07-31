@@ -397,7 +397,7 @@ $player-equalizer-gap: 2px;
       fade-in 500ms ease-out forwards,
       spin 4s linear infinite;
     animation-play-state: running, paused;
-    transition: animation-play-state 360ms ease;
+    transition: transform 360ms ease, animation-play-state 360ms ease;
 
     &.playing {
       animation-play-state: running, running;
