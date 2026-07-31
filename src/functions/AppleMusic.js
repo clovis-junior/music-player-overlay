@@ -91,8 +91,7 @@ async function FetchInitialState(onData) {
     if (Object.keys(initialData).length > 0)
       onData?.(current => ({ ...current, ...initialData }));
 
-    console.log(initialData);
-
+    // console.log(initialData);
   } catch (err) {
     console.warn('Failed to get initial state:', err.message);
   }
@@ -135,7 +134,7 @@ export default {
     };
     const handleDisconnect = () => onDisconnect?.();
     const handleStateUpdate = ({ data, type }) => {
-      console.log('[Cider Event]', type, data);
+      // console.log('[Cider Event]', type, data);
       switch (type) {
         case 'playbackStatus.playbackStateDidChange':
           onData?.(current => ({ ...current, ...UpdatePlaybackState(data) }));
