@@ -12,8 +12,11 @@ async function loadPlatformModule(platform) {
       return import('../functions/AppleMusic.js');
     case 'youtube':
     case 'youtube-music':
-    default:
       return import('../functions/YoutubeMusic.js');
+    case 'system':
+    case 'universal':
+    default:
+      return import('../functions/System.js');
   }
 }
 
