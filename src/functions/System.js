@@ -1,4 +1,5 @@
-import { getCachedData as deezerData } from './Deezer';
+import { getCachedMetadata as deezerData } from './Deezer';
+import { getCachedMetadata as lastFmData } from './LastFM';
 import { GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
@@ -16,11 +17,12 @@ async function UpdatePlayerData(data) {
   const song = data?.video;
   const meta = NormalizeMetadata(song?.author, song?.title);
   const deezer = await deezerData(meta?.artist, meta?.track);
+  const lastFm = await lastFmData(meta?.artist, meta?.track);
 
   const isPlaying = (player?.trackState === 1);
-  const title = deezer?.track || meta?.track || song?.title;
-  const artist = deezer?.artist || meta?.artist || song?.author;
-  const albumCover = deezer?.albumCover || song?.thumbnails[song.thumbnails.length - 1].url;
+  const title = deezer?.track || lastFm?.track || meta?.track || song?.title;
+  const artist = deezer?.artist || lastFm?.artist || meta?.artist || song?.author;
+  const albumCover = deezer?.albumCover || lastFm?.albumCover || song?.thumbnails?.at(-1)?.url;
   const duration = {
     elapsed: Number(player?.videoProgress) || 0,
     remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),

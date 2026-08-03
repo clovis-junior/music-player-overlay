@@ -32,6 +32,11 @@ export async function handler(event) {
       };
     }
 
+    const artists = result?.contributors
+      ?.map(artist => artist?.name)
+      ?.filter(Boolean)?.join(', ') 
+      || result?.artist?.name;
+
     return {
       statusCode: 200,
       headers: {
@@ -39,7 +44,7 @@ export async function handler(event) {
       },
       body: JSON.stringify({
         title: result.title,
-        artist: result.artist?.name,
+        artist: artists,
         album: result.album?.title,
         albumCover: result.album?.cover_xl
       })

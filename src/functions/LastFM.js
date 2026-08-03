@@ -1,11 +1,16 @@
 import { IsEmpty } from './Utils';
 
-const coverCache = new Map();
+const cache = new Map();
 
-async function getAlbumCover(artist, track) {
+
+async function getMetadata(artist, track) {
+  if (IsEmpty(artist) || IsEmpty(track))
+    return null;
+
   const params = new URLSearchParams({
     method: 'track.getInfo',
-    artist, track,
+    artist,
+    track,
     api_key: import.meta.env.VITE_LASTFM_API_KEY,
     format: 'json'
   });
@@ -19,33 +24,49 @@ async function getAlbumCover(artist, track) {
       return null;
 
     const data = await response.json();
+    const info = data?.track;
 
-    const images = data?.track?.album?.image ?? [];
+    if (!info)
+      return null;
 
-    return (
+    const images = info?.album?.image ?? [];
+    const albumCover =
       images.find(i => i.size === 'mega')?.['#text'] ||
       images.find(i => i.size === 'extralarge')?.['#text'] ||
       images.find(i => i.size === 'large')?.['#text'] ||
-      null
-    )
+      null;
+
+
+    return {
+      title: info?.name || '',
+      artist: info?.artist?.name || '',
+      // album: info?.album?.title || '',
+      albumCover,
+    }
   } catch {
     return null
   }
 }
 
-export async function getCachedAlbumCover(artist, title) {
+
+export async function getCachedMetadata(artist, title) {
   if (IsEmpty(artist) || IsEmpty(title))
     return null;
 
   const key = `${artist}|${title}`
     .toLowerCase()
     .trim();
-    
-  if (coverCache.has(key))
-    return coverCache.get(key);
 
-  const cover = await getAlbumCover(artist, title);
-  coverCache.set(key, cover);
+  if (cache.has(key))
+    return cache.get(key);
 
-  return cover
+  const data = await getMetadata(
+    artist,
+    title
+  );
+
+  if (data)
+    cache.set(key, data);
+
+  return data
 }

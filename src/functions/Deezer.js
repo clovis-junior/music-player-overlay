@@ -2,7 +2,7 @@ import { IsEmpty } from './Utils';
 
 const cache = new Map();
 
-async function getData(artist, track) {
+async function getMetadata(artist, track) {
   if (!artist || !track)
     return null;
 
@@ -27,7 +27,7 @@ async function getData(artist, track) {
 }
 
 
-export function getCachedData(artist, title) {
+export function getCachedMetadata(artist, title) {
   if (IsEmpty(artist) || IsEmpty(title))
     return Promise.resolve(null);
 
@@ -38,7 +38,7 @@ export function getCachedData(artist, title) {
   if (cache.has(key))
     return cache.get(key);
 
-  const promise = getData(
+  const promise = getMetadata(
     artist,
     title
   );

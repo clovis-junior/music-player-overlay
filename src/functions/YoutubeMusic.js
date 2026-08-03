@@ -1,3 +1,5 @@
+import { getCachedMetadata as deezerData } from './Deezer';
+import { getCachedMetadata as lastFmData } from './LastFM';
 import { GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
@@ -68,17 +70,19 @@ export async function RequestToken(code) {
   }
 }
 
-function UpdatePlayerData(data) {
+async function UpdatePlayerData(data) {
   if (data.error) return data;
 
   const player = data?.player;
   const song = data?.video;
   const meta = NormalizeMetadata(song?.author, song?.title);
+  const deezer = await deezerData(meta?.artist, meta?.track);
+  const lastFm = await lastFmData(meta?.artist, meta?.track);
 
   const isPlaying = (player?.trackState === 1);
-  const title = meta?.track || song?.title;
-  const artist = meta?.artist || song?.author;
-  const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
+  const title = deezer?.track || lastFm?.track || meta?.track || song?.title;
+  const artist = deezer?.artist || lastFm?.artist || meta?.artist || song?.author;
+  const albumCover = deezer?.albumCover || lastFm?.albumCover || song?.thumbnails?.at(-1)?.url;
   const duration = {
     elapsed: Number(player?.videoProgress) || 0,
     remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
@@ -123,8 +127,8 @@ export default {
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
-    const handleStateUpdate = state => {
-      const data = UpdatePlayerData(state);
+    const handleStateUpdate = async state => {
+      const data = await UpdatePlayerData(state);
 
       if (!data || data?.error) return;
 
