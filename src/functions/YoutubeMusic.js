@@ -91,27 +91,22 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     albumCover: song?.thumbnails?.at(-1)?.url || '',
     duration: {
       elapsed: Number(player?.videoProgress) || 0,
-      remaining: Math.max(
-        0,
-        song?.durationSeconds - player?.videoProgress
-      ),
+      remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
       total: Number(song?.durationSeconds) || 0
     }
   };
 
-  ResolveMetadata(meta.artist, meta.track)
-    .then(metadata => {
+  if (meta?.artist && meta?.track) {
+    ResolveMetadata(meta.artist, meta.track).then(metadata => {
       if (!metadata) return;
 
       onMetadataUpdate?.({
-        ...currentData,
-        title: metadata.title || currentData.title,
-        artist: metadata.artist || currentData.artist,
-        albumCover:
-          metadata.albumCover ||
-          currentData.albumCover
+        title: metadata.title,
+        artist: metadata.artist,
+        albumCover: metadata.albumCover
       })
-    });
+    })
+  }
 
   return currentData
 }
@@ -152,7 +147,15 @@ export default {
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
     const handleStateUpdate = async state => {
-      const data = await UpdatePlayerData(state);
+      const data = await UpdatePlayerData(
+        state,
+        metadata => {
+          onData?.(current => ({
+            ...current,
+            ...metadata
+          }));
+        }
+      );
 
       if (!data || data?.error)
         return;
