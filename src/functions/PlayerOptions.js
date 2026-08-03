@@ -5,11 +5,17 @@ export function buildPlayerURL(rawURL, platformData, options) {
   if (!URLValidade(rawURL))
     return '';
 
-  const baseURL = rawURL.split('?')[0];
+  const parsedURL = URL.parse(rawURL);
 
-  const params = new URLSearchParams(platformData);
+  if (parsedURL?.hostname !== window.location.hostname || parsedURL?.pathname !== '/player')
+    return '';
+
+  const params = new URLSearchParams(platformData || parsedURL.searchParams);
 
   params.delete('options');
+
+  if (!params.has('platform'))
+    params.set('platform', 'system');
 
   const playerOptions = new URLSearchParams();
 
@@ -19,17 +25,18 @@ export function buildPlayerURL(rawURL, platformData, options) {
     if (value === schema.default)
       return;
 
-    playerOptions.set(key, value);
+    playerOptions.set(key, value)
   });
 
-  if ([...playerOptions].length > 0) {
+  if ([...playerOptions].length > 0)
     params.set(
       'options',
       SafeBase64Encode(playerOptions.toString())
     );
-  }
 
-  return `${baseURL}?${params.toString()}`;
+  const result = import.meta.env.DEV ? `${parsedURL?.hostname}:${parsedURL?.port}` : parsedURL?.hostname;
+
+  return `${parsedURL?.protocol}//${ result}${parsedURL?.pathname}?${params.toString()}`
 }
 
 export function getChangedOptions(options) {

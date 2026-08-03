@@ -24,7 +24,10 @@ export function GenerateRandomString(length = 8, uppercase = true, numbers = tru
 }
 
 export function URLValidade(value) {
-  const filter = /^(https?):\/\/(?:www\.)?([a-zA-Z0-9-:]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&/=]*)$/is;
+  const filter = import.meta.env.DEV ? 
+  /^https?:\/\/(?:localhost|(?:\d{1,3}\.){3}\d{1,3}|(?:[a-z\d-]+\.)+[a-z]{2,})(?::\d{1,5})?(?:\/.*)?$/i 
+  : /^(https?):\/\/(?:www\.)?([a-zA-Z0-9-:]{1,256})\.([a-zA-Z0-9.]{2,})\b([a-zA-Z0-9-_()@:%+.~#?&/=]*)$/is;
+
   return (filter.test(value)) ? true : false;
 }
 
@@ -42,10 +45,14 @@ export function ConvertTime(time = 0) {
 }
 
 export function GetURLParams(path = window.location.href) {
-  const queryString = path.includes('?')
-    ? path.split('?')[1].replace(/#/g, '&')
-    : path.replace(/#/g, '&');
-  const searchParams = new URLSearchParams(queryString);
+  const url = new URL(path);
+
+  let query = url.search;
+
+  if (!query && url.hash.includes('?'))
+    query = url.hash.substring(url.hash.indexOf('?'));
+
+  const searchParams = new URLSearchParams(query);
 
   return {
     get data() {
@@ -115,6 +122,34 @@ export async function CopyToClipboard(text) {
     console.error('Fallback copy failed:', error);
     return false;
   }
+}
+
+export function NormalizeMetadata(author, title) {
+  let artist = author
+    ?.replace(/\s*-\s*Topic$/i, '')
+    ?.trim();
+
+  let track = title
+    ?.replace(/\s*\(Official.*?\)/gi, '')
+    ?.replace(/\s*\[Official.*?\]/gi, '')
+    ?.replace(/\s*Official Audio/gi, '')
+    ?.replace(/\s*Official Video/gi, '')
+    ?.trim();
+
+  if (artist && track) {
+    const escapedArtist = artist.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const regex = new RegExp(`^${escapedArtist}\\s*-\\s*`, 'i');
+
+    if (regex.test(track)) {
+      track = track.replace(regex, '').trim();
+    }
+  }
+
+  return {
+    artist,
+    track
+  };
 }
 
 export function SafeBase64Encode(string) {

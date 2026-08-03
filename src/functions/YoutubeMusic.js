@@ -1,4 +1,4 @@
-import { GetURLParams } from './Utils';
+import { GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
 import icon from '../assets/images/ytm-logo.png';
@@ -73,10 +73,11 @@ function UpdatePlayerData(data) {
 
   const player = data?.player;
   const song = data?.video;
+  const meta = NormalizeMetadata(song?.author, song?.title);
 
   const isPlaying = (player?.trackState === 1);
-  const title = song?.title;
-  const artist = song?.author;
+  const title = meta?.track || song?.title;
+  const artist = meta?.artist || song?.author;
   const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
   const duration = {
     elapsed: Number(player?.videoProgress) || 0,

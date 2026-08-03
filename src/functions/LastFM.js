@@ -37,8 +37,10 @@ export async function getCachedAlbumCover(artist, title) {
   if (IsEmpty(artist) || IsEmpty(title))
     return null;
 
-  const key = `${artist}|${title}`;
-
+  const key = `${artist}|${title}`
+    .toLowerCase()
+    .trim();
+    
   if (coverCache.has(key))
     return coverCache.get(key);
 

@@ -181,7 +181,7 @@ function parsePlayerURL(value = '') {
       isValid: false,
       data: {},
       options: { ...defaultPlayerOptions }
-    };
+    }
   }
 
   const params = GetURLParams(value);
@@ -305,7 +305,7 @@ export default function Customize() {
             />
             <aside className={styles?.buttons}>
               <button className={styles?.button} onClick={() => {
-                if (!finalURL)
+                if (finalURL.length <= 0)
                   return false;
 
                 resetOptions();
@@ -349,7 +349,7 @@ export default function Customize() {
         <div className={styles?.widget_preview}>
           {!IsEmpty(finalURL) && (<iframe key={JSON.stringify(options)} src={finalURL} title="Player Preview" />)}
           <div className={styles?.alerts}>
-            {(!finalURL || !platformData) && (
+            {(IsEmpty(finalURL) || !platformData) && (
               <Alert type="warn">
                 You need the player url and play any song!
               </Alert>
@@ -365,8 +365,9 @@ export default function Customize() {
       <footer className={styles?.widget_footer}>
         <div className={styles?.container}>
           <div className={styles?.widget_url_result}
+            data-disabled={IsEmpty(finalURL)}
             onClick={() => {
-              if (!finalURL)
+              if (IsEmpty(finalURL)) 
                 return false;
 
               const copy = CopyToClipboard(finalURL);
@@ -382,7 +383,7 @@ export default function Customize() {
             <input type="text" readOnly={true} value={finalURL} />
           </div>
           <aside className={styles?.buttons} onClick={openPlayer}>
-            <button className={styles?.button} disabled={!finalURL}>
+            <button className={styles?.button} disabled={IsEmpty(finalURL)}>
               Open on new Window
             </button>
           </aside>
