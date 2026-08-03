@@ -13,6 +13,23 @@ function IsValidTrack(data) {
   return Boolean(data?.title && data?.artist)
 }
 
+export function IsValidCover(url) {
+  if (!url) return false;
+
+  if (typeof url !== 'string')
+    return false;
+
+  const value = url.trim();
+
+  if (!value)
+    return false;
+
+  if (value.includes('placeholder') || value.includes('default'))
+    return false;
+
+  return /^https?:\/\/.+\.(jpg|jpeg|png|webp)/i.test(value);
+}
+
 async function UpdatePlayerData(data, onMetadataUpdate) {
   if (data.error) return data;
 
@@ -40,11 +57,15 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     ResolveMetadata(meta.artist, meta.track).then(metadata => {
       if (!metadata) return;
 
-      onMetadataUpdate?.({
-        title: metadata.title,
-        artist: metadata.artist,
-        albumCover: metadata.albumCover
-      })
+      const update = {
+        title: metadata.title || currentData.title,
+        artist: metadata.artist || currentData.artist
+      };
+
+      if (IsValidCover(metadata.albumCover))
+        update.albumCover = metadata.albumCover;
+
+      onMetadataUpdate?.(update)
     })
   }
 
