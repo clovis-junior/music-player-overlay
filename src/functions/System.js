@@ -43,7 +43,7 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
 
   const currentData = {
     isPlaying: player?.trackState === 1,
-    title: meta?.track || song?.title || '',,
+    title: meta?.track || song?.title || '',
     artist: meta?.artist || song?.author || '',
     albumCover: song?.thumbnails?.at(-1)?.url || null,
     duration: {
