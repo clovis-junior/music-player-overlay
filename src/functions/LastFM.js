@@ -2,22 +2,14 @@ import { IsEmpty } from './Utils';
 
 const cache = new Map();
 
-
 async function getMetadata(artist, track) {
   if (IsEmpty(artist) || IsEmpty(track))
     return null;
 
-  const cleanTrack = track
-    ?.replace(/(\[.*?\]|\(.*?\))/g, '')
-    ?.replace(/ft\..*|feat\..*/i, '')
-    ?.trim();
-
-  const cleanArtist = artist.split('/')?.[0]?.split(',')?.[0]?.trim();
-
   const params = new URLSearchParams({
     method: 'track.getInfo',
-    artist: cleanArtist,
-    track: cleanTrack,
+    artist: artist.trim(),
+    track: track.trim(),
     api_key: import.meta.env.VITE_LASTFM_API_KEY,
     format: 'json'
   });
@@ -41,23 +33,25 @@ async function getMetadata(artist, track) {
       images.find(i => i.size === 'mega')?.['#text'] ||
       images.find(i => i.size === 'extralarge')?.['#text'] ||
       images.find(i => i.size === 'large')?.['#text'] ||
-      null;
+      images[images.length - 1]?.['#text'] || null;
+
+    const validCover = (albumCover && albumCover.trim() !== '') ? albumCover : null;
 
     return {
-      title: info?.name || '',
-      artist: info?.artist?.name || '',
-      // album: info?.album?.title || '',
-      albumCover,
-    }
+      title: info?.name || track,
+      artist: info?.artist?.name || artist,
+      album: info?.album?.title || '',
+      albumCover: validCover
+    };
+
   } catch {
-    return null
+    return null;
   }
 }
 
-
-export async function getCachedMetadata(artist, title) {
+export function getCachedMetadata(artist, title) {
   if (IsEmpty(artist) || IsEmpty(title))
-    return null;
+    return Promise.resolve(null);
 
   const key = `${artist}|${title}`
     .toLowerCase()
@@ -66,13 +60,8 @@ export async function getCachedMetadata(artist, title) {
   if (cache.has(key))
     return cache.get(key);
 
-  const data = await getMetadata(
-    artist,
-    title
-  );
+  const promise = getMetadata(artist, title);
+  cache.set(key, promise);
 
-  if (data)
-    cache.set(key, data);
-
-  return data
+  return promise
 }

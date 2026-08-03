@@ -13,7 +13,7 @@ export async function ResolveMetadata(artist, track) {
         return {
           title: data.title,
           artist: data.artist,
-          album: data.album,
+          // album: data.album,
           albumCover: data.albumCover
         }
       }
