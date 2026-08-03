@@ -422,13 +422,13 @@ $container: 1920px;
   flex-grow: 2;
   position: relative;
 
-  &:has([data-disabled]) {
+  &[data-disabled="true"] {
     &:hover {
-      cursor: not-allowed;
+      cursor: not-allowed !important;
     }
   }
 
-  &:not(:has([data-disabled])) {
+  &[data-disabled="false"] {
     &:hover {
       cursor: pointer;
 
@@ -436,31 +436,29 @@ $container: 1920px;
         opacity: 0;
       }
     }
-
-    & .label {
-      z-index: 1;
-      pointer-events: none;
-      width: 100%;
-      opacity: 1;
-      padding: 1rem 2rem;
-      overflow: hidden;
-      white-space: nowrap;
-      border-radius: $border-radius;
-      background-color: rgba(var(--background-color), 0.2);
-      font-weight: 600;
-      color: rgb(var(--font-primary-color));
-      text-align: center;
-      text-overflow: ellipsis;
-      @include backdrop-filter(blur(4px) grayscale(1));
-      transition: opacity 300ms;
-      transform: translate(-50%, -50%);
-      position: absolute;
-      left: 50%;
-      top: 50%;
-    }
   }
 
-
+  & .label {
+    z-index: 1;
+    pointer-events: none;
+    width: 100%;
+    opacity: 1;
+    padding: 1rem 2rem;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: $border-radius;
+    background-color: rgba(var(--background-color), 0.2);
+    font-weight: 600;
+    color: rgb(var(--font-primary-color));
+    text-align: center;
+    text-overflow: ellipsis;
+    @include backdrop-filter(blur(4px) grayscale(1));
+    transition: opacity 300ms;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
 
   & input {
     pointer-events: none;
