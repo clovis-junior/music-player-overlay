@@ -142,8 +142,8 @@ export default {
           current?.duration?.remaining === next?.duration?.remaining &&
           current?.duration?.total === next?.duration?.total;
 
-        return (sameMetadata && samePlaybackState) ? current : next;
-      });
+        return (sameMetadata && samePlaybackState) ? current : next
+      })
     };
 
     socket?.on('connect', handleConnect);
