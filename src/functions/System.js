@@ -43,9 +43,9 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
 
   const currentData = {
     isPlaying: player?.trackState === 1,
-    title: meta?.track || song?.title || '',
+    title: meta?.track || song?.title || '',,
     artist: meta?.artist || song?.author || '',
-    albumCover: song?.thumbnails?.at(-1)?.url || '',
+    albumCover: song?.thumbnails?.at(-1)?.url || null,
     duration: {
       elapsed: Number(player?.videoProgress) || 0,
       remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
@@ -125,8 +125,8 @@ export default {
 
       onData?.(current => {
         const next = {
-          ...current,
-          ...data
+          ...current, ...data,
+          albumCover: data.albumCover || current?.albumCover || ''
         };
 
         const sameMetadata =
