@@ -9,6 +9,10 @@ const port = params?.get('port') || 10767;
 
 const baseURL = `http://${host}:${port}`;
 
+function IsValidTrack(data) {
+  return Boolean(data?.title && data?.artist)
+}
+
 async function UpdatePlayerData(data, onMetadataUpdate) {
   if (data.error) return data;
 
@@ -87,32 +91,19 @@ export default {
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
     const handleStateUpdate = async state => {
-      const updateMetadata = metadata => {
-        if (!metadata) return;
-
-        onData?.(current => {
-          const next = {
-            ...current,
-            ...metadata
-          };
-
-          const sameMetadata =
-            current?.title === next?.title &&
-            current?.artist === next?.artist &&
-            current?.albumCover === next?.albumCover;
-
-          return sameMetadata
-            ? current : next;
-        });
-      };
-
-      const data = await UpdatePlayerData(state, updateMetadata);
+      const data = await UpdatePlayerData(state);
 
       if (!data || data?.error)
         return;
 
+      if (!IsValidTrack(data))
+        return;
+
       onData?.(current => {
-        const next = data;
+        const next = {
+          ...current,
+          ...data
+        };
 
         const sameMetadata =
           current?.title === next?.title &&
@@ -125,9 +116,11 @@ export default {
           current?.duration?.remaining === next?.duration?.remaining &&
           current?.duration?.total === next?.duration?.total;
 
-        return (sameMetadata && samePlaybackState)
-          ? current : next;
-      })
+        return (
+          sameMetadata &&
+          samePlaybackState
+        ) ? current : next
+      });
     };
 
     socket?.on('connect', handleConnect);
