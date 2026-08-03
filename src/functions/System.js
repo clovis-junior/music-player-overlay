@@ -1,5 +1,5 @@
 import { ResolveMetadata } from './ResolveMetadata';
-import { GetURLParams, NormalizeMetadata } from './Utils';
+import { IsEmpty, GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
 const params = GetURLParams();
@@ -14,7 +14,7 @@ function IsValidTrack(data) {
 }
 
 export function IsValidCover(url) {
-  if (!url) return false;
+  if (IsEmpty(url)) return false;
 
   if (typeof url !== 'string')
     return false;
@@ -27,7 +27,7 @@ export function IsValidCover(url) {
   if (value.includes('placeholder') || value.includes('default'))
     return false;
 
-  return /^https?:\/\/.+\.(jpg|jpeg|png|webp)/i.test(value);
+  return /^https?:\/\/.+/i.test(value);
 }
 
 async function UpdatePlayerData(data, onMetadataUpdate) {
