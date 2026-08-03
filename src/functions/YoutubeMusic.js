@@ -2,7 +2,6 @@ import { GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
 import icon from '../assets/images/ytm-logo.png';
-import { ResolveMetadata } from './ResolveMetadata';
 
 const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
@@ -17,10 +16,6 @@ const token = params?.get('token');
 const baseURL = `http://${host}:${port}/api/v1`;
 
 export var authCode;
-
-function IsValidTrack(data) {
-  return Boolean(data?.title && data?.artist)
-}
 
 export async function RequestCode() {
   try {
@@ -73,42 +68,24 @@ export async function RequestToken(code) {
   }
 }
 
-async function UpdatePlayerData(data, onMetadataUpdate) {
+function UpdatePlayerData(data) {
   if (data.error) return data;
 
   const player = data?.player;
   const song = data?.video;
+  const meta = NormalizeMetadata(song?.author, song?.title);
 
-  const meta = NormalizeMetadata(
-    song?.author,
-    song?.title
-  );
-
-  const currentData = {
-    isPlaying: player?.trackState === 1,
-    title: meta?.track || song?.title || '',
-    artist: meta?.artist || song?.author || '',
-    albumCover: song?.thumbnails?.at(-1)?.url || '',
-    duration: {
-      elapsed: Number(player?.videoProgress) || 0,
-      remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
-      total: Number(song?.durationSeconds) || 0
-    }
+  const isPlaying = (player?.trackState === 1);
+  const title = meta?.track || song?.title;
+  const artist = meta?.artist || song?.author;
+  const albumCover = song?.thumbnails?.at(-1)?.url;
+  const duration = {
+    elapsed: Number(player?.videoProgress) || 0,
+    remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
+    total: Number(song?.durationSeconds) || 0
   };
 
-  if (meta?.artist && meta?.track) {
-    ResolveMetadata(meta.artist, meta.track).then(metadata => {
-      if (!metadata) return;
-
-      onMetadataUpdate?.({
-        title: metadata.title,
-        artist: metadata.artist,
-        albumCover: metadata.albumCover
-      })
-    })
-  }
-
-  return currentData
+  return { isPlaying, title, artist, duration, albumCover };
 }
 
 function GetData(debug = false) {
@@ -146,28 +123,13 @@ export default {
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
-    const handleStateUpdate = async state => {
-      const data = await UpdatePlayerData(
-        state,
-        metadata => {
-          onData?.(current => ({
-            ...current,
-            ...metadata
-          }));
-        }
-      );
+    const handleStateUpdate = state => {
+      const data = UpdatePlayerData(state);
 
-      if (!data || data?.error)
-        return;
-
-      if (!IsValidTrack(data))
-        return;
+      if (!data || data?.error) return;
 
       onData?.(current => {
-        const next = {
-          ...current,
-          ...data
-        };
+        const next = data;
 
         const sameMetadata =
           current?.title === next?.title &&
@@ -180,10 +142,7 @@ export default {
           current?.duration?.remaining === next?.duration?.remaining &&
           current?.duration?.total === next?.duration?.total;
 
-        return (
-          sameMetadata &&
-          samePlaybackState
-        ) ? current : next
+        return (sameMetadata && samePlaybackState) ? current : next;
       });
     };
 
