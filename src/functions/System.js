@@ -1,5 +1,4 @@
-import { getCachedMetadata as deezerData } from './Deezer';
-import { getCachedMetadata as lastFmData } from './LastFM';
+import { ResolveMetadata } from './ResolveMetadata';
 import { GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
@@ -10,26 +9,47 @@ const port = params?.get('port') || 10767;
 
 const baseURL = `http://${host}:${port}`;
 
-async function UpdatePlayerData(data) {
+async function UpdatePlayerData(data, onMetadataUpdate) {
   if (data.error) return data;
 
   const player = data?.player;
   const song = data?.video;
-  const meta = NormalizeMetadata(song?.author, song?.title);
-  const deezer = await deezerData(meta?.artist, meta?.track);
-  const lastFm = await lastFmData(meta?.artist, meta?.track);
 
-  const isPlaying = (player?.trackState === 1);
-  const title = deezer?.track || lastFm?.track || meta?.track || song?.title;
-  const artist = deezer?.artist || lastFm?.artist || meta?.artist || song?.author;
-  const albumCover = deezer?.albumCover || lastFm?.albumCover || song?.thumbnails?.at(-1)?.url;
-  const duration = {
-    elapsed: Number(player?.videoProgress) || 0,
-    remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
-    total: Number(song?.durationSeconds) || 0
+  const meta = NormalizeMetadata(
+    song?.author,
+    song?.title
+  );
+
+  const currentData = {
+    isPlaying: player?.trackState === 1,
+    title: meta?.track || song?.title || '',
+    artist: meta?.artist || song?.author || '',
+    albumCover: song?.thumbnails?.at(-1)?.url || '',
+    duration: {
+      elapsed: Number(player?.videoProgress) || 0,
+      remaining: Math.max(
+        0,
+        song?.durationSeconds - player?.videoProgress
+      ),
+      total: Number(song?.durationSeconds) || 0
+    }
   };
 
-  return { isPlaying, title, artist, duration, albumCover };
+  ResolveMetadata(meta.artist, meta.track)
+    .then(metadata => {
+      if (!metadata) return;
+
+      onMetadataUpdate?.({
+        ...currentData,
+        title: metadata.title || currentData.title,
+        artist: metadata.artist || currentData.artist,
+        albumCover:
+          metadata.albumCover ||
+          currentData.albumCover
+      })
+    });
+
+  return currentData
 }
 
 function GetData(debug = false) {
@@ -67,9 +87,29 @@ export default {
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
     const handleStateUpdate = async state => {
-      const data = await UpdatePlayerData(state);
+      const updateMetadata = metadata => {
+        if (!metadata) return;
 
-      if (!data || data?.error) return;
+        onData?.(current => {
+          const next = {
+            ...current,
+            ...metadata
+          };
+
+          const sameMetadata =
+            current?.title === next?.title &&
+            current?.artist === next?.artist &&
+            current?.albumCover === next?.albumCover;
+
+          return sameMetadata
+            ? current : next;
+        });
+      };
+
+      const data = await UpdatePlayerData(state, updateMetadata);
+
+      if (!data || data?.error)
+        return;
 
       onData?.(current => {
         const next = data;
@@ -85,8 +125,9 @@ export default {
           current?.duration?.remaining === next?.duration?.remaining &&
           current?.duration?.total === next?.duration?.total;
 
-        return (sameMetadata && samePlaybackState) ? current : next;
-      });
+        return (sameMetadata && samePlaybackState)
+          ? current : next;
+      })
     };
 
     socket?.on('connect', handleConnect);
