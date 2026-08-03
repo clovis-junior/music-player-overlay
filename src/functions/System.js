@@ -1,3 +1,4 @@
+import { getCachedAlbumCover } from './LastFM';
 import { GetURLParams } from './Utils';
 import { io } from 'socket.io-client';
 
@@ -8,16 +9,45 @@ const port = params?.get('port') || 10767;
 
 const baseURL = `http://${host}:${port}`;
 
-function UpdatePlayerData(data) {
+function NormalizeMetadata(author, title) {
+  let artist = author
+    ?.replace(/\s*-\s*Topic$/i, '')
+    ?.trim();
+
+  let track = title
+    ?.replace(/\s*\(Official.*?\)/gi, '')
+    ?.replace(/\s*\[Official.*?\]/gi, '')
+    ?.replace(/\s*Official Audio/gi, '')
+    ?.replace(/\s*Official Video/gi, '')
+    ?.trim();
+
+  if (artist && track) {
+    const escapedArtist = artist.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const regex = new RegExp(`^${escapedArtist}\\s*-\\s*`, 'i');
+
+    if (regex.test(track)) {
+      track = track.replace(regex, '').trim();
+    }
+  }
+
+  return {
+    artist,
+    track
+  };
+}
+
+async function UpdatePlayerData(data) {
   if (data.error) return data;
 
   const player = data?.player;
   const song = data?.video;
+  const meta = NormalizeMetadata(song?.author, song?.title);
 
   const isPlaying = (player?.trackState === 1);
-  const title = song?.title;
-  const artist = song?.author;
-  const albumCover = song?.thumbnails[song.thumbnails.length - 1].url;
+  const title = meta?.track || song?.title;
+  const artist = meta?.artist || song?.author;
+  const albumCover = await getCachedAlbumCover(artist, title) || song?.thumbnails[song.thumbnails.length - 1].url || '';
   const duration = {
     elapsed: Number(player?.videoProgress) || 0,
     remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
@@ -61,8 +91,8 @@ export default {
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
-    const handleStateUpdate = state => {
-      const data = UpdatePlayerData(state);
+    const handleStateUpdate = async state => {
+      const data = await UpdatePlayerData(state);
 
       if (!data || data?.error) return;
 
