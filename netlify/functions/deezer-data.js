@@ -13,9 +13,16 @@ export async function handler(event) {
     };
   }
 
+  const cleanTrack = track
+    ?.replace(/(\[.*?\]|\(.*?\))/g, '')
+    ?.replace(/ft\..*|feat\..*/i, '')
+    ?.trim();
+
+  const cleanArtist = artist.split('/')?.[0]?.split(',')?.[0]?.trim();
+
   try {
     const query = encodeURIComponent(
-      `${artist} ${track}`
+      `${cleanArtist} ${cleanTrack}`
     );
 
     const response = await fetch(

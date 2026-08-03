@@ -7,10 +7,17 @@ async function getMetadata(artist, track) {
   if (IsEmpty(artist) || IsEmpty(track))
     return null;
 
+  const cleanTrack = track
+    ?.replace(/(\[.*?\]|\(.*?\))/g, '')
+    ?.replace(/ft\..*|feat\..*/i, '')
+    ?.trim();
+
+  const cleanArtist = artist.split('/')?.[0]?.split(',')?.[0]?.trim();
+
   const params = new URLSearchParams({
     method: 'track.getInfo',
-    artist,
-    track,
+    artist: cleanArtist,
+    track: cleanTrack,
     api_key: import.meta.env.VITE_LASTFM_API_KEY,
     format: 'json'
   });
@@ -35,7 +42,6 @@ async function getMetadata(artist, track) {
       images.find(i => i.size === 'extralarge')?.['#text'] ||
       images.find(i => i.size === 'large')?.['#text'] ||
       null;
-
 
     return {
       title: info?.name || '',
