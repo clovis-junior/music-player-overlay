@@ -19,14 +19,12 @@ async function getMetadata(artist, track) {
       `https://ws.audioscrobbler.com/2.0/?${params}`
     );
 
-    if (!response.ok)
-      return null;
+    if (!response.ok) return null;
 
     const data = await response.json();
     const info = data?.track;
 
-    if (!info)
-      return null;
+    if (!info) return null;
 
     const images = info?.album?.image ?? [];
     const albumCover =
@@ -42,10 +40,9 @@ async function getMetadata(artist, track) {
       artist: info?.artist?.name || artist,
       album: info?.album?.title || '',
       albumCover: validCover
-    };
-
+    }
   } catch {
-    return null;
+    return null
   }
 }
 

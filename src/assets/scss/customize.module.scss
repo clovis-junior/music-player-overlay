@@ -72,6 +72,7 @@ $container: 1920px;
   }
 
   & select {
+    max-width: 240px;
     letter-spacing: 1px;
   }
 
@@ -356,6 +357,11 @@ $container: 1920px;
         font-weight: 300;
         font-size: 14px;
         color: rgba(var(--font-tertiary-color), 0.8);
+
+        & a {
+          color: inherit;
+          text-decoration: underline;
+        }
       }
     }
 

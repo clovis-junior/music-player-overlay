@@ -1,7 +1,7 @@
 @use "global.scss" as *;
 @use "sass:math";
 
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Display&display=swap");
+// @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Display&display=swap");
 
 /* ********************************************************
     Animations
@@ -229,6 +229,7 @@ $player-equalizer-gap: 2px;
 ******************************************************** */
 .music_player,
 .music_player_compact {
+  --font-family: ${$fonts};
   --scale: 2;
   --background-color: #{hexToRGB($dark-color)};
   --background-pallete-2nd: #{hexToRGB($dark-pallete-1st)};
@@ -251,7 +252,7 @@ $player-equalizer-gap: 2px;
   pointer-events: none;
   width: calc(100% - #{$size});
   height: #{$size};
-  font-family: "Noto Sans Display", $fonts;
+  font-family: var(--font-family);
   font-weight: 400;
   font-size: 1rem;
   transform: scale(var(--scale));

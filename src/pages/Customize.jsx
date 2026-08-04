@@ -7,13 +7,16 @@ import Player from '../components/Player'
 import { buildPlayerURL, decodeOptions } from '../functions/PlayerOptions'
 import { useNavigate } from 'react-router-dom'
 
-function WaveInput({
-  min = 0,
-  max = 40,
-  step = 1,
-  value = 0,
-  onChange
-}) {
+function WaveInput(props) {
+  const {
+    min = 0,
+    max = 40,
+    step = 1,
+    value = 0,
+    onChange,
+    ...inline
+  } = props;
+
   function normalizeWaveValue(value) {
     if (value === 0) return 0;
     if (value < 2) return 0;
@@ -46,6 +49,7 @@ function WaveInput({
 
   return (
     <input
+      {...inline}
       type="number"
       min={min}
       max={max}
@@ -57,7 +61,8 @@ function WaveInput({
 }
 
 function Switch(props) {
-  const { id, checked, onChange, ...inline } = props;
+  const { id, checked, onChange } = props;
+
   if (!id) return null;
 
   return (
@@ -66,8 +71,7 @@ function Switch(props) {
         id={id}
         type="checkbox"
         checked={checked}
-        onChange={e => onChange(e.target.checked)}
-        {...inline} />
+        onChange={e => onChange(e.target.checked)} />
       <span className={styles?.slider} />
     </label>
   )
@@ -98,7 +102,7 @@ function Setting(props) {
     <div className={classes}>
       <aside className={styles?.infos}>
         <span className={styles?.label}>{name}</span>
-        {disclaimer && (<span className={styles?.disclaimer}>{disclaimer}</span>)}
+        {disclaimer && (<span className={styles?.disclaimer} dangerouslySetInnerHTML={{ __html: disclaimer }} />)}
       </aside>
       <div className={styles?.content}>
         {children}
@@ -107,7 +111,8 @@ function Setting(props) {
   )
 }
 
-function Select({ id, value, options = [], onChange }) {
+function Select(props) {
+  const { id, value, options = [], onChange } = props;
   if (!id || options.length <= 0)
     return null;
 
@@ -128,6 +133,8 @@ function Select({ id, value, options = [], onChange }) {
 function Field({ option, value, onChange }) {
   const safeValue = value ?? option?.default ?? '';
 
+  console.log(option);
+
   switch (option?.type) {
     case 'boolean':
       return (
@@ -140,6 +147,7 @@ function Field({ option, value, onChange }) {
     case 'equalizer-input':
       return (
         <WaveInput
+          id={option?.key}
           min={option?.min}
           max={option?.max}
           value={value ?? option?.default ?? 0}
@@ -149,6 +157,7 @@ function Field({ option, value, onChange }) {
     case 'number':
       return (
         <input
+          id={option?.key}
           type="number"
           value={value}
           min={option?.min}
@@ -158,7 +167,9 @@ function Field({ option, value, onChange }) {
     case 'text':
       return (
         <input
+          id={option?.key}
           type="text"
+          size={option?.size}
           value={safeValue}
           onChange={e => onChange(e.target.value)} />
       );
@@ -334,6 +345,7 @@ export default function Customize() {
                   <Field
                     id={options[field.key]}
                     option={field}
+                    size={field?.size}
                     value={options[field.key]}
                     onChange={(value) =>
                       setOptions(prev => ({
@@ -367,7 +379,7 @@ export default function Customize() {
           <div className={styles?.widget_url_result}
             data-disabled={IsEmpty(finalURL)}
             onClick={() => {
-              if (IsEmpty(finalURL)) 
+              if (IsEmpty(finalURL))
                 return false;
 
               const copy = CopyToClipboard(finalURL);

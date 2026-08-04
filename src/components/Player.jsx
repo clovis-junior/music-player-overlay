@@ -109,6 +109,7 @@ export default function Player({ options = {} }) {
     ref: player,
     music: music || {},
     sleeping: sleeping,
+    style: { '--font-family': `"${options?.fontName}"`},
     ultraMode: options?.skin?.includes('ultra') || false,
     options: options,
     platformIcon

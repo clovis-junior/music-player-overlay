@@ -41,19 +41,32 @@ const options = Object.fromEntries(
 );
 
 export default function Plugin() {
-  const theme = params.get('css');
+  const theme = options?.css;
+  const selectedFont = options?.fontName;
 
   useEffect(() => {
-    if (theme) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.type = 'text/css';
-      link.href = decodeURIComponent(theme);
-      link.crossOrigin = 'anonymous';
+    if (!selectedFont) return;
 
-      return () => document.head.appendChild(link)
-    }
+    const formattedFont = selectedFont?.trim()?.replace(/\s+/g, '+');
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@300;400;500;700&display=swap`;
 
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = fontUrl;
+
+    return () => document.head.appendChild(link)
+  }, [selectedFont]);
+
+  useEffect(() => {
+    if (theme) return;
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = decodeURIComponent(theme);
+    link.crossOrigin = 'anonymous';
+
+    return () => document.head.appendChild(link)
   }, [theme]);
 
   return (

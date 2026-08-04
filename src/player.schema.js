@@ -1,3 +1,5 @@
+import { defaultFont, fontOptions } from './functions/GoogleFonts';
+
 const playerSchema = {
   skin: {
     type: 'select',
@@ -29,6 +31,16 @@ const playerSchema = {
     }],
     ui: {
       label: 'Player Skin',
+      category: 'Appearance'
+    }
+  },
+  fontName: {
+    type: 'select',
+    default: defaultFont,
+    values: fontOptions,
+    ui: {
+      label: 'Font name',
+      disclaimer: 'Fonts by <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer">Google Fonts</a>',
       category: 'Appearance'
     }
   },
@@ -299,6 +311,7 @@ const playerSchema = {
   },
   css: {
     type: 'text',
+    size: 36,
     default: '',
     ui: {
       label: 'Custom CSS',
