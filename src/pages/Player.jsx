@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import Player from '../components/Player'
 import playerSchema from '../player.schema'
 import { GetURLParams } from '../functions/Utils'
+import { defaultFont } from './functions/GoogleFonts'
 import style from '../assets/scss/player.module.scss'
 
 const params = GetURLParams();
@@ -42,17 +43,17 @@ const options = Object.fromEntries(
 
 export default function Plugin() {
   const theme = options?.css;
-  const selectedFont = options?.fontName;
+  const selectedFont = options?.fontName?.trim();
 
   useEffect(() => {
-    if (!selectedFont) return;
+    if (selectedFont !== defaultFont) return;
 
-    const formattedFont = selectedFont?.trim()?.replace(/\s+/g, '+');
-    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@300;400;500;700&display=swap`;
-
+    const formattedFont = selectedFont?.replace(/\s+/g, '+');
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}&display=swap`;
+    
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = fontUrl;
+    link.href = decodeURIComponent(fontUrl);
 
     return () => document.head.appendChild(link)
   }, [selectedFont]);
