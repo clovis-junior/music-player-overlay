@@ -644,7 +644,13 @@ $player-equalizer-gap: 2px;
       overflow: hidden !important;
 
       & .player_content {
-        @include backdrop-filter(blur(8px) grayscale(1) brightness(0.6) !important);
+        @include backdrop-filter(blur(2px) grayscale(0.1) !important);
+      }
+    }
+
+    &.light, &.vibrant {
+      & .player_content {
+        background-color: rgba(var(--background-color), 0.6);
       }
     }
 
@@ -701,37 +707,29 @@ $player-equalizer-gap: 2px;
       gap: 0 !important;
       background-color: transparent;
       overflow: initial !important;
-      background-color: rgba(var(--background-color), 0.6);
-      @include backdrop-filter(blur(2px) grayscale(0.2));
-      padding: 8px 10px 12px;
-
-      &:not(:has(.music_progress_bar)) {
-        -webkit-mask-image: linear-gradient(180deg, transparent 0%, white 8px white calc(100% + 8px), transparent 100%);
-        mask-image: linear-gradient(180deg, transparent 0%, white 8px, white calc(100% + 8px), transparent 100%);
-      }
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, white 8px white calc(100% + 8px), transparent 100%);
+      mask-image: linear-gradient(180deg, transparent 0%, white 8px, white calc(100% + 8px), transparent 100%);
+      background-color: rgba(var(--background-color), 0.4);
+      @include backdrop-filter(blur(4px) grayscale(0.2));
+      padding: 12px;
 
       & .music_progress_bar {
         width: 100%;
         height: 4px;
-        background-color: rgba(var(--background-pallete-2nd), 0.4) !important;
+        background-color: transparent !important;
+        @include backdrop-filter(unset !important);
         border-radius: 0 !important;
         position: absolute;
+        bottom: 0;
         right: 0;
         left: 0;
-        top: 0;
 
         & .music_progress_bar_fill {
           border-radius: 0 var(--radius) var(--radius) 0 !important;
           box-shadow: 0 0 2px rgb(var(--accent-color));
 
           &.with_pointer::after {
-            content: "";
-            z-index: 2;
-            width: 8px;
-            height: 8px;
-            box-shadow:
-              0 0 2px rgb(var(--accent-color)),
-              0 0 6px rgba(0, 0, 0, 0.6);
+            content: unset;
           }
         }
       }
