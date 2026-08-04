@@ -46,7 +46,7 @@ export default function Plugin() {
   const selectedFont = options?.fontName?.trim() || defaultFont;
 
   useEffect(() => {
-    if (!selectedFont || selectedFont === defaultFont) return;
+    if (!selectedFont) return;
 
     const formattedFont = selectedFont.replace(/\s+/g, '+');
     const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@300;400;500;700&display=swap`;
