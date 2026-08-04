@@ -118,5 +118,5 @@ export default function Player({ options = {} }) {
 
   const Skin = skins[options?.skin] || skins['default'];
 
-  return <Skin {...attrs} {} />
+  return <Skin {...attrs} />
 }
