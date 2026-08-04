@@ -43,23 +43,31 @@ const options = Object.fromEntries(
 
 export default function Plugin() {
   const theme = options?.css;
-  const selectedFont = options?.fontName?.trim();
+  const selectedFont = options?.fontName?.trim() || defaultFont;
 
   useEffect(() => {
-    if (selectedFont !== defaultFont) return;
+    if (!selectedFont || selectedFont === defaultFont) return;
 
-    const formattedFont = selectedFont?.replace(/\s+/g, '+');
-    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}&display=swap`;
-    
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = decodeURIComponent(fontUrl);
+    const formattedFont = selectedFont.replace(/\s+/g, '+');
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@300;400;500;700&display=swap`;
 
-    return () => document.head.appendChild(link)
+    let link = document.querySelector(`link[href="${fontUrl}"]`);
+
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = fontUrl;
+      document.head.appendChild(link);
+    }
+
+    return () => {
+      if (link && link.parentNode)
+        link.parentNode.removeChild(link);
+    }
   }, [selectedFont]);
 
   useEffect(() => {
-    if (theme) return;
+    if (!theme) return;
 
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -67,7 +75,12 @@ export default function Plugin() {
     link.href = decodeURIComponent(theme);
     link.crossOrigin = 'anonymous';
 
-    return () => document.head.appendChild(link)
+    document.head.appendChild(link);
+
+    return () => {
+      if (link.parentNode)
+        link.parentNode.removeChild(link);
+    }
   }, [theme]);
 
   return (
