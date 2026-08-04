@@ -133,8 +133,6 @@ function Select(props) {
 function Field({ option, value, onChange }) {
   const safeValue = value ?? option?.default ?? '';
 
-  console.log(option);
-
   switch (option?.type) {
     case 'boolean':
       return (
