@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import Player from '../components/Player'
 import playerSchema from '../player.schema'
 import { GetURLParams } from '../functions/Utils'
-import { defaultFont } from './functions/GoogleFonts'
+import { defaultFont } from '../functions/GoogleFonts'
 import style from '../assets/scss/player.module.scss'
 
 const params = GetURLParams();
