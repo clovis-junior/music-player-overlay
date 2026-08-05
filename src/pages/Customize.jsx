@@ -111,8 +111,6 @@ function Setting(props) {
   )
 }
 
-import React from 'react';
-
 export function SelectWithSearch(props) {
   const { id, value, options = [], onChange } = props;
 
