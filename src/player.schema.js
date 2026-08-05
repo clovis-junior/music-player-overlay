@@ -35,7 +35,7 @@ const playerSchema = {
     }
   },
   fontName: {
-    type: 'select',
+    type: 'select-with-search',
     default: defaultFont,
     values: fontOptions,
     ui: {

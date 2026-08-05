@@ -111,6 +111,40 @@ function Setting(props) {
   )
 }
 
+import React from 'react';
+
+export function SelectWithSearch(props) {
+  const { id, value, options = [], onChange } = props;
+
+  if (!id || options.length <= 0) return null;
+
+  const defaultValue = options?.default || 
+    options?.find(opt => opt?.default)?.value || 
+    options?.[0]?.value || '';
+
+  const currentValue = (value !== undefined || value !== null) 
+    ? value : defaultValue;
+
+  return (
+    <>
+      <input
+        id={id}
+        type="text"
+        list={`list-${id}`}
+        value={currentValue}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={(e) => e.target.select()} />
+      <datalist id={`list-${id}`}>
+        {options.map((option, index) => (
+          <option key={option.value || index} value={option.value || option.name}>
+            {option.name !== option.value ? option.name : null}
+          </option>
+        ))}
+      </datalist>
+    </>
+  )
+}
+
 function Select(props) {
   const { id, value, options = [], onChange } = props;
   if (!id || options.length <= 0)
@@ -122,8 +156,8 @@ function Select(props) {
       value={value ?? ''}
       onChange={e => onChange(e.target.value)}>
       {options.map((option, index) => (
-        <option key={index} value={option.value} checked={option.default}>
-          {option.name}
+        <option key={option.value || index} value={option.value || option.name}>
+          {option.name !== option.value ? option.name : null}
         </option>
       ))}
     </select>
@@ -170,6 +204,14 @@ function Field({ option, value, onChange }) {
           size={option?.size}
           value={safeValue}
           onChange={e => onChange(e.target.value)} />
+      );
+    case 'select-with-search':
+      return (
+        <SelectWithSearch
+          id={option?.key}
+          value={safeValue}
+          options={option?.values}
+          onChange={onChange} />
       );
     case 'select':
       return (
