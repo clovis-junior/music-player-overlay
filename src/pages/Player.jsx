@@ -49,7 +49,7 @@ export default function Plugin() {
     if (!selectedFont) return;
 
     const formattedFont = selectedFont.replace(/\s+/g, '+');
-    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@300;400;500;700&display=swap`;
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:wght@100..900&display=swap`;
 
     let link = document.querySelector(`link[href="${fontUrl}"]`);
 
