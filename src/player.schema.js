@@ -247,6 +247,14 @@ const playerSchema = {
       category: 'Theme'
     }
   },
+  albumArtNoBlur: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Remove the blur on default theme',
+      category: 'Theme'
+    }
+  },
   removeContent: {
     type: 'boolean',
     default: false,

@@ -364,11 +364,15 @@ export function Vinyl(props) {
   )
 }
 
+export function MusicAlbumBackground({ noBlur = false, albumImage = null, altText = '' }) {
+  const style = [
+    styles?.music_album_art,
+    noBlur && styles?.no_blur
+  ].filter(Boolean).join(' ');
 
-export function MusicAlbumBackground({ albumImage = null, altText = '' }) {
   return (
     <figure className={styles?.music_album_blur_container}>
-      <AsyncImage className={styles?.music_album_art} src={albumImage} alt={altText} />
+      <AsyncImage className={style} src={albumImage} alt={altText} />
     </figure>
   )
 }

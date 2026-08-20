@@ -69,7 +69,10 @@ function PlayerContent({ platformIcon = null, options = {}, music = {} }) {
   return (
     <div className={contentClasses}>
       {(options?.skin === 'default' && options?.theme === 'default') && (
-        <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
+        <MusicAlbumBackground
+          noBlur={options?.albumArtNoBlur}
+          albumImage={music?.albumCover}
+          altText={music?.title} />
       )}
       <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
         {((options?.removeAlbumArt || options?.showVinyl) && options?.showPlatformIcon) && (
@@ -209,7 +212,10 @@ export function CompactSkin(props) {
   return (
     <main {...inline} className={playerClasses}>
       {(options?.theme === 'default') && (
-        <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
+        <MusicAlbumBackground
+          noBlur={options?.albumArtNoBlur}
+          albumImage={music?.albumCover}
+          altText={music?.title} />
       )}
       {!options?.hideProgressBar && (
         <ProgressBar
@@ -237,7 +243,10 @@ export function VerticalSkin(props) {
   return (
     <main {...inline} className={playerClasses}>
       {(options?.theme === 'default') && (
-        <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
+        <MusicAlbumBackground
+          noBlur={options?.albumArtNoBlur}
+          albumImage={music?.albumCover}
+          altText={music?.title} />
       )}
       {!options?.removeAlbumArt && (
         <MusicArt
@@ -263,7 +272,10 @@ export function AlternativeSkin(props) {
   return (
     <main {...inline} className={playerClasses}>
       {(options?.theme === 'default') && (
-        <MusicAlbumBackground albumImage={music?.albumCover} altText={music?.title} />
+        <MusicAlbumBackground
+          noBlur={options?.albumArtNoBlur}
+          albumImage={music?.albumCover}
+          altText={music?.title} />
       )}
       {!options?.removeAlbumArt && (
         <MusicArt

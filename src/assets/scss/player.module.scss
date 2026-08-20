@@ -93,6 +93,11 @@ $player-equalizer-gap: 2px;
       position: absolute;
       left: 50%;
       top: 50%;
+
+      &.no_blur {
+        filter: blur(0) brightness(25%);
+        transform: translate(-50%, -50%) scale(1);
+      }
     }
   }
 }
@@ -646,7 +651,8 @@ $player-equalizer-gap: 2px;
       }
     }
 
-    &.light, &.vibrant {
+    &.light,
+    &.vibrant {
       & .player_content {
         background-color: rgba(var(--background-color), 0.6);
       }
