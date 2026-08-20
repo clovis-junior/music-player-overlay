@@ -254,6 +254,7 @@ export default function Customize() {
   const params = GetURLParams();
 
   const [alerts, setAlerts] = useState([]);
+  const [, setLocalFontsLoaded] = useState(false);
 
   const initialURL = params?.has('url')
     ? decodeURIComponent(params?.get('url'))
@@ -282,36 +283,38 @@ export default function Customize() {
     return IsEmpty(playerURL) || !URLValidade(playerURL);
   }, [playerURL]);
 
-  const groups = useMemo(() => {
-    return Object.entries(playerSchema).reduce((result, [key, option]) => {
-      const category = option.ui.category;
+  const groups = Object.entries(playerSchema).reduce((result, [key, option]) => {
+    const category = option.ui.category;
 
-      if (!result[category])
-        result[category] = [];
+    if (!result[category])
+      result[category] = [];
 
-      result[category].push({
-        key,
-        ...option
-      });
+    result[category].push({
+      key,
+      ...option,
+      values: option.values,
+      ui: {
+        ...option.ui,
+        disclaimer: option.ui.disclaimer
+      }
+    });
 
-      return result
-    }, {})
-  }, []);
-
-  const [, forceUpdate] = useState({});
+    return result
+  }, {});
 
   useEffect(() => {
-    const handleUpdate = () => forceUpdate({});
+    const handleUpdate = () => setLocalFontsLoaded(true);
     window.addEventListener('local-fonts-updated', handleUpdate);
 
     checkAndLoadLocalFonts().then(hasPermission => {
-      if (hasPermission) {
-        forceUpdate({});
-      }
+      if (hasPermission)
+        setLocalFontsLoaded(true);
+
     });
 
     return () => window.removeEventListener('local-fonts-updated', handleUpdate);
   }, []);
+  
 
   function handleURLChange(event) {
     const nextURL = event.target.value;
