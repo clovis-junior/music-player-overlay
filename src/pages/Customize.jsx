@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { GetURLParams, IsEmpty, URLValidade, CopyToClipboard, GenerateRandomString } from '../functions/Utils'
 import styles from '../assets/scss/customize.module.scss'
 import Alert from '../components/Alert'
+import { checkAndLoadLocalFonts } from '../functions/LocalFonts'
 import playerSchema, { defaultPlayerOptions } from '../player.schema'
-import Player from '../components/Player'
 import { buildPlayerURL, decodeOptions } from '../functions/PlayerOptions'
 import { useNavigate } from 'react-router-dom'
 
@@ -296,6 +296,21 @@ export default function Customize() {
 
       return result
     }, {})
+  }, []);
+
+  const [, forceUpdate] = useState({});
+
+  useEffect(() => {
+    const handleUpdate = () => forceUpdate({});
+    window.addEventListener('local-fonts-updated', handleUpdate);
+
+    checkAndLoadLocalFonts().then(hasPermission => {
+      if (hasPermission) {
+        forceUpdate({});
+      }
+    });
+
+    return () => window.removeEventListener('local-fonts-updated', handleUpdate);
   }, []);
 
   function handleURLChange(event) {

@@ -1,4 +1,5 @@
-import { defaultFont, fontOptions } from './functions/GoogleFonts';
+import { defaultFont, fontOptions as googleFontOptions } from './functions/GoogleFonts';
+import { fontOptions as localFontOptions } from './functions/LocalFonts';
 
 const playerSchema = {
   skin: {
@@ -37,10 +38,16 @@ const playerSchema = {
   fontName: {
     type: 'select-with-search',
     default: defaultFont,
-    values: fontOptions,
+    get values() {
+      return localFontOptions.length > 0 ? localFontOptions : googleFontOptions;
+    },
     ui: {
       label: 'Font name',
-      disclaimer: 'Fonts by <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer">Google Fonts</a>',
+      get disclaimer() {
+        return localFontOptions.length > 0 
+          ? '<a href="ms-settings:fonts">Check your installed fonts</a>' 
+          : 'By <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer"> Google Fonts</a> (or <a href="#" onclick="window.handleLoadLocalFonts(); return false;">detect PC fonts</a>).';
+      },
       category: 'Appearance'
     }
   },
