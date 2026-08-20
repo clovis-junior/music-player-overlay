@@ -130,9 +130,15 @@ function DefaultFooter({
   return (
     <footer className={classes}>
       {musicTimes}
-      <div className={styles?.feature}>
-        {options?.swapProgressBar ? (<Equalizer size={options?.equalizer} />) : progressBarComponent}
-      </div>
+      {options?.swapProgressBar ? (
+        <div className={styles?.feature}>
+          <Equalizer size={options?.equalizer} />
+        </div>
+      ) : progressBarComponent && (
+        <div className={styles?.feature}>
+          {progressBarComponent}
+        </div>
+      )}
     </footer>
   )
 }
