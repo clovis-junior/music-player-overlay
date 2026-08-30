@@ -565,6 +565,7 @@ $player-equalizer-gap: 2px;
     $padding-gap: 10px;
     $alternate-size: calc($size - $padding-gap);
 
+    width: calc(calc($size * 3) + $padding-gap);
     height: auto;
     gap: calc($padding-gap + 4px);
     padding: calc($padding-gap * 1.25);
@@ -584,6 +585,7 @@ $player-equalizer-gap: 2px;
     }
 
     &:has(.music_album_art), &:has(.vinyl) {
+      width: initial;
       padding: calc($padding-gap * 1.25) $padding-gap;
       
       & .player_content {
@@ -593,7 +595,7 @@ $player-equalizer-gap: 2px;
     }
 
     &:has(.vinyl) {
-      padding: calc($padding-gap * 1.25) calc($padding-gap + 6px) calc($padding-gap * 1.25) $padding-gap;
+      padding-left: calc($padding-gap + 6px);
       
       & .player_content {
         padding-right: $padding-gap;
