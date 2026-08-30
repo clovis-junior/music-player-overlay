@@ -583,7 +583,7 @@ $player-equalizer-gap: 2px;
         padding-left: 0;
     }
 
-    &:has(.music_album_art, .vinyl) {
+    &:has(.music_album_art), &:has(.vinyl) {
       padding: calc($padding-gap * 1.25) $padding-gap;
       
       & .player_content {
@@ -593,7 +593,7 @@ $player-equalizer-gap: 2px;
     }
 
     &:has(.vinyl) {
-      padding-left: calc($padding-gap + 6px);
+      padding: calc($padding-gap * 1.25) calc($padding-gap + 6px) calc($padding-gap * 1.25) $padding-gap;
       
       & .player_content {
         padding-right: $padding-gap;
