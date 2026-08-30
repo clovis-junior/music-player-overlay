@@ -565,7 +565,7 @@ $player-equalizer-gap: 2px;
   $padding-gap: 10px;
   $alternate-size: calc(#{$size} - #{$padding-gap});
 
-  width: calc((#{$size} * 3) + #{$padding-gap});
+  width: calc((#{$size} * 4) + #{$padding-gap});
   height: auto;
   gap: calc(#{$padding-gap} + 4px);
   padding: calc(#{$padding-gap} * 1.25) $padding-gap;
@@ -584,15 +584,16 @@ $player-equalizer-gap: 2px;
     padding-left: 0;
   }
 
-  &:not(:has(.music_album_art, .vinyl)) {
-      width: calc((#{$size} * 2) + #{$padding-gap});
-      padding: calc(#{$padding-gap} * 1.25);
+  &:not(:has(.music_album_art)),
+  &:not(:has(.vinyl)) {
+    width: calc((#{$size} * 2) + #{$padding-gap});
+    padding: calc(#{$padding-gap} * 1.25);
   
-      .player_content {
-        flex-basis: initial;
-        max-width: 100%;
-      }
+    .player_content {
+      flex-basis: initial;
+      max-width: 100%;
     }
+  }
   
     &:has(.vinyl) {
       padding-left: calc(#{$padding-gap} + 6px);
