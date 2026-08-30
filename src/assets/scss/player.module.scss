@@ -590,18 +590,17 @@ $player-equalizer-gap: 2px;
       }
     }
 
-    &:has(.music_album_art) {
-      padding: calc($padding-gap * 1.25) $padding-gap;
-    }
-
     &:has(.music_album_art, .vinyl) {
       width: calc(calc($size * 3) + $padding-gap);
-      padding: calc($padding-gap * 1.25) $padding-gap;
 
       & .player_content {
         flex-basis: calc(100% - calc($size + $padding-gap));
         max-width: calc(100% - calc($size + $padding-gap));
       }
+    }
+
+    &:has(.music_album_art) {
+      padding: calc($padding-gap * 1.25) $padding-gap;
     }
 
     &:has(.vinyl) {
