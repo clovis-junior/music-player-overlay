@@ -496,7 +496,7 @@ $player-equalizer-gap: 2px;
     @include backdrop-filter(blur(8px));
     box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
 
-    &:not(:has(.music_album_blur_container)) {
+    &:not(:has(> .music_album_blur_container)) {
       text-shadow: 0 0 0 transparent !important;
     }
 
@@ -584,8 +584,8 @@ $player-equalizer-gap: 2px;
     padding-left: 0;
   }
 
-  &:has(.music_album_art, .vinyl) {
-    width: auto;
+  &:has(> .music_album_art, > .vinyl) {
+    width: inherit;
     padding: calc(#{$padding-gap} * 1.25) $padding-gap;
 
     .player_content {
@@ -594,7 +594,7 @@ $player-equalizer-gap: 2px;
     }
   }
   
-  &:has(.vinyl) {
+  &:has(> .vinyl) {
     padding-left: calc(#{$padding-gap} + 6px);
 
     .player_content {
@@ -610,7 +610,7 @@ $player-equalizer-gap: 2px;
     overflow: hidden !important;
     position: relative;
 
-    &:not(:has(.vinyl)) {
+    &:not(:has(> .vinyl)) {
       border-radius: var(--radius);
       border: 1px solid rgba(var(--background-color), 0.5);
       background-color: rgba(var(--background-color), 0.35) !important;
@@ -656,7 +656,7 @@ $player-equalizer-gap: 2px;
       }
     }
 
-    &:has(.vinyl):not(:has(.player_content)) {
+    &:has(> .vinyl):not(:has(> .player_content)) {
       overflow: initial !important;
       background-color: transparent !important;
       box-shadow: 0 0 0 transparent !important;
@@ -802,7 +802,7 @@ $player-equalizer-gap: 2px;
     & .player_content {
       @extend .music_player_surface;
 
-      &:not(:has(.music_album_blur_container)) {
+      &:not(:has(> .music_album_blur_container)) {
         text-shadow: 0 0 0 transparent !important;
       }
     }
@@ -813,14 +813,14 @@ $player-equalizer-gap: 2px;
       padding-top: initial;
     }
 
-    &:has(.player_content) {
+    &:has(> .player_content) {
       & .vinyl {
         width: $size;
         height: $size;
       }
     }
 
-    &:not(:has(.player_content)) {
+    &:not(:has(> .player_content)) {
       & .vinyl {
         flex-grow: 0;
         flex-basis: initial;
@@ -1222,7 +1222,7 @@ $player-equalizer-gap: 2px;
     }
   }
 
-  &:not(:has(.music_album_blur_container)),
+  &:not(:has(> .music_album_blur_container)),
   &.transparent,
   &.vibrant {
     text-shadow: 0 0 0 transparent !important;
