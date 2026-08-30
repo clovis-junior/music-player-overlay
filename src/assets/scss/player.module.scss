@@ -574,14 +574,12 @@ $player-equalizer-gap: 2px;
     flex-grow: 0;
     flex-basis: $alternate-size;
   }
-
+  
   .player_content {
     flex-basis: initial;
     max-width: 100%;
     height: $alternate-size;
-    padding-top: math.div($padding-gap, 2);
-    padding-bottom: math.div($padding-gap, 2);
-    padding-left: 0;
+    padding: math.div($padding-gap, 2);
   }
 
   &:has(> .music_album_art, > .vinyl) {
@@ -591,6 +589,7 @@ $player-equalizer-gap: 2px;
     .player_content {
       flex-basis: calc(100% - (#{$size} + #{$padding-gap}));
       max-width: calc(100% - (#{$size} + #{$padding-gap}));
+      padding-left: 0;
     }
   }
   
