@@ -567,7 +567,7 @@ $player-equalizer-gap: 2px;
 
     height: auto;
     gap: calc($padding-gap + 4px);
-    padding: calc($padding-gap * 1.25) $padding-gap;
+    padding: calc($padding-gap * 1.25);
 
     & .music_album_art {
       flex-grow: 0;
@@ -575,32 +575,28 @@ $player-equalizer-gap: 2px;
     }
 
     & .player_content {
-      flex-basis: calc(100% - calc($size + $padding-gap));
-      max-width: calc(100% - calc($size + $padding-gap));
-      height: $alternate-size;
-      padding-bottom: math.div($padding-gap, 2);
-      padding-top: math.div($padding-gap, 2);
-      padding-left: 0;
-    }
-
-    &:has(.vinyl) {
-      padding-left: calc($padding-gap + 6px);
-      & .player_content {
-        padding-right: $padding-gap;
-      }
-    }
-
-    &:not(:has(.music_album_art, .vinyl)) {
-      width: calc(calc($size * 3) + $padding-gap);
-      padding: calc($padding-gap * 1.25);
-
-      & .player_content {
         flex-basis: initial;
         max-width: 100%;
         height: $alternate-size;
         padding-bottom: math.div($padding-gap, 2);
         padding-top: math.div($padding-gap, 2);
         padding-left: 0;
+    }
+
+    &:has(.music_album_art, .vinyl) {
+      padding: calc($padding-gap * 1.25) $padding-gap;
+      
+      & .player_content {
+        flex-basis: calc(100% - calc($size + $padding-gap));
+        max-width: calc(100% - calc($size + $padding-gap));
+      }
+    }
+
+    &:has(.vinyl) {
+      padding-left: calc($padding-gap + 6px);
+      
+      & .player_content {
+        padding-right: $padding-gap;
       }
     }
   }
