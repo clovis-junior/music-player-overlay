@@ -1,11 +1,12 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { GetURLParams, IsEmpty, URLValidade, CopyToClipboard, GenerateRandomString } from '../functions/Utils'
-import styles from '../assets/scss/customize.module.scss'
-import Alert from '../components/Alert'
 import { checkAndLoadLocalFonts } from '../functions/LocalFonts'
 import playerSchema, { defaultPlayerOptions } from '../player.schema'
 import { buildPlayerURL, decodeOptions } from '../functions/PlayerOptions'
-import { useNavigate } from 'react-router-dom'
+import { CreateSettings, LoadSettings } from '../functions/Settings'
+import styles from '../assets/scss/customize.module.scss'
+import Alert from '../components/Alert'
 
 function WaveInput(props) {
   const {
@@ -116,11 +117,11 @@ export function SelectWithSearch(props) {
 
   if (!id || options.length <= 0) return null;
 
-  const defaultValue = options?.default || 
-    options?.find(opt => opt?.default)?.value || 
+  const defaultValue = options?.default ||
+    options?.find(opt => opt?.default)?.value ||
     options?.[0]?.value || '';
 
-  const currentValue = (value !== undefined || value !== null) 
+  const currentValue = (value !== undefined || value !== null)
     ? value : defaultValue;
 
   return (
@@ -256,6 +257,8 @@ export default function Customize() {
   const [alerts, setAlerts] = useState([]);
   const [, setLocalFontsLoaded] = useState(false);
 
+  const settingsInputRef = useRef(null);
+
   const initialURL = params?.has('url')
     ? decodeURIComponent(params?.get('url'))
     : '';
@@ -314,7 +317,6 @@ export default function Customize() {
 
     return () => window.removeEventListener('local-fonts-updated', handleUpdate);
   }, []);
-  
 
   function handleURLChange(event) {
     const nextURL = event.target.value;
@@ -370,6 +372,32 @@ export default function Customize() {
               readOnly={params?.has('url')}
               placeholder="Paste your URL Player here"
             />
+            <input
+              ref={settingsInputRef}
+              type="file"
+              accept=".json,application/json"
+              hidden
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+
+                if (!file) return;
+
+                try {
+                  const settings = await LoadSettings(file);
+
+                  setOptions({
+                    ...defaultPlayerOptions,
+                    ...settings
+                  });
+
+                  showAlert('success', 'Settings has loaded successfully!')
+                } catch {
+                  showAlert('error', 'Failed to load settings!')
+                }
+
+                event.target.value = ''
+              }}
+            />
             <aside className={styles?.buttons}>
               <button className={styles?.button} onClick={() => {
                 if (finalURL.length <= 0)
@@ -380,6 +408,11 @@ export default function Customize() {
                 showAlert('success', 'Default settings has loaded!')
               }} disabled={disabled}>
                 Set Default Settings
+              </button>
+              <button className={styles?.button}
+                disabled={disabled}
+                onClick={() => settingsInputRef.current?.click()}>
+                Load Settings
               </button>
               <button className={styles?.button} onClick={() => navigate('/')}>
                 Back to Homepage
@@ -450,9 +483,19 @@ export default function Customize() {
             <span className={styles?.label}>Click to copy this URL and use it on you streaming software</span>
             <input type="text" readOnly={true} value={finalURL} />
           </div>
-          <aside className={styles?.buttons} onClick={openPlayer}>
-            <button className={styles?.button} disabled={IsEmpty(finalURL)}>
+          <aside className={styles?.buttons}>
+            <button className={styles?.button} disabled={IsEmpty(finalURL)} onClick={openPlayer}>
               Open on new Window
+            </button>
+            <button className={styles?.button}
+              disabled={IsEmpty(finalURL)}
+              onClick={() => {
+                if (IsEmpty(finalURL))
+                  return false;
+
+                return CreateSettings(options)
+              }}>
+              Save Settings
             </button>
           </aside>
         </div>
