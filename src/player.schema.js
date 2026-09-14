@@ -39,14 +39,19 @@ const playerSchema = {
     type: 'select-with-search',
     default: defaultFont,
     get values() {
-      return localFontOptions.length > 0 ? localFontOptions : googleFontOptions;
+      return [
+        ...googleFontOptions,
+        ...localFontOptions.filter(localFont =>
+          !googleFontOptions.some(
+            googleFont => googleFont.value === localFont.value
+          )
+        )
+      ]
     },
     ui: {
       label: 'Font name',
       get disclaimer() {
-        return localFontOptions.length > 0 
-          ? '<a href="ms-settings:fonts">Check your installed fonts</a>' 
-          : 'By <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer"> Google Fonts</a> (or <a href="#" onclick="window.handleLoadLocalFonts(); return false;">detect PC fonts</a>).';
+        return `Using <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer">Google Fonts</a>${localFontOptions.length > 0 ? ' and PC fonts.' : '. <a href="#" onclick="window.handleLoadLocalFonts(); return false;">Detect PC fonts</a>.'}`
       },
       category: 'Appearance'
     }

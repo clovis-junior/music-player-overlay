@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Vibrant } from 'node-vibrant/browser'
-import { defaultFont } from '../functions/GoogleFonts'
-import { GetURLParams, ConvertTime } from '../functions/Utils'
+import { GetURLParams } from '../functions/Utils'
 import { useMusicPlatform } from '../hooks/MusicPlatform.js'
 
 import { AlbumArtCardSkin, AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins'
