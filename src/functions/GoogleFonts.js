@@ -15,9 +15,9 @@ if (fontOptions.length === 0) {
 }
 
 export function isGoogleFont(fontName) {
-  return fontOptions.some(
-    font => font.value === fontName
-  )
+  if (!fontName) return false;
+  
+  return fontOptions?.some(font => font.value === fontName)
 }
 
 async function getGoogleFonts(sort = 'popularity') {
