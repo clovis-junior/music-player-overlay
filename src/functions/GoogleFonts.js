@@ -14,6 +14,12 @@ if (fontOptions.length === 0) {
   })
 }
 
+export function isGoogleFont(fontName) {
+  return fontOptions.some(
+    font => font.value === fontName
+  )
+}
+
 async function getGoogleFonts(sort = 'popularity') {
   const params = new URLSearchParams({
     key: import.meta.env.VITE_GOOGLE_API_KEY,
