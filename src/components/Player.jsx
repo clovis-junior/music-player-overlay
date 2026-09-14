@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Vibrant } from 'node-vibrant/browser'
 import { GetURLParams } from '../functions/Utils'
+import { defaultFont } from '../functions/GoogleFonts'
 import { useMusicPlatform } from '../hooks/MusicPlatform.js'
 
 import { AlbumArtCardSkin, AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins'
@@ -109,7 +110,7 @@ export default function Player({ options = {} }) {
     ref: player,
     music: music || {},
     sleeping: sleeping,
-    style: {'--font-family': `"${options?.fontName}"`},
+    style: {'--font-family': `"${options?.fontName || defaultFont}"`},
     ultraMode: options?.skin?.includes('ultra') || false,
     options: options,
     platformIcon
