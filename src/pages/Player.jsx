@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import Player from '../components/Player'
 import playerSchema from '../player.schema'
 import { GetURLParams } from '../functions/Utils'
-import { defaultFont } from '../functions/GoogleFonts'
+import { defaultFont, isGoogleFont } from '../functions/GoogleFonts'
 import style from '../assets/scss/player.module.scss'
 
 const params = GetURLParams();
@@ -46,7 +46,8 @@ export default function Plugin() {
   const selectedFont = options?.fontName?.trim() || defaultFont;
 
   useEffect(() => {
-    if (!selectedFont) return;
+    if (!selectedFont || !isGoogleFont(selectedFont))
+      return;
 
     const formattedFont = selectedFont.replace(/\s+/g, '+');
     const fontUrl = `https://fonts.googleapis.com/css2?family=${formattedFont}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap`;
@@ -57,6 +58,7 @@ export default function Plugin() {
       link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = fontUrl;
+      // link.dataset.googleFont = selectedFont;
       document.head.appendChild(link);
     }
 
