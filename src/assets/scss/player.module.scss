@@ -609,7 +609,7 @@ $player-equalizer-gap: 2px;
     overflow: hidden !important;
     position: relative;
 
-    &:not(:has(> .vinyl)) {
+    &:not(:has(.vinyl)) {
       border-radius: var(--radius);
       border: 1px solid rgba(var(--background-color), 0.5);
       background-color: rgba(var(--background-color), 0.35) !important;
@@ -655,7 +655,7 @@ $player-equalizer-gap: 2px;
       }
     }
 
-    &:has(> .vinyl):not(:has(> .player_content)) {
+    &:has(.vinyl):not(:has(.player_content)) {
       overflow: initial !important;
       background-color: transparent !important;
       box-shadow: 0 0 0 transparent !important;
