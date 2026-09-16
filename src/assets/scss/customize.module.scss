@@ -214,24 +214,14 @@ $container: 1920px;
     display: block;
     object-fit: cover;
     border-radius: 100%;
-    outline: 2px solid $theme-color;
+    border: 2px solid $theme-color;
     box-shadow:
       0 0 2px $theme-color,
       0 0 4px $theme-color,
       0 0 8px $theme-color,
       0 0 2px $theme-color inset,
       0 0 4px $theme-color inset;
-    transition: transform 360ms ease-in-out;
     -webkit-user-drag: none;
-
-    &:hover {
-      transform: rotateY(180deg);
-    }
-
-    &:active {
-      transition: transform 180ms ease-out;
-      transform: rotateY(180deg) scale(0.9);
-    }
   }
 
   & .scroll {
