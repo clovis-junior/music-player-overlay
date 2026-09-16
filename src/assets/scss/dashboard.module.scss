@@ -28,8 +28,8 @@ $border-radius: 10px !default;
   --font-tertiary-color: #{hexToRGB($dark-pallete-3rd)};
 
   @media (prefers-color-scheme: dark) {
-    --background-color: #{hexToRGB($dark-pallete-2nd)};
-    --foreground-color: #{hexToRGB($dark-pallete-1st)};
+    --background-color: #{hexToRGB($dark-pallete-1st)};
+    --foreground-color: #{hexToRGB($dark-pallete-4th)};
 
     --font-primary-color: #{hexToRGB($light-pallete-1st)};
     --font-secondary-color: #{hexToRGB($light-pallete-2nd)};
@@ -172,13 +172,32 @@ $border-radius: 10px !default;
     }
   }
 
-  .platform_logo {
+  .platform_logo,
+  .base_logo {
     max-width: calc(100% - 10rem);
     max-height: 6rem;
     display: block;
     margin: 0 auto;
     object-fit: cover;
     -webkit-user-drag: none;
+  }
+
+  .base_logo {
+    border-radius: 100%;
+    outline: 4px solid $theme-color;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 2px $theme-color, 0 0 4px $theme-color, 0 0 8px $theme-color, 0 0 16px $theme-color,
+    0 0 2px $theme-color inset, 0 0 4px $theme-color inset, 0 0 8px $theme-color inset;
+    transition: transform 360ms ease-in-out;
+
+    &:hover {
+      transform: rotateY(180deg);
+    }
+
+    &:active {
+      transition: transform 180ms ease-out;
+      transform: rotateY(180deg) scale(0.9);
+    }
   }
 
   .user_select_valid {
@@ -263,7 +282,7 @@ $border-radius: 10px !default;
     transition: all 100ms ease;
 
     &:hover {
-      background-color: $info-color;
+      background-color: $light-pallete-2nd;
     }
 
     &:disabled {

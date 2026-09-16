@@ -114,7 +114,7 @@ $container: 1920px;
     transition: all 100ms ease;
 
     &:hover {
-      background-color: $info-color;
+      background-color: $theme-pallete-1st;
       color: $light-color;
     }
 
@@ -127,10 +127,6 @@ $container: 1920px;
 
     &:not(:disabled):hover {
       cursor: pointer;
-    }
-
-    &:not(:disabled):active {
-      transform: scale(0.9);
     }
   }
 
@@ -172,7 +168,7 @@ $container: 1920px;
       opacity: 0;
 
       &:checked + .slider {
-        background-color: $success-color;
+        background-color: $theme-color;
       }
 
       &:checked + .slider::before {
@@ -209,6 +205,33 @@ $container: 1920px;
     max-width: $container;
     margin: auto;
     gap: 24px;
+  }
+
+  & .logo {
+    cursor: pointer;
+    width: 3rem;
+    height: 3rem;
+    display: block;
+    object-fit: cover;
+    border-radius: 100%;
+    outline: 2px solid $theme-color;
+    box-shadow:
+      0 0 2px $theme-color,
+      0 0 4px $theme-color,
+      0 0 8px $theme-color,
+      0 0 2px $theme-color inset,
+      0 0 4px $theme-color inset;
+    transition: transform 360ms ease-in-out;
+    -webkit-user-drag: none;
+
+    &:hover {
+      transform: rotateY(180deg);
+    }
+
+    &:active {
+      transition: transform 180ms ease-out;
+      transform: rotateY(180deg) scale(0.9);
+    }
   }
 
   & .scroll {
@@ -311,7 +334,7 @@ $container: 1920px;
       display: block;
       font-weight: 800;
       font-size: 1rem;
-      color: $info-color;
+      color: $theme-pallete-2nd;
     }
   }
 

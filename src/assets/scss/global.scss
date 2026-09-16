@@ -45,6 +45,11 @@ $warning-color: #f97316;
 $danger-color: #dc2626;
 $success-color: #16a34a;
 
+$theme-color: #35d6de !default;
+$theme-pallete-1st: #13878f !default;
+$theme-pallete-2nd: #085d65 !default;
+$theme-pallete-3rd: #023c40 !default;
+
 $amazon-color: #0077c1;
 $apple-color: #fc3c44;
 $spotify-color: #1db954;
@@ -72,6 +77,13 @@ $youtube-color: #ff0033;
   }
 }
 
+@keyframes ripple-effect {
+  100% {
+    transform: scale(4);
+    filter: opacity(0);
+  }
+}
+
 /* ********************************************************
     Base
 ******************************************************** */
@@ -88,8 +100,10 @@ body {
 }
 
 ::selection {
-  background-color: $dark-pallete-1st;
-  color: $info-color;
+  background-color: $theme-color;
+  color: $light-color;
+  filter: initial !important;
+  text-shadow: initial !important;
 }
 
 ::-webkit-scrollbar {
@@ -161,5 +175,21 @@ body {
         animation-duration: 1s + (math.random(600) * 1ms);
       }
     }
+  }
+}
+
+*[data-ripple] {
+  overflow: hidden !important;
+  position: relative !important;
+
+  & .ripple {
+    z-index: 9;
+    pointer-events: none;
+    border-radius: 50%;
+    background-color: #fff;
+    filter: opacity(0.2);
+    animation: ripple-effect 800ms linear;
+    transform: scale(0);
+    position: absolute;
   }
 }

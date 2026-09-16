@@ -5,8 +5,10 @@ import { checkAndLoadLocalFonts } from '../functions/LocalFonts'
 import playerSchema, { defaultPlayerOptions } from '../player.schema'
 import { buildPlayerURL, decodeOptions } from '../functions/PlayerOptions'
 import { CreateSettings, LoadSettings } from '../functions/Settings'
-import styles from '../assets/scss/customize.module.scss'
+import AsyncImage from '../components/AsyncImage'
+import Ripple from '../components/Ripple'
 import Alert from '../components/Alert'
+import styles from '../assets/scss/customize.module.scss'
 
 function WaveInput(props) {
   const {
@@ -364,7 +366,9 @@ export default function Customize() {
     <div className={styles?.widget_page}>
       <header className={styles?.widget_header}>
         <div className={styles?.container}>
-          <h2>Customize</h2>
+          <figure>
+            <AsyncImage className={styles.logo} src="/android-icon-48x48.png" alt="Ornidget" />
+          </figure>
           <div className={styles?.scroll}>
             <input id="url" type="text"
               value={playerURL}
@@ -372,34 +376,39 @@ export default function Customize() {
               readOnly={params?.has('url')}
               placeholder="Paste your URL Player here"
             />
-            <input
-              ref={settingsInputRef}
-              type="file"
-              accept=".json,application/json"
-              hidden
-              onChange={async (event) => {
-                const file = event.target.files?.[0];
-
-                if (!file) return;
-
-                try {
-                  const settings = await LoadSettings(file);
-
-                  setOptions({
-                    ...defaultPlayerOptions,
-                    ...settings
-                  });
-
-                  showAlert('success', 'Settings has loaded successfully!')
-                } catch {
-                  showAlert('error', 'Failed to load settings!')
-                }
-
-                event.target.value = ''
-              }}
-            />
             <aside className={styles?.buttons}>
-              <button className={styles?.button} onClick={() => {
+              <input
+                ref={settingsInputRef}
+                type="file"
+                accept=".json,application/json"
+                hidden
+                onChange={async (event) => {
+                  const file = event.target.files?.[0];
+
+                  if (!file) return;
+
+                  try {
+                    const settings = await LoadSettings(file);
+
+                    setOptions({
+                      ...defaultPlayerOptions,
+                      ...settings
+                    });
+
+                    showAlert('success', 'Settings has loaded successfully!')
+                  } catch {
+                    showAlert('error', 'Failed to load settings!')
+                  }
+
+                  event.target.value = ''
+                }}
+              />
+              <Ripple tag="button" type="button" className={styles?.button}
+                disabled={disabled}
+                onClick={() => settingsInputRef.current?.click()}>
+                Load Settings
+              </Ripple>
+              <Ripple tag="button" type="button" className={styles?.button} onClick={() => {
                 if (finalURL.length <= 0)
                   return false;
 
@@ -408,15 +417,10 @@ export default function Customize() {
                 showAlert('success', 'Default settings has loaded!')
               }} disabled={disabled}>
                 Set Default Settings
-              </button>
-              <button className={styles?.button}
-                disabled={disabled}
-                onClick={() => settingsInputRef.current?.click()}>
-                Load Settings
-              </button>
-              <button className={styles?.button} onClick={() => navigate('/')}>
+              </Ripple>
+              <Ripple tag="button" type="button" className={styles?.button} onClick={() => navigate('/')}>
                 Back to Homepage
-              </button>
+              </Ripple>
             </aside>
           </div>
         </div>
@@ -484,10 +488,7 @@ export default function Customize() {
             <input type="text" readOnly={true} value={finalURL} />
           </div>
           <aside className={styles?.buttons}>
-            <button className={styles?.button} disabled={IsEmpty(finalURL)} onClick={openPlayer}>
-              Open on new Window
-            </button>
-            <button className={styles?.button}
+            <Ripple tag="button" type="button" className={styles?.button}
               disabled={IsEmpty(finalURL)}
               onClick={() => {
                 if (IsEmpty(finalURL))
@@ -496,7 +497,10 @@ export default function Customize() {
                 return CreateSettings(options)
               }}>
               Save Settings
-            </button>
+            </Ripple>
+            <Ripple tag="button" type="button" className={styles?.button} disabled={IsEmpty(finalURL)} onClick={openPlayer}>
+              Open on new Window
+            </Ripple>
           </aside>
         </div>
       </footer>

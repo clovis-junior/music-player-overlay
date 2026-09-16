@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import styles from '../assets/scss/dashboard.module.scss'
+import AsyncImage from '../components/AsyncImage';
 
 function Choose() {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ function Choose() {
   return (
     <main className={styles?.panel}>
       <div className={`${styles?.panel_content} ${styles?.centered}`}>
+        <figure>
+          <AsyncImage className={styles.base_logo} src="/apple-icon-180x180.png" alt="Ornidget" />
+        </figure>
         <h2>Welcome!</h2>
         <p>Please, choose the platform for create the overlay.</p>
         <div className={`${styles?.btns} ${styles?.column}`}>
