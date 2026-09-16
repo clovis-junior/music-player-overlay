@@ -370,10 +370,14 @@ export default function Customize() {
             <AsyncImage className={styles.logo} src="/android-icon-48x48.png" alt="Ornidget" />
           </figure>
           <div className={styles?.scroll}>
-            <Ripple tag="button" type="button" className={styles?.button} onClick={() => navigate('/')}>
+            <Ripple tag="button" type="button" 
+              className={styles?.button} 
+              style={{ flex: '0 0 10rem' }}
+              onClick={() => navigate('/')}>
               Homepage
             </Ripple>
             <input id="url" type="text"
+              style={{ flex: '2 0', 'text-align': 'center' }}
               value={playerURL}
               onChange={handleURLChange}
               readOnly={params?.has('url')}
@@ -382,9 +386,8 @@ export default function Customize() {
             <aside className={styles?.buttons}>
               <input
                 ref={settingsInputRef}
-                type="file"
+                type="file" hidden
                 accept=".json,application/json"
-                hidden
                 onChange={async (event) => {
                   const file = event.target.files?.[0];
 
