@@ -370,6 +370,9 @@ export default function Customize() {
             <AsyncImage className={styles.logo} src="/android-icon-48x48.png" alt="Ornidget" />
           </figure>
           <div className={styles?.scroll}>
+            <Ripple tag="button" type="button" className={styles?.button} onClick={() => navigate('/')}>
+              Homepage
+            </Ripple>
             <input id="url" type="text"
               value={playerURL}
               onChange={handleURLChange}
@@ -417,9 +420,6 @@ export default function Customize() {
                 showAlert('success', 'Default settings has loaded!')
               }} disabled={disabled}>
                 Set Default Settings
-              </Ripple>
-              <Ripple tag="button" type="button" className={styles?.button} onClick={() => navigate('/')}>
-                Back to Homepage
               </Ripple>
             </aside>
           </div>
