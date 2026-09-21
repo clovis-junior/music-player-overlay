@@ -12,7 +12,11 @@ async function loadPlatformModule(platform) {
       return import('../functions/AppleMusic.js');
     case 'youtube':
     case 'youtube-music':
+    case 'youtube-music-desktop':
       return import('../functions/YoutubeMusic.js');
+    case 'pear-desktop':
+    case 'youtube-music-pear':
+      return import('../functions/PearDesktop.js');
     case 'system':
     case 'universal':
     default:

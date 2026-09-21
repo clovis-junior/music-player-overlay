@@ -8,6 +8,7 @@ import Spotify from './Spotify'
 import YouTubeMusic from './YouTubeMusic'
 
 import styles from '../assets/scss/dashboard.module.scss'
+import PearDesktop from './PearDesktop'
 
 export const browserURL = `${window.location.protocol}//${window.location.host}/`;
 
@@ -48,8 +49,11 @@ export default function Platform() {
         return AppleMusic;
       case 'spotify':
         return Spotify;
-      case 'youtube':
+      case 'pear-desktop':
+      case 'youtube-music-pear':
+        return PearDesktop;
       case 'youtube-music':
+      case 'youtube-music-desktop':
       default:
         return YouTubeMusic
     }

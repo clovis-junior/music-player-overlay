@@ -20,7 +20,7 @@ Its a FREE overlay for streamers to show current music playing in your favorite 
 > All software tested on Windows 11.
 
 ## 🎧 Supported Music Platforms
-- [x] **[YouTube Music Desktop](https://ytmdesktop.app/)** *(Default)*
+- [x] **YouTube Music Desktop** *(Using [YouTube Music Desktop](https://ytmdesktop.app/) or [Pear Desktop](https://github.com/pear-devs/pear-desktop/releases/latest))*
 - [ ] **Spotify (Our own app)** *(The Spotify App in "developer mode" for now)*
 - [x] **Spotify (Your own app)** *(Necessary create a Spotify App, [click here for more instructions](https://developer.spotify.com/documentation/web-api/concepts/apps))*
 - [x] **Apple Music** *(Requires [Cider](https://cider.sh/))*

@@ -18,7 +18,14 @@ function Choose() {
         <h2>Welcome!</h2>
         <p>Please, choose the platform for create the overlay.</p>
         <div className={`${styles?.btns} ${styles?.column}`}>
-          <button type='button' className={`${styles?.btn} ${styles?.ytm}`} onClick={() => navigate('/platform/youtube-music')}>YouTube Music</button>
+          <button type='button' className={`${styles?.btn} ${styles?.ytm}`} onClick={() => navigate('/platform/youtube-music-desktop')}>
+            <span>YouTube Music</span>
+            <sub>(using YouTube Music Desktop)</sub>
+          </button>
+          <button type='button' className={`${styles?.btn} ${styles?.ytm}`} onClick={() => navigate('/platform/youtube-music-pear')}>
+            <span>YouTube Music</span>
+            <sub>(using Pear Desktop)</sub>
+          </button>
           <button type='button' className={`${styles?.btn} ${styles?.apple}`} onClick={() => navigate('/platform/apple-music')}>Apple Music</button>
           <button type='button' className={`${styles?.btn} ${styles?.spotify}`} onClick={() => navigate('/platform/spotify')}>Spotify</button>
         </div>

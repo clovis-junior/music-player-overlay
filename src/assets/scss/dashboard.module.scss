@@ -258,6 +258,11 @@ $border-radius: 10px !default;
 
       & .btn {
         width: 100%;
+        gap: 10px;
+
+        & sub, &sup {
+          font-style: italic;
+        }
       }
     }
 
