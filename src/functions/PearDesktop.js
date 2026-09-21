@@ -115,7 +115,7 @@ export default {
           try {
             const parsedData = JSON.parse(event.data);
 
-            console.log('[Pear Desktop WS Payload]:', parsedData);
+            // console.log('[Pear Desktop WS Payload]:', parsedData);
 
             const data = UpdatePlayerData(parsedData, lastState);
 
