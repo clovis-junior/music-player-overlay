@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 const params = GetURLParams();
 
 const host = params?.get('host') || 'localhost';
-const port = params?.get('port') || 10767;
+const port = params?.get('port') || 1997;
 
 const baseURL = `http://${host}:${port}`;
 

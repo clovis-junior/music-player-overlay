@@ -33,22 +33,29 @@ export async function GetAccessToken(uri) {
   }
 }
 
-function UpdatePlayerData(data) {
-  if (!data || data?.error) return data;
+function UpdatePlayerData(data, current) {
+  if (!data || data?.error) return {};
 
   const isPlaying = data?.is_playing || false;
-  const type = data?.currently_playing_type;
-  const title = data?.item?.name || '';
-  const artist = data?.item?.artists?.map(artist => artist?.name)?.join(', ') || '';
-  const album = data?.item?.album?.name || '';
-  const albumCover = data?.item?.album?.images?.[0]?.url || '';
   const duration = {
     elapsed: (data?.progress_ms / 1000) || 0,
     remaining: ((data?.item?.duration_ms - data?.progress_ms) / 1000) || 0,
     total: (data?.item?.duration_ms / 1000) || 0
   };
 
-  return { isPlaying, type, title, artist, duration, album, albumCover };
+  const currentItemId = data?.item?.id;
+  const previousItemId = current?._id;
+
+  if (currentItemId && currentItemId === previousItemId)
+    return { ...current, isPlaying, duration };
+
+  const type = data?.currently_playing_type;
+  const title = data?.item?.name || '';
+  const artist = data?.item?.artists?.map(artist => artist?.name)?.filter(Boolean).join(', ') || '';
+  const album = data?.item?.album?.name || '';
+  const albumCover = data?.item?.album?.images?.[0]?.url || '';
+  
+  return { _id: currentItemId, isPlaying, type, title, artist, duration, album, albumCover }
 }
 
 async function GetData() {

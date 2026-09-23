@@ -34,17 +34,16 @@ export async function RequestToken() {
   }
 }
 
-function UpdatePlayerData(data, currentData) {
-  if (!data || data.error) return data;
+function UpdatePlayerData(data, current) {
+  if (!data || data.error) return {};
 
   if (data.type === 'PLAYER_STATE_CHANGED') {
     const isPlaying = Boolean(data.isPlaying);
-    const elapsed = Number(data.position ?? currentData?.duration?.elapsed ?? 0);
-    const total = Number(currentData?.duration?.total ?? 0);
+    const elapsed = Number(data.position ?? current?.duration?.elapsed ?? 0);
+    const total = Number(current?.duration?.total ?? 0);
 
     return {
-      ...currentData,
-      isPlaying,
+      ...current, isPlaying,
       duration: {
         elapsed,
         remaining: Math.max(0, total - elapsed),
@@ -55,11 +54,10 @@ function UpdatePlayerData(data, currentData) {
 
   if (data.type === 'POSITION_CHANGED' || (data.position !== undefined && !data.song)) {
     const elapsed = Number(data.position ?? 0);
-    const total = Number(currentData?.duration?.total ?? 0);
+    const total = Number(current?.duration?.total ?? 0);
 
     return {
-      ...currentData,
-      duration: {
+      ...current, duration: {
         elapsed,
         remaining: Math.max(0, total - elapsed),
         total
@@ -74,8 +72,10 @@ function UpdatePlayerData(data, currentData) {
     ? Boolean(data.isPlaying && !song?.isPaused) 
     : !song?.isPaused;
 
+  const songId = song?.videoId || '';
   const title = meta?.track || song?.title || '';
   const artist = meta?.artist || song?.artist || '';
+  const album = song?.album || '';
   const albumCover = song?.imageSrc || null;
 
   const elapsed = Number(data?.position ?? song?.elapsedSeconds ?? 0);
@@ -87,7 +87,7 @@ function UpdatePlayerData(data, currentData) {
     total
   }
 
-  return { isPlaying, title, artist, duration, albumCover }
+  return { _id: songId, isPlaying, title, artist, duration, albumCover, album }
 }
 
 export default {
@@ -129,6 +129,7 @@ export default {
               const sameMetadata =
                 current?.title === next?.title &&
                 current?.artist === next?.artist &&
+                current?.album === next?.album &&
                 current?.albumCover === next?.albumCover;
 
               const samePlaybackState =

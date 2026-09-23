@@ -69,12 +69,13 @@ export async function RequestToken(code) {
 }
 
 function UpdatePlayerData(data) {
-  if (data.error) return data;
+  if (data.error) return {};
 
   const player = data?.player;
   const song = data?.video;
   const meta = NormalizeMetadata(song?.author, song?.title);
 
+  const songId = song?.id || '';
   const isPlaying = (player?.trackState === 1);
   const title = meta?.track || song?.title;
   const artist = meta?.artist || song?.author;
@@ -86,7 +87,7 @@ function UpdatePlayerData(data) {
     total: Number(song?.durationSeconds) || 0
   };
 
-  return { isPlaying, title, artist, duration, albumCover, album };
+  return { _id: songId, isPlaying, title, artist, duration, albumCover, album };
 }
 
 function GetData(debug = false) {
@@ -135,6 +136,7 @@ export default {
         const sameMetadata =
           current?.title === next?.title &&
           current?.artist === next?.artist &&
+          current?.album === next?.album &&
           current?.albumCover === next?.albumCover;
 
         const samePlaybackState =
