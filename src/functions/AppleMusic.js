@@ -44,12 +44,13 @@ function UpdateMusicData(data) {
 
   const title = data?.name || data?.title || '';
   const artist = data?.artistName || data?.artist || '';
+  const album = data?.albumName || '';
   const albumCover = GetAlbumCover(
     data?.artwork?.url,
     data?.artwork?.width || 600
   );
 
-  return { title, artist, albumCover };
+  return { title, artist, albumCover, album };
 }
 
 function UpdatePlaybackState(data) {

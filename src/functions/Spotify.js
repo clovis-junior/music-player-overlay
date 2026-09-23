@@ -40,6 +40,7 @@ function UpdatePlayerData(data) {
   const type = data?.currently_playing_type;
   const title = data?.item?.name || '';
   const artist = data?.item?.artists?.map(artist => artist?.name)?.join(', ') || '';
+  const album = data?.item?.album?.name || '';
   const albumCover = data?.item?.album?.images?.[0]?.url || '';
   const duration = {
     elapsed: (data?.progress_ms / 1000) || 0,
@@ -47,7 +48,7 @@ function UpdatePlayerData(data) {
     total: (data?.item?.duration_ms / 1000) || 0
   };
 
-  return { isPlaying, type, title, artist, duration, albumCover };
+  return { isPlaying, type, title, artist, duration, album, albumCover };
 }
 
 async function GetData() {

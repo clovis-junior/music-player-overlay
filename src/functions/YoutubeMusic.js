@@ -78,6 +78,7 @@ function UpdatePlayerData(data) {
   const isPlaying = (player?.trackState === 1);
   const title = meta?.track || song?.title;
   const artist = meta?.artist || song?.author;
+  const album = song?.album || '';
   const albumCover = song?.thumbnails?.at(-1)?.url;
   const duration = {
     elapsed: Number(player?.videoProgress) || 0,
@@ -85,7 +86,7 @@ function UpdatePlayerData(data) {
     total: Number(song?.durationSeconds) || 0
   };
 
-  return { isPlaying, title, artist, duration, albumCover };
+  return { isPlaying, title, artist, duration, albumCover, album };
 }
 
 function GetData(debug = false) {

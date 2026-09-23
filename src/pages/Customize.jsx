@@ -377,7 +377,7 @@ export default function Customize() {
               Homepage
             </Ripple>
             <input id="url" type="text"
-              style={{ flex: '2 0', 'text-align': 'center' }}
+              style={{ flex: '2 0', textAlign: 'center' }}
               value={playerURL}
               onChange={handleURLChange}
               readOnly={params?.has('url')}

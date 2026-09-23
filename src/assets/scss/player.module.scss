@@ -561,46 +561,46 @@ $player-equalizer-gap: 2px;
     }
   }
 
-&.alternative {
-  $padding-gap: 10px;
-  $alternate-size: calc(#{$size} - #{$padding-gap});
+  &.alternative {
+    $padding-gap: 10px;
+    $alternate-size: calc(#{$size} - #{$padding-gap});
 
-  width: calc((#{$size} * 3) + #{$padding-gap});
-  height: auto;
-  gap: calc(#{$padding-gap} + 4px);
-  padding: calc(#{$padding-gap} * 1.25);
+    width: calc((#{$size} * 3) + #{$padding-gap});
+    height: auto;
+    gap: calc(#{$padding-gap} + 4px);
+    padding: calc(#{$padding-gap} * 1.25);
 
-  .music_album_art {
-    flex-grow: 0;
-    flex-basis: $alternate-size;
-  }
-  
-  .player_content {
-    flex-basis: initial;
-    max-width: 100%;
-    height: $alternate-size;
-    padding: math.div($padding-gap, 2);
-  }
-
-  &:has(> .music_album_art, > .vinyl) {
-    width: inherit;
-    padding: calc(#{$padding-gap} * 1.25) $padding-gap;
+    .music_album_art {
+      flex-grow: 0;
+      flex-basis: $alternate-size;
+    }
 
     .player_content {
-      flex-basis: calc(100% - (#{$size} + #{$padding-gap}));
-      max-width: calc(100% - (#{$size} + #{$padding-gap}));
-      padding-left: 0;
+      flex-basis: initial;
+      max-width: 100%;
+      height: $alternate-size;
+      padding: math.div($padding-gap, 2);
     }
-  }
-  
-  &:has(> .vinyl) {
-    padding-left: calc(#{$padding-gap} + 6px);
 
-    .player_content {
-      padding-right: $padding-gap;
+    &:has(> .music_album_art, > .vinyl) {
+      width: inherit;
+      padding: calc(#{$padding-gap} * 1.25) $padding-gap;
+
+      .player_content {
+        flex-basis: calc(100% - (#{$size} + #{$padding-gap}));
+        max-width: calc(100% - (#{$size} + #{$padding-gap}));
+        padding-left: 0;
+      }
+    }
+
+    &:has(> .vinyl) {
+      padding-left: calc(#{$padding-gap} + 6px);
+
+      .player_content {
+        padding-right: $padding-gap;
+      }
     }
   }
-}
 
   &.card {
     --radius: 10px;
@@ -845,12 +845,26 @@ $player-equalizer-gap: 2px;
       display: none;
     }
 
-    & figure {
+    & figure, & .video_container {
       height: 0;
       padding-top: 100%;
       overflow: hidden;
       position: relative;
+    }
 
+    & .video_container {
+      & > video {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    }
+
+    & figure {
       & > img {
         width: 100%;
         height: 100%;

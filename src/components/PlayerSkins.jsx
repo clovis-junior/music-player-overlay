@@ -1,5 +1,5 @@
-import { Equalizer, MusicAlbumArt, MusicAlbumBackground, MusicInfo, MusicTimes, MusicTimesWithEqualizer, MusicTimesWithProgressBar, PlayerInfos, ProgressBar, Scroll, Streaming, Vinyl } from './PlayerComponents'
-import { GetURLParams, ConvertTime } from '../functions/Utils'
+import { Equalizer, MusicAlbumArt, MusicAlbumArtAnimated, MusicAlbumBackground, MusicInfo, MusicTimes, MusicTimesWithEqualizer, MusicTimesWithProgressBar, PlayerInfos, ProgressBar, Scroll, Streaming, Vinyl } from './PlayerComponents'
+import { GetURLParams, ConvertTime, IsEmpty } from '../functions/Utils'
 import styles from '../assets/scss/player.module.scss'
 
 function universalClasses(options) {
@@ -41,8 +41,19 @@ export function MusicArt({
   platformIcon = null,
   music = {},
   vinylStopped = false,
+  animated = false,
   vinyl = false
 }) {
+
+  if (animated) {
+    return (
+      <MusicAlbumArtAnimated
+        showPlatform={showPlatform}
+        platformIcon={platformIcon}
+        url={music?.albumCoverAnimated} />
+    )
+  }
+
   if (vinyl) {
     return (
       <Vinyl key={music?.albumCover}
@@ -154,6 +165,7 @@ export function AlbumArtCardSkin(props) {
       <div className={styles?.aspect}>
         <MusicArt
           music={music}
+          animated={(!IsEmpty(music?.albumCoverAnimated))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl} />
         {options?.showPlatformIcon && (
@@ -257,6 +269,7 @@ export function VerticalSkin(props) {
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}
+          animated={(!IsEmpty(music?.albumCoverAnimated))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
@@ -286,6 +299,7 @@ export function AlternativeSkin(props) {
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}
+          animated={(!IsEmpty(music?.albumCoverAnimated))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
@@ -308,6 +322,7 @@ export function DefaultSkin(props) {
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}
+          animated={(!IsEmpty(music?.albumCoverAnimated))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}

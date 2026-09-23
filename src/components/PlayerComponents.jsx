@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { ConvertTime } from '../functions/Utils'
+import Hls from 'hls.js';
 import styles from '../assets/scss/player.module.scss'
 import AsyncImage from './AsyncImage.jsx'
 
@@ -34,7 +35,7 @@ export function ProgressBar({
     total: currentTotal,
     lastUpdate: performance.now(),
   });
-  
+
   useEffect(() => {
     stateRef.current = {
       elapsed: currentElapsed,
@@ -80,8 +81,8 @@ export function ProgressBar({
     return (
       <div className={styles?.music_progress_bar_circular}>
         <svg viewBox="0 0 100 100">
-          <circle 
-            className={styles?.bg_circle} 
+          <circle
+            className={styles?.bg_circle}
             cx="50" cy="50" r={radius} />
           <circle
             className={styles?.fill_circle}
@@ -329,6 +330,61 @@ export function MusicAlbumArt({
       <figure>
         <AsyncImage src={albumImage} alt={altText} />
       </figure>
+    </div>
+  )
+}
+
+export function MusicAlbumArtAnimated({
+  url = null,
+  platformIcon = null,
+  showPlatform = false
+}) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !url) return;
+
+    let hls;
+
+    if (url.includes('.m3u8')) {
+      if (Hls.isSupported()) {
+        hls = new Hls({ enableWorker: true });
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.muted = true;
+          video.play().catch((err) => console.warn('Autoplay bloqueado:', err));
+        })
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+        video.muted = true;
+        video.play().catch((err) => console.warn('Autoplay bloqueado:', err))
+      }
+    } else {
+      video.src = url;
+      video.muted = true;
+      video.play().catch((err) => console.warn('Autoplay bloqueado:', err))
+    }
+
+    return () => {
+      if (hls)
+        hls.destroy()
+    }
+  }, [url]);
+
+  return (
+    <div className={styles?.music_album_art}>
+      {showPlatform && (
+        <Streaming pathIcon={platformIcon} />
+      )}
+      <div className={styles?.video_container}>
+        <video
+          ref={videoRef}
+          src={url}
+          autoPlay loop muted
+          playsInline />
+      </div>
     </div>
   )
 }
