@@ -5,7 +5,6 @@ import styles from '../assets/scss/player.module.scss'
 export default function AsyncVideo({
   src = null,
   className = null,
-  duration = 220,
   loop = true,
   muted = true,
   playsinline = true,
@@ -20,7 +19,6 @@ export default function AsyncVideo({
     if (!src) {
       setCurrentSrc(null);
       setNextSrc(null);
-      setTransitioning(false);
       return
     }
 
@@ -30,21 +28,9 @@ export default function AsyncVideo({
   }, [src, currentSrc]);
 
   const handleNextReady = () => {
-    if (!nextSrc) return;
-    setTransitioning(true)
+    setCurrentSrc(nextSrc);
+    setNextSrc(null)
   };
-
-  useEffect(() => {
-    if (!transitioning) return;
-
-    const timer = setTimeout(() => {
-      setCurrentSrc(nextSrc);
-      setNextSrc(null);
-      setTransitioning(false);
-    }, duration);
-
-    return () => clearTimeout(timer)
-  }, [transitioning, nextSrc, duration]);
 
   if (!currentSrc && !nextSrc) return null;
 
@@ -52,31 +38,20 @@ export default function AsyncVideo({
     <>
       {currentSrc && (
         <ReactPlayer
-          key={currentSrc}
-          className={[
-            className,
-            nextSrc && transitioning ? styles?.old : ''
-          ].filter(Boolean).join(' ')}
-          src={currentSrc}
+          key={currentSrc} src={currentSrc}
+          className={className}
           title={altText}
           playing={playing}
-          muted={muted}
-          loop={loop}
+          muted={muted} loop={loop}
           playsinline={playsinline} />
       )}
-
       {nextSrc && (
         <ReactPlayer
-          key={nextSrc}
-          className={[
-            className,
-            styles?.new
-          ].filter(Boolean).join(' ')}
-          src={nextSrc}
+          key={nextSrc} src={nextSrc}
+          className={className}
           title={altText}
           playing={playing}
-          muted={muted}
-          loop={loop}
+          muted={muted} loop={loop}
           playsinline={playsinline}
           onReady={handleNextReady} />
       )}
