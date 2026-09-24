@@ -158,7 +158,7 @@ export default {
       if (!data || data?.error) return;
 
       onData?.(current => {
-        const isNewTrack = current?._id !== data._id;
+        const isNewTrack = current?._id !== data?._id;
 
         const next = {
           ...current, ...data,
