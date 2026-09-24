@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
-import ReactPlayer from 'react-player';
-import styles from '../assets/scss/player.module.scss';
+import { useEffect, useState } from 'react'
+import ReactPlayer from 'react-player'
+import styles from '../assets/scss/player.module.scss'
 
 export default function AsyncVideo({
   src = null,
-  className = '',
+  className = null,
   duration = 220,
   loop = true,
   muted = true,
@@ -17,7 +17,14 @@ export default function AsyncVideo({
   const [transitioning, setTransitioning] = useState(false);
 
   useEffect(() => {
-    if (!src || src === currentSrc) return;
+    if (!src) {
+      setCurrentSrc(null);
+      setNextSrc(null);
+      setTransitioning(false);
+      return
+    }
+
+    if (src === currentSrc) return;
 
     setNextSrc(src)
   }, [src, currentSrc]);
@@ -44,32 +51,34 @@ export default function AsyncVideo({
   return (
     <>
       {currentSrc && (
-          <ReactPlayer
-            className={[
+        <ReactPlayer
+          key={currentSrc}
+          className={[
             className,
             nextSrc && transitioning ? styles?.old : ''
           ].filter(Boolean).join(' ')}
-            src={currentSrc}
-            title={altText}
-            playing={playing}
-            muted={muted}
-            loop={loop}
-            playsinline={playsinline} />
+          url={currentSrc}
+          title={altText}
+          playing={playing}
+          muted={muted}
+          loop={loop}
+          playsinline={playsinline} />
       )}
 
       {nextSrc && (
-          <ReactPlayer
-            className={[
+        <ReactPlayer
+          key={nextSrc}
+          className={[
             className,
-            nextSrc && transitioning ? styles?.old : ''
+            styles?.new
           ].filter(Boolean).join(' ')}
-            src={nextSrc}
-            title={altText}
-            playing={playing}
-            muted={muted}
-            loop={loop}
-            playsinline={playsinline}
-            onReady={handleNextReady} />
+          url={nextSrc}
+          title={altText}
+          playing={playing}
+          muted={muted}
+          loop={loop}
+          playsinline={playsinline}
+          onReady={handleNextReady} />
       )}
     </>
   );
