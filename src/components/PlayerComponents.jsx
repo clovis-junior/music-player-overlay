@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import ReactPlayer from 'react-player'
 import { ConvertTime } from '../functions/Utils'
 import styles from '../assets/scss/player.module.scss'
 import AsyncImage from './AsyncImage.jsx'
@@ -338,19 +339,20 @@ export function MusicAlbumArtAnimated({
   platformIcon = null,
   showPlatform = false
 }) {
-  const videoRef = useRef(null);
+  if (!url)
+    return null;
 
   return (
     <div className={styles?.music_album_art}>
       {showPlatform && (
         <Streaming pathIcon={platformIcon} />
       )}
-      <div className={styles?.video_container}>
-        <video
-          ref={videoRef}
-          src={url}
-          autoPlay loop muted
-          playsInline />
+      <div className={styles?.music_album_animated_container}>
+        <ReactPlayer 
+          className={styles?.music_album_animated}
+          src={url} playing={true}
+          muted={true} loop={true}
+          playsinline={true} />
       </div>
     </div>
   )

@@ -2,16 +2,26 @@ import { IsEmpty } from './Utils';
 
 const cache = new Map();
 
-async function getMetadata(artist, track) {
-  if (!artist || !track)
+async function getMetadata(artist, track, album) {
+  if (IsEmpty(artist) || IsEmpty(track))
     return null;
 
   const params = new URLSearchParams({
     artist,
-    track
+    track,
+    album
   });
 
   try {
+    const response = await fetch(
+      `/.netlify/functions/artwork?${params}`
+    );
+
+    if (!response.ok)
+      return null;
+
+    return await response.json()
+  } catch {
     const response = await fetch(
       `/.netlify/functions/itunes-data?${params}`
     );
@@ -19,15 +29,12 @@ async function getMetadata(artist, track) {
     if (!response.ok)
       return null;
 
-    return await response.json();
-
-  } catch {
-    return null;
+    return await response.json()
   }
 }
 
 
-export function getCachedMetadata(artist, title) {
+export function getCachedMetadata(artist, title, album) {
   if (IsEmpty(artist) || IsEmpty(title))
     return Promise.resolve(null);
 
@@ -40,7 +47,8 @@ export function getCachedMetadata(artist, title) {
 
   const promise = getMetadata(
     artist,
-    title
+    title,
+    album
   );
   cache.set(key, promise);
   return promise

@@ -50,7 +50,7 @@ export function MusicArt({
       <MusicAlbumArtAnimated
         showPlatform={showPlatform}
         platformIcon={platformIcon}
-        url={music?.albumCoverAnimated} />
+        url={music?.albumAnimatedCover} />
     )
   }
 
@@ -165,7 +165,7 @@ export function AlbumArtCardSkin(props) {
       <div className={styles?.aspect}>
         <MusicArt
           music={music}
-          animated={(!IsEmpty(music?.albumCoverAnimated))}
+          animated={(!IsEmpty(music?.albumAnimatedCover))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl} />
         {options?.showPlatformIcon && (
@@ -269,7 +269,7 @@ export function VerticalSkin(props) {
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}
-          animated={(!IsEmpty(music?.albumCoverAnimated))}
+          animated={(!IsEmpty(music?.albumAnimatedCover))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
@@ -299,7 +299,7 @@ export function AlternativeSkin(props) {
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}
-          animated={(!IsEmpty(music?.albumCoverAnimated))}
+          animated={(!IsEmpty(music?.albumAnimatedCover))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}
@@ -322,7 +322,7 @@ export function DefaultSkin(props) {
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}
-          animated={(!IsEmpty(music?.albumCoverAnimated))}
+          animated={(!IsEmpty(music?.albumAnimatedCover))}
           vinyl={options?.showVinyl}
           vinylStopped={options?.notRollVinyl}
           showPlatform={options?.showPlatformIcon}

@@ -58,12 +58,11 @@ export async function handler(event) {
         album: bestMatch.collectionName,
         albumCover: hdCover
       })
-    };
-
+    }
   } catch (error) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message })
-    };
+    }
   }
 }

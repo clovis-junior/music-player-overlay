@@ -6,7 +6,6 @@
 ![GitHub License](https://img.shields.io/github/license/clovis-junior/music-player-overlay)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fmusic-widget.netlify.app%2F)
 
-
 This a project made only by myself using Vite with React, SCSS and love!
 Its a FREE overlay for streamers to show current music playing in your favorite platform.
 
@@ -59,6 +58,9 @@ Activating option named "Solid Color" you remove a background blur (with album a
 > If you use [StreamElements](https://streamelements.com/), i made overlay with a simple version of this player, [click here to check](https://github.com/clovis-junior/streamelements-custom-widgets/tree/main/player-music).
 
 ## 👇🏻 Check it out
+
+I'm using the [artwork.boidu.dev](https://github.com/boidushya/artwork.boidu.dev) for get the animated artworks.
+**Thanks for [boidushya](https://github.com/boidushya)!**
 
 | 💼 Professional                                         | ☕ Support                       |
 |---------------------------------------------------------|-----------------------------------|

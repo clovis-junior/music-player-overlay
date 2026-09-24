@@ -45,7 +45,9 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     isPlaying: player?.trackState === 1,
     title: meta?.track || song?.title || '',
     artist: meta?.artist || song?.author || '',
+    album: song?.album || '',
     albumCover: song?.thumbnails?.at(-1)?.url || null,
+    albumAnimatedCover: null,
     duration: {
       elapsed: Number(player?.videoProgress) || 0,
       remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
@@ -54,12 +56,13 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
   };
 
   if (meta?.artist && meta?.track) {
-    ResolveMetadata(meta.artist, meta.track).then(metadata => {
+    ResolveMetadata(meta.artist, meta.track, currentData.album).then(metadata => {
       if (!metadata) return;
 
       const update = {
         title: metadata.title || currentData.title,
-        artist: metadata.artist || currentData.artist
+        artist: metadata.artist || currentData.artist,
+        albumAnimatedCover: metadata.albumAnimatedCover || currentData.albumAnimatedCover
       };
 
       if (IsValidCover(metadata.albumCover))
