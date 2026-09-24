@@ -57,7 +57,7 @@ export default function AsyncVideo({
             className,
             nextSrc && transitioning ? styles?.old : ''
           ].filter(Boolean).join(' ')}
-          url={currentSrc}
+          src={currentSrc}
           title={altText}
           playing={playing}
           muted={muted}
@@ -72,7 +72,7 @@ export default function AsyncVideo({
             className,
             styles?.new
           ].filter(Boolean).join(' ')}
-          url={nextSrc}
+          src={nextSrc}
           title={altText}
           playing={playing}
           muted={muted}
