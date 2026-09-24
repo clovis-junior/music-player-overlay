@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import ReactPlayer from 'react-player'
 import { ConvertTime, IsEmpty } from '../functions/Utils'
 import styles from '../assets/scss/player.module.scss'
+import AsyncVideo from './AsyncVideo.jsx'
 import AsyncImage from './AsyncImage.jsx'
 
 export function UpdatePercentage(elapsed = 0, total = 0) {
@@ -325,7 +325,7 @@ export function MusicAlbumArt({
     return null;
 
   const isAnimatedValid = Boolean(animated) && !IsEmpty(albumAnimated);
-
+  
   return (
     <div className={styles?.music_album_art}>
       {showPlatform && platformIcon && (
@@ -336,11 +336,9 @@ export function MusicAlbumArt({
       </figure>
       {isAnimatedValid ? (
         <div className={styles?.music_album_animated_container}>
-          <ReactPlayer
+          <AsyncVideo
             className={styles?.music_album_animated}
-            title={altText} src={albumAnimated}
-            playing={true} playsinline={true}
-            muted={true} loop={true} />
+            altText={altText} src={albumAnimated} />
         </div>
       )}
     </div>
