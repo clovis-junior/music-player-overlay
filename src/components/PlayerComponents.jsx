@@ -334,7 +334,7 @@ export function MusicAlbumArt({
       <figure>
         <AsyncImage src={albumImage} alt={altText} />
       </figure>
-      {isAnimatedValid ? (
+      {isAnimatedValid && (
         <div className={styles?.music_album_animated_container}>
           <AsyncVideo
             className={styles?.music_album_animated}
