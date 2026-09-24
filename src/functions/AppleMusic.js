@@ -2,6 +2,7 @@ import { GetURLParams, IsEmpty } from './Utils';
 import { io } from 'socket.io-client';
 
 import icon from '../assets/images/apple-music-icon.svg';
+import { GetAlbumCoverAnimated } from './ResolveMetadata';
 
 const params = GetURLParams();
 
@@ -39,9 +40,10 @@ function UpdateMusicTime(data) {
   return {}
 }
 
-function UpdateMusicData(data) {
+function UpdateMusicData(data, onMetadataUpdate) {
   if (IsEmpty(data)) return {};
 
+  const id = data?.playParams?.id || '';
   const title = data?.name || data?.title || '';
   const artist = data?.artistName || data?.artist || '';
   const album = data?.albumName || '';
@@ -49,8 +51,20 @@ function UpdateMusicData(data) {
     data?.artwork?.url,
     data?.artwork?.width || 600
   );
+  const albumAnimatedCover = null;
 
-  return { title, artist, albumCover, album };
+  if (!albumAnimatedCover) {
+    GetAlbumCoverAnimated(title, artist, album)
+      .then(response => {
+        if (response?.animated)
+          onMetadataUpdate?.({
+            _id: id,
+            albumAnimatedCover: response.animated
+          })
+      })
+  }
+
+  return { _id: id, title, artist, album, albumCover, albumAnimatedCover }
 }
 
 function UpdatePlaybackState(data) {
@@ -86,7 +100,7 @@ async function FetchInitialState(onData) {
       const status = await statusRes.value.json();
       const isPlaying = status?.isConnecting || status?.status === 'playing' || status === true;
 
-      initialData = { ...initialData, isPlaying };
+      initialData = { ...initialData, isPlaying }
     }
 
     if (Object.keys(initialData).length > 0)
@@ -138,11 +152,34 @@ export default {
       // console.log('[Cider Event]', type, data);
       switch (type) {
         case 'playbackStatus.playbackStateDidChange':
-          onData?.(current => ({ ...current, ...UpdatePlaybackState(data) }));
+          onData?.(current => {
+            const stateUpdate = UpdatePlaybackState(data);
+            return { ...current, ...stateUpdate }
+          });
           break;
-        case 'playbackStatus.nowPlayingItemDidChange':
-          onData?.(current => ({ ...current, ...UpdateMusicData(data) }));
-          break;
+        case 'playbackStatus.nowPlayingItemDidChange': {
+          const newMetadata = UpdateMusicData(data, metadata => {
+            onData?.(current => {
+              if (current?._id !== metadata._id)
+                return current;
+
+              return { ...current, albumAnimatedCover: metadata.albumAnimatedCover }
+            })
+          });
+
+          console.log(newMetadata);
+
+          onData?.(current => {
+            const isNewTrack = current?._id !== newMetadata._id;
+
+            return {
+              ...current, ...newMetadata,
+              albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
+            }
+          });
+          
+          break
+        }
         case 'playbackStatus.playbackTimeDidChange':
           onData?.(current => ({ ...current, ...UpdateMusicTime(data) }));
           break;

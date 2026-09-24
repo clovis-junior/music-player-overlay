@@ -1,5 +1,6 @@
 import { GetURLParams } from './Utils.js';
 import icon from '../assets/images/spotify-logo.png';
+import { GetAlbumCoverAnimated } from './ResolveMetadata.js';
 
 const params = GetURLParams();
 const clientID = localStorage?.getItem('spotifyAppClientID') || params.get('clientID');
@@ -33,7 +34,7 @@ export async function GetAccessToken(uri) {
   }
 }
 
-function UpdatePlayerData(data, current) {
+function UpdatePlayerData(data, current, onMetadataUpdate) {
   if (!data || data?.error) return {};
 
   const isPlaying = data?.is_playing || false;
@@ -45,8 +46,9 @@ function UpdatePlayerData(data, current) {
 
   const currentItemId = data?.item?.id;
   const previousItemId = current?._id;
+  const isNewTrack = !(currentItemId && currentItemId === previousItemId);
 
-  if (currentItemId && currentItemId === previousItemId)
+  if (!isNewTrack)
     return { ...current, isPlaying, duration };
 
   const type = data?.currently_playing_type;
@@ -54,8 +56,24 @@ function UpdatePlayerData(data, current) {
   const artist = data?.item?.artists?.map(artist => artist?.name)?.filter(Boolean).join(', ') || '';
   const album = data?.item?.album?.name || '';
   const albumCover = data?.item?.album?.images?.[0]?.url || '';
-  
-  return { _id: currentItemId, isPlaying, type, title, artist, duration, album, albumCover }
+
+  if (isNewTrack) {
+    GetAlbumCoverAnimated(title, artist, album)
+      .then(response => {
+        if (response?.animated)
+          onMetadataUpdate?.({
+            _id: currentItemId,
+            albumAnimatedCover: response.animated
+          })
+      })
+  }
+
+  return {
+    _id: currentItemId,
+    isPlaying, type, title, artist,
+    duration, album, albumCover,
+    albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
+  }
 }
 
 async function GetData() {
@@ -92,6 +110,16 @@ export default {
   connect({ onConnect, onDisconnect, onData }) {
     let cancelled = false;
 
+    const handleMetadataUpdate = metadata => {
+      onData?.(current => {
+        const isMatch = (current?._id && current._id === metadata._id);
+
+        if (!isMatch) return current;
+
+        return { ...current, albumAnimatedCover: metadata.albumAnimatedCover }
+      })
+    };
+
     async function getMusicData() {
       const data = await GetData();
 
@@ -103,7 +131,7 @@ export default {
       }
 
       onConnect?.();
-      onData?.(current => UpdatePlayerData(data, current));
+      onData?.(current => UpdatePlayerData(data, current, handleMetadataUpdate));
     }
 
     getMusicData();
@@ -112,7 +140,7 @@ export default {
 
     return () => {
       cancelled = true;
-      clearInterval(check);
-    };
+      clearInterval(check)
+    }
   }
 }

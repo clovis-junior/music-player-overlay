@@ -2,6 +2,7 @@ import { GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
 import icon from '../assets/images/ytm-logo.png';
+import { GetAlbumCoverAnimated } from './ResolveMetadata';
 
 const appID = 'music-player-overlay';
 const appName = 'Music Player Overlay (By Clovis Junior)';
@@ -68,7 +69,7 @@ export async function RequestToken(code) {
   }
 }
 
-function UpdatePlayerData(data) {
+async function UpdatePlayerData(data, onMetadataUpdate) {
   if (data.error) return {};
 
   const player = data?.player;
@@ -76,18 +77,37 @@ function UpdatePlayerData(data) {
   const meta = NormalizeMetadata(song?.author, song?.title);
 
   const songId = song?.id || '';
-  const isPlaying = (player?.trackState === 1);
-  const title = meta?.track || song?.title;
-  const artist = meta?.artist || song?.author;
+  const isPlaying = player?.trackState === 1;
+  const title = meta?.track || song?.title || '';
+  const artist = meta?.artist || song?.author || '';
   const album = song?.album || '';
-  const albumCover = song?.thumbnails?.at(-1)?.url;
+  const albumCover = song?.thumbnails?.at(-1)?.url || null;
   const duration = {
     elapsed: Number(player?.videoProgress) || 0,
-    remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
+    remaining: Math.max(0, (song?.durationSeconds || 0) - (player?.videoProgress || 0)),
     total: Number(song?.durationSeconds) || 0
   };
 
-  return { _id: songId, isPlaying, title, artist, duration, albumCover, album };
+  const current = {
+    _id: songId,
+    isPlaying, duration,
+    title, artist,
+    album, albumCover,
+    albumAnimatedCover: null
+  };
+
+  if (!current.albumAnimatedCover) {
+    GetAlbumCoverAnimated(title, artist, album)
+      .then(response => {
+        if (response?.animated)
+          onMetadataUpdate?.({
+            _id: songId,
+            albumAnimatedCover: response.animated
+          })
+      })
+  }
+
+  return current
 }
 
 function GetData(debug = false) {
@@ -125,19 +145,32 @@ export default {
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
-    const handleStateUpdate = state => {
-      const data = UpdatePlayerData(state);
+    const handleStateUpdate = async state => {
+      const data = await UpdatePlayerData(state, metadata => {
+        onData?.(current => {
+          return {
+            ...current,
+            albumAnimatedCover: metadata.albumAnimatedCover
+          }
+        })
+      });
 
       if (!data || data?.error) return;
 
       onData?.(current => {
-        const next = data;
+        const isNewTrack = current?._id !== data._id;
+
+        const next = {
+          ...current, ...data,
+          albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
+        };
 
         const sameMetadata =
           current?.title === next?.title &&
           current?.artist === next?.artist &&
           current?.album === next?.album &&
-          current?.albumCover === next?.albumCover;
+          current?.albumCover === next?.albumCover &&
+          current?.albumAnimatedCover === next?.albumAnimatedCover;
 
         const samePlaybackState =
           current?.isPlaying === next?.isPlaying &&

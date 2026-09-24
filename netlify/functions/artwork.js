@@ -5,7 +5,7 @@ export async function handler(event) {
   const track = params.get('track');
   const album = params.get('album');
 
-  if (!artist || !track) {
+  if (!artist || !track || !album) {
     return {
       statusCode: 400,
       body: JSON.stringify({ error: 'Missing metadata' })
@@ -30,10 +30,8 @@ export async function handler(event) {
     const data = await response.json();
     const result = data;
 
-    if (!result)
+    if (!result || result.error)
       return { statusCode: 200, body: JSON.stringify(null) };
-
-    console.log(album);
 
     return {
       statusCode: 200,
@@ -41,12 +39,7 @@ export async function handler(event) {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({
-        title: result?.name,
-        artist: result?.artist,
-        albumCover: result?.static,
-        albumAnimatedCover: result?.animated || null
-      })
+      body: JSON.stringify(result)
     }
   } catch (error) {
     return {

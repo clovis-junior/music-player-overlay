@@ -7,21 +7,10 @@ async function getMetadata(artist, track, album) {
     return null;
 
   const params = new URLSearchParams({
-    artist,
-    track,
-    album
+    artist, track, album
   });
 
   try {
-    const response = await fetch(
-      `/.netlify/functions/artwork?${params}`
-    );
-
-    if (!response.ok)
-      return null;
-
-    return await response.json()
-  } catch {
     const response = await fetch(
       `/.netlify/functions/itunes-data?${params}`
     );
@@ -30,9 +19,10 @@ async function getMetadata(artist, track, album) {
       return null;
 
     return await response.json()
+  } catch {
+    return null
   }
 }
-
 
 export function getCachedMetadata(artist, title, album) {
   if (IsEmpty(artist) || IsEmpty(title))

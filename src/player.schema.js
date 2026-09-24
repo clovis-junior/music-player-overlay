@@ -101,6 +101,15 @@ const playerSchema = {
       category: 'Appearance'
     }
   },
+  animatedAlbumArt: {
+    type: 'boolean',
+    default: false,
+    ui: {
+      label: 'Show album art animated',
+      disclaimer: 'Only if avalable. Not compatible with compact skin',
+      category: 'Appearance'
+    }
+  },
   notRollVinyl: {
     type: 'boolean',
     default: false,

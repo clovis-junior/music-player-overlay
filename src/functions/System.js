@@ -1,4 +1,4 @@
-import { ResolveMetadata } from './ResolveMetadata';
+import { GetAlbumCoverAnimated, ResolveMetadata } from './ResolveMetadata';
 import { IsEmpty, GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
@@ -41,7 +41,7 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     song?.title
   );
 
-  const currentData = {
+  const current = {
     isPlaying: player?.trackState === 1,
     title: meta?.track || song?.title || '',
     artist: meta?.artist || song?.author || '',
@@ -55,24 +55,34 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     }
   };
 
-  if (meta?.artist && meta?.track) {
-    ResolveMetadata(meta.artist, meta.track, currentData.album).then(metadata => {
-      if (!metadata) return;
-
-      const update = {
-        title: metadata.title || currentData.title,
-        artist: metadata.artist || currentData.artist,
-        albumAnimatedCover: metadata.albumAnimatedCover || currentData.albumAnimatedCover
-      };
-
-      if (IsValidCover(metadata.albumCover))
-        update.albumCover = metadata.albumCover;
-
-      onMetadataUpdate?.(update)
+  if (!current.albumAnimatedCover) {
+    GetAlbumCoverAnimated(
+       current.title,  current.artist, current.album
+    ).then(response => {
+      if (response?.animated)
+        current.albumAnimatedCover = response?.animated;
     })
   }
 
-  return currentData
+  if (meta?.artist && meta?.track) {
+    ResolveMetadata(meta.artist, meta.track)
+      .then(async (metadata) => {
+        if (!metadata) return;
+
+        const update = {
+          title: metadata.title || current.title,
+          artist: metadata.artist || current.artist,
+          albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
+        };
+
+        if (current.albumAnimatedCover)
+          update.albumAnimatedCover = current.albumAnimatedCover;
+
+        onMetadataUpdate?.(update)
+      })
+  }
+
+  return current
 }
 
 function GetData(debug = false) {
@@ -109,33 +119,29 @@ export default {
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
-    const handleStateUpdate = async state => {
+    const handleStateUpdate = async (state) => {
       const data = await UpdatePlayerData(
-        state,
-        metadata => {
+        state, metadata => {
           onData?.(current => ({
-            ...current,
-            ...metadata
-          }));
-        }
-      );
+            ...current, ...metadata
+          }))
+        });
 
-      if (!data || data?.error)
-        return;
-
-      if (!IsValidTrack(data))
-        return;
+      if (!data || data?.error || !IsValidTrack(data)) return;
 
       onData?.(current => {
         const next = {
           ...current, ...data,
-          albumCover: data.albumCover || current?.albumCover || ''
+          albumCover: data?.albumCover || current?.albumCover || '',
+          albumAnimatedCover: data?.albumAnimatedCover || current?.albumAnimatedCover
         };
 
         const sameMetadata =
           current?.title === next?.title &&
           current?.artist === next?.artist &&
-          current?.albumCover === next?.albumCover;
+          current?.album === next?.album &&
+          current?.albumCover === next?.albumCover &&
+          current?.albumAnimatedCover === next?.albumAnimatedCover;
 
         const samePlaybackState =
           current?.isPlaying === next?.isPlaying &&
@@ -143,11 +149,8 @@ export default {
           current?.duration?.remaining === next?.duration?.remaining &&
           current?.duration?.total === next?.duration?.total;
 
-        return (
-          sameMetadata &&
-          samePlaybackState
-        ) ? current : next
-      });
+        return (sameMetadata && samePlaybackState) ? current : next
+      })
     };
 
     socket?.on('connect', handleConnect);

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactPlayer from 'react-player'
-import { ConvertTime } from '../functions/Utils'
+import { ConvertTime, IsEmpty } from '../functions/Utils'
 import styles from '../assets/scss/player.module.scss'
 import AsyncImage from './AsyncImage.jsx'
 
@@ -315,45 +315,35 @@ export function PlayerInfos({ children, inverted = false, align = 'left' }) {
 
 export function MusicAlbumArt({
   albumImage = null,
+  albumAnimated = null,
   platformIcon = null,
+  animated = false,
   showPlatform = false,
   altText = ''
 }) {
-  if (!albumImage)
+  if (!albumImage && !albumAnimated)
     return null;
+
+  const isAnimatedValid = Boolean(animated) && !IsEmpty(albumAnimated);
 
   return (
     <div className={styles?.music_album_art}>
-      {showPlatform && (
+      {showPlatform && platformIcon && (
         <Streaming pathIcon={platformIcon} />
       )}
-      <figure>
-        <AsyncImage src={albumImage} alt={altText} />
-      </figure>
-    </div>
-  )
-}
-
-export function MusicAlbumArtAnimated({
-  url = null,
-  platformIcon = null,
-  showPlatform = false
-}) {
-  if (!url)
-    return null;
-
-  return (
-    <div className={styles?.music_album_art}>
-      {showPlatform && (
-        <Streaming pathIcon={platformIcon} />
+      {isAnimatedValid ? (
+        <div className={styles?.music_album_animated_container}>
+          <ReactPlayer
+            className={styles?.music_album_animated}
+            title={altText} src={albumAnimated}
+            playing={true} playsinline={true}
+            muted={true} loop={true} />
+        </div>
+      ) : (
+        <figure>
+          <AsyncImage src={albumImage} alt={altText} />
+        </figure>
       )}
-      <div className={styles?.music_album_animated_container}>
-        <ReactPlayer 
-          className={styles?.music_album_animated}
-          src={url} playing={true}
-          muted={true} loop={true}
-          playsinline={true} />
-      </div>
     </div>
   )
 }
