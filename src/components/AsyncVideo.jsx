@@ -4,7 +4,7 @@ import styles from '../assets/scss/player.module.scss';
 
 export default function AsyncVideo({
   src = null,
-  className = null,
+  className = '',
   duration = 220,
   loop = true,
   muted = true,
@@ -44,31 +44,32 @@ export default function AsyncVideo({
   return (
     <>
       {currentSrc && (
-        <div className={[
+          <ReactPlayer
+            className={[
             className,
             nextSrc && transitioning ? styles?.old : ''
-          ].filter(Boolean).join(' ')}>
-          <ReactPlayer
-            url={currentSrc}
+          ].filter(Boolean).join(' ')}
+            src={currentSrc}
             title={altText}
             playing={playing}
             muted={muted}
             loop={loop}
             playsinline={playsinline} />
-        </div>
       )}
 
       {nextSrc && (
-        <div className={[className, styles?.new].filter(Boolean).join(' ')}>
           <ReactPlayer
-            url={nextSrc}
+            className={[
+            className,
+            nextSrc && transitioning ? styles?.old : ''
+          ].filter(Boolean).join(' ')}
+            src={nextSrc}
             title={altText}
             playing={playing}
             muted={muted}
             loop={loop}
             playsinline={playsinline}
             onReady={handleNextReady} />
-        </div>
       )}
     </>
   );
