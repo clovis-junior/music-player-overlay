@@ -3,6 +3,7 @@ import { getCachedMetadata as deezerData } from './Deezer';
 import { getCachedMetadata as lastFmData } from './LastFM';
 import { IsEmpty } from './Utils';
 
+const cache = new Map();
 const providers = [iTunesData, deezerData, lastFmData];
 
 export async function ResolveMetadata(artist, track, album) {
@@ -30,6 +31,16 @@ export async function GetAlbumCoverAnimated(track, artist, album) {
   if (IsEmpty(track) || IsEmpty(artist))
     return null;
 
+  const key = album ? `${artist}|${title}|${album}`
+    .toLowerCase()
+    .trim() 
+    : `${artist}|${title}`
+    .toLowerCase()
+    .trim();
+
+  if (cache.has(key))
+    return cache.get(key);
+
   const params = new URLSearchParams({
     artist: artist,
     album: album,
@@ -43,5 +54,8 @@ export async function GetAlbumCoverAnimated(track, artist, album) {
   if (!response.ok)
     return null;
 
-  return await response.json()
+  const data = await response.json();
+
+  cache.set(key, data);
+  return data
 }
