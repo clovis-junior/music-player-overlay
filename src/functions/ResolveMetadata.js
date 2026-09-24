@@ -31,10 +31,10 @@ export async function GetAlbumCoverAnimated(track, artist, album) {
   if (IsEmpty(track) || IsEmpty(artist))
     return null;
 
-  const key = album ? `${artist}|${title}|${album}`
+  const key = album ? `${artist}|${track}|${album}`
     .toLowerCase()
     .trim() 
-    : `${artist}|${title}`
+    : `${artist}|${track}`
     .toLowerCase()
     .trim();
 
