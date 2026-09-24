@@ -28,13 +28,10 @@ export async function ResolveMetadata(artist, track, album) {
 }
 
 export async function GetAlbumCoverAnimated(track, artist, album) {
-  if (IsEmpty(track) || IsEmpty(artist))
+  if (IsEmpty(track) || IsEmpty(artist) || IsEmpty(album))
     return null;
 
-  const key = album ? `${artist}|${track}|${album}`
-    .toLowerCase()
-    .trim() 
-    : `${artist}|${track}`
+  const key = `${artist}|${track}|${album}`
     .toLowerCase()
     .trim();
 
