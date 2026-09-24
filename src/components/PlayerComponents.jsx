@@ -331,6 +331,9 @@ export function MusicAlbumArt({
       {showPlatform && platformIcon && (
         <Streaming pathIcon={platformIcon} />
       )}
+      <figure>
+        <AsyncImage src={albumImage} alt={altText} />
+      </figure>
       {isAnimatedValid ? (
         <div className={styles?.music_album_animated_container}>
           <ReactPlayer
@@ -339,10 +342,6 @@ export function MusicAlbumArt({
             playing={true} playsinline={true}
             muted={true} loop={true} />
         </div>
-      ) : (
-        <figure>
-          <AsyncImage src={albumImage} alt={altText} />
-        </figure>
       )}
     </div>
   )
