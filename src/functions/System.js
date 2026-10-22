@@ -10,7 +10,7 @@ const port = params?.get('port') || 1997;
 const baseURL = `http://${host}:${port}`;
 
 function IsValidTrack(data) {
-  return Boolean(data?.title && data?.artist);
+  return Boolean(data?.title && data?.artist)
 }
 
 export function IsValidCover(url) {
@@ -19,15 +19,25 @@ export function IsValidCover(url) {
   if (typeof url !== 'string')
     return false;
 
-  const value = url.trim();
+  const value = url.trim().toLowerCase();
 
   if (!value)
     return false;
 
-  if (value.includes('placeholder') || value.includes('default'))
+  const invalidKeywords = [
+    'placeholder',
+    'default',
+    'no_image',
+    'nocover',
+    'transparent',
+    'blank',
+    '2a96cbd8b46e442fc41c2b86b821562f'
+  ];
+
+  if (invalidKeywords.some(keyword => value.includes(keyword)))
     return false;
 
-  return /^https?:\/\/.+/i.test(value);
+  return /^https?:\/\/.+/i.test(value)
 }
 
 async function UpdatePlayerData(data, onMetadataUpdate) {
@@ -64,9 +74,9 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
           onMetadataUpdate?.({
             _id: songId,
             albumAnimatedCover: response.animated
-          });
+          })
         }
-      });
+      })
   }
 
   if (meta?.artist && meta?.track) {
@@ -79,11 +89,11 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
           title: metadata.title || title,
           artist: metadata.artist || artist,
           albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : albumCover,
-        });
+        })
       })
   }
 
-  return current;
+  return current
 }
 
 function GetData(debug = false) {
@@ -126,7 +136,7 @@ export default {
             return current;
 
           return { ...current, ...metadata }
-        });
+        })
       });
 
       if (!data || data?.error || !IsValidTrack(data)) return;
@@ -154,7 +164,7 @@ export default {
           current?.duration?.total === next?.duration?.total;
 
         return (sameMetadata && samePlaybackState) ? current : next;
-      });
+      })
     };
 
     socket?.on('connect', handleConnect);
