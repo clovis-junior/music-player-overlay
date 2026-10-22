@@ -59,7 +59,7 @@ function UpdatePlayerData(data) {
     isPlaying: Boolean(data.is_playing),
     title, artist,
     album: track.album?.name || '',
-    albumCover: track.album?.image || ',
+    albumCover: track.album?.image || '',
     albumAnimatedCover: null,
     duration: {
       elapsed,
