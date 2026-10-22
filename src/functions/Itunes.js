@@ -39,7 +39,7 @@ export function getCachedMetadata(artist, title, album) {
     if (!data)
       cache.delete(key);
 
-    return data;
+    return data
   }).catch(() => {
     cache.delete(key);
     return null
