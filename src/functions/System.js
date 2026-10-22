@@ -37,11 +37,13 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
   const song = data?.video;
 
   const meta = NormalizeMetadata(
-    song?.author,
-    song?.title
+    song?.author, song?.title
   );
 
+  const songId = song?.id || `${song?.author || ''}|${song?.title || ''}`.toLowerCase().trim();
+
   const current = {
+    _id: songId,
     isPlaying: player?.trackState === 1,
     title: meta?.track || song?.title || '',
     artist: meta?.artist || song?.author || '',
@@ -60,16 +62,20 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
       current.title, current.artist, current.album
     ).then(response => {
       if (response?.animated)
-        onMetadataUpdate?.({ albumAnimatedCover: response.animated });
+        onMetadataUpdate?.({ 
+          _id: songId, 
+          albumAnimatedCover: response.animated 
+        })
     })
   }
 
   if (meta?.artist && meta?.track) {
-    ResolveMetadata(meta.artist, meta.track)
+    ResolveMetadata(meta.artist, meta.track, current.album)
       .then(async (metadata) => {
         if (!metadata) return;
 
         const update = {
+          _id: songId,
           title: metadata.title || current.title,
           artist: metadata.artist || current.artist,
           albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
@@ -79,7 +85,7 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
       })
   }
 
-  return current;
+  return current
 }
 
 function GetData(debug = false) {
@@ -102,7 +108,6 @@ function GetData(debug = false) {
     return socket
   } catch (e) {
     console.error(e.message);
-
     return { error: JSON.stringify(e.message) }
   }
 }
@@ -119,18 +124,24 @@ export default {
     const handleStateUpdate = async (state) => {
       const data = await UpdatePlayerData(
         state, metadata => {
-          onData?.(current => ({
-            ...current, ...metadata
-          }))
+          onData?.(current => {
+            if ((current?._id && metadata?._id) && 
+                (current._id !== metadata._id))
+              return current;
+
+            return { ...current, ...metadata }
+          });
         });
 
       if (!data || data?.error || !IsValidTrack(data)) return;
 
       onData?.(current => {
+        const isNewTrack = current?._id !== data?._id;
+
         const next = {
           ...current, ...data,
           albumCover: data?.albumCover || current?.albumCover || '',
-          albumAnimatedCover: data?.albumAnimatedCover || current?.albumAnimatedCover
+          albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
         };
 
         const sameMetadata =
@@ -155,7 +166,7 @@ export default {
     socket?.on('state-update', handleStateUpdate);
     socket?.connect();
 
-     return () => {
+    return () => {
       socket?.off('connect', handleConnect);
       socket?.off('disconnect', handleDisconnect);
       socket?.off('state-update', handleStateUpdate);
