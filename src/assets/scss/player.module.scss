@@ -61,6 +61,7 @@ $player-equalizer-gap: 2px;
 
 /* Music/Player ------------------------------------------ */
 .music_album_blur_container {
+  z-index: -1;
   position: absolute;
   inset: 0;
 
@@ -487,7 +488,7 @@ $player-equalizer-gap: 2px;
     flex-direction: row-reverse;
   }
 
-  &.alternative,
+  &.full,
   &.vertical {
     overflow: hidden;
     border-radius: $radius;
@@ -561,7 +562,7 @@ $player-equalizer-gap: 2px;
     }
   }
 
-  &.alternative {
+  &.full {
     $padding-gap: 10px;
     $alternate-size: calc(#{$size} - #{$padding-gap});
 
@@ -598,6 +599,85 @@ $player-equalizer-gap: 2px;
 
       .player_content {
         padding-right: $padding-gap;
+      }
+    }
+  }
+
+  &.alternative {
+    .music_album_art,
+    .music_infos,
+    .player_features {
+      @extend .music_player_surface;
+    }
+
+    &.square {
+      & .player_content {
+        & .music_infos,
+        & .player_features {
+          border-radius: 2px;
+        }
+      }
+    }
+
+    .player_content {
+      gap: 6px;
+      padding: 0;
+      border-radius: 0;
+      overflow: initial !important;
+      background-color: initial !important;
+      @include backdrop-filter(initial !important);
+      box-shadow: initial !important;
+
+      &:not(:has(> .music_album_blur_container)) {
+        text-shadow: 0 0 0 transparent !important;
+      }
+
+      &.inverted {
+        & .music_infos {
+          & > .music_album_blur_container {
+            bottom: -100%;
+          }
+        }
+
+        & .player_features {
+          & > .music_album_blur_container {
+            bottom: -380%;
+          }
+        }
+      }
+
+      & .music_infos,
+      & .player_features {
+        min-height: 0;
+        overflow: hidden;
+        border-radius: $radius;
+        position: relative;
+      }
+
+      & .music_infos {
+        flex: 2;
+        padding: 4px 8px 6px;
+
+        & > .music_album_blur_container {
+          bottom: -250%;
+        }
+      }
+
+      & .player_features {
+        flex: 1;
+        justify-content: center;
+        padding: 12px 10px 10px;
+
+        & > .music_album_blur_container {
+          bottom: -100%;
+        }
+      }
+    }
+
+    &.no_shadow {
+      & .music_infos,
+      & .player_features {
+        box-shadow: 0 0 0 0 transparent;
       }
     }
   }
@@ -764,7 +844,7 @@ $player-equalizer-gap: 2px;
     animation-name: waveform;
   }
 
-  &:not(.alternative, .vertical).no_shadow {
+  &:not(.full, .alternative, .vertical).no_shadow {
     & .music_album_art,
     & .player_content {
       box-shadow: 0 0 0 0 transparent;
@@ -796,7 +876,7 @@ $player-equalizer-gap: 2px;
     transition: all 220ms ease-out;
   }
 
-  &:not(.alternative, .vertical, .transparent) {
+  &:not(.full, .alternative, .vertical, .transparent) {
     & .music_album_art,
     & .player_content {
       @extend .music_player_surface;

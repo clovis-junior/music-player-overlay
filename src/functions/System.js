@@ -10,19 +10,16 @@ const port = params?.get('port') || 1997;
 const baseURL = `http://${host}:${port}`;
 
 function IsValidTrack(data) {
-  return Boolean(data?.title && data?.artist)
+  return Boolean(data?.title && data?.artist);
 }
 
 export function IsValidCover(url) {
   if (IsEmpty(url)) return false;
-
-  if (typeof url !== 'string')
-    return false;
+  if (typeof url !== 'string') return false;
 
   const value = url.trim().toLowerCase();
 
-  if (!value)
-    return false;
+  if (!value) return false;
 
   const invalidKeywords = [
     'placeholder',
@@ -34,27 +31,34 @@ export function IsValidCover(url) {
     '2a96cbd8b46e442fc41c2b86b821562f'
   ];
 
-  if (invalidKeywords.some(keyword => value.includes(keyword)))
+  if (invalidKeywords.some(keyword => value.includes(keyword))) {
     return false;
+  }
 
-  return /^https?:\/\/.+/i.test(value)
+  return /^https?:\/\/.+/i.test(value);
 }
 
 const metadataRequests = new Map();
 const MAX_METADATA_CACHE = 200;
 
 function RememberMetadataRequest(key, promise) {
-  metadataRequests.delete(key);
-
   const trackedPromise = Promise.resolve(promise)
     .then(() => true)
     .catch(error => {
-      console.error('Metadata enrichment error:', error?.message || error);
+      console.error(
+        'Metadata enrichment error:',
+        error?.message || error
+      );
+
       return false;
     })
     .then(success => {
-      if (!success && metadataRequests.get(key) === trackedPromise)
+      if (
+        !success &&
+        metadataRequests.get(key) === trackedPromise
+      ) {
         metadataRequests.delete(key);
+      }
 
       return success;
     });
@@ -70,14 +74,12 @@ function RememberMetadataRequest(key, promise) {
 }
 
 function UpdatePlayerData(data, onMetadataUpdate) {
-  if (!data || data.error)
-    return {};
+  if (!data || data.error) return {};
 
   const player = data.player;
   const song = data.track || data.video;
 
-  if (!song)
-    return {};
+  if (!song) return {};
 
   const rawTitle = song.name ?? song.title ?? '';
   const rawArtist = song.artist ?? song.author ?? '';
@@ -88,29 +90,39 @@ function UpdatePlayerData(data, onMetadataUpdate) {
   const title = meta?.track || rawTitle;
   const artist = meta?.artist || rawArtist;
   const album = rawAlbum;
-
   const source = data.source || '';
 
   const songId = data.id || [
     source,
-    (title || rawTitle).toLowerCase().trim(),
-    (artist || rawArtist).toLowerCase().trim(),
+    title.toLowerCase().trim(),
+    artist.toLowerCase().trim(),
     album.toLowerCase().trim()
   ].join(':');
 
-  const isPlaying = typeof data.is_playing === 'boolean'
-    ? data.is_playing
-    : player?.trackState === 1;
+  const isPlaying =
+    typeof data.is_playing === 'boolean'
+      ? data.is_playing
+      : player?.trackState === 1;
 
-  const rawProgress = Number(data.progress ?? player?.videoProgress);
-  const rawDuration = Number(song.duration ?? song.durationSeconds);
+  const rawProgress = Number(
+    data.progress ?? player?.videoProgress
+  );
+
+  const rawDuration = Number(
+    song.duration ?? song.durationSeconds
+  );
 
   const total = Number.isFinite(rawDuration)
     ? Math.max(0, rawDuration)
     : 0;
 
   const elapsed = Number.isFinite(rawProgress)
-    ? Math.max(0, total > 0 ? Math.min(rawProgress, total) : rawProgress)
+    ? Math.max(
+        0,
+        total > 0
+          ? Math.min(Math.max(0, rawProgress), total)
+          : Math.max(0, rawProgress)
+      )
     : 0;
 
   const duration = {
@@ -119,11 +131,10 @@ function UpdatePlayerData(data, onMetadataUpdate) {
     total
   };
 
-  const rawCover = song.album?.image
-    ?? song.thumbnails?.at(-1)?.url
-    ?? '';
-
-  const albumCover = IsValidCover(rawCover) ? rawCover : '';
+  const websocketCover =
+    song.album?.image ??
+    song.thumbnails?.at(-1)?.url ??
+    '';
 
   const current = {
     _id: songId,
@@ -133,21 +144,72 @@ function UpdatePlayerData(data, onMetadataUpdate) {
     title,
     artist,
     album,
-    albumCover,
+
+    albumCover: websocketCover || '',
+    albumCoverSource: websocketCover ? 'websocket' : '',
+
+    metadataSource: '',
+
     albumAnimatedCover: null
   };
 
-  if (!title || !artist)
+  if (!IsValidTrack(current)) {
     return current;
+  }
 
-  const canResolveMetadata = Boolean(meta?.artist && meta?.track);
+  const resolveKey = `${songId}:resolved`;
+
+  if (
+    meta?.artist &&
+    meta?.track &&
+    !metadataRequests.has(resolveKey)
+  ) {
+    RememberMetadataRequest(
+      resolveKey,
+      (async () => {
+        const metadata = await ResolveMetadata(
+          meta.artist,
+          meta.track,
+          album
+        );
+
+        if (!metadata) return;
+
+        const providerCover = IsValidCover(metadata.albumCover)
+          ? metadata.albumCover
+          : null;
+
+        onMetadataUpdate?.({
+          _id: songId,
+
+          title: metadata.title || title,
+          artist: metadata.artist || artist,
+          album: metadata.album || album,
+
+          metadataSource: 'provider',
+
+          ...(providerCover
+            ? {
+                albumCover: providerCover,
+                albumCoverSource: 'provider'
+              }
+            : {})
+        });
+      })()
+    );
+  }
 
   const animatedKey = `${songId}:animated`;
+
   if (!metadataRequests.has(animatedKey)) {
     RememberMetadataRequest(
       animatedKey,
       (async () => {
-        const response = await GetAlbumCoverAnimated(title, artist, album);
+        const response = await GetAlbumCoverAnimated(
+          title,
+          artist,
+          album
+        );
 
         if (response?.animated) {
           onMetadataUpdate?.({
@@ -156,34 +218,7 @@ function UpdatePlayerData(data, onMetadataUpdate) {
           })
         }
       })()
-    )
-  }
-
-  const resolveKey = `${songId}:resolved`;
-  if (canResolveMetadata && !metadataRequests.has(resolveKey)) {
-    RememberMetadataRequest(
-      resolveKey,
-      (async () => {
-        const metadata = await ResolveMetadata(meta.artist, meta.track, album);
-
-        if (!metadata)
-          return;
-
-        const update = { _id: songId };
-
-        if (metadata.title)
-          update.title = metadata.title;
-
-        if (metadata.artist)
-          update.artist = metadata.artist;
-
-        if (IsValidCover(metadata.albumCover))
-          update.albumCover = metadata.albumCover;
-
-        if (Object.keys(update).length > 1)
-          onMetadataUpdate?.(update);
-      })()
-    )
+    );
   }
 
   return current
@@ -191,7 +226,7 @@ function UpdatePlayerData(data, onMetadataUpdate) {
 
 function GetData(debug = false) {
   try {
-    const socket = io(`${baseURL}`, {
+    const socket = io(baseURL, {
       transports: ['websocket'],
       autoConnect: false,
       reconnection: true
@@ -200,19 +235,24 @@ function GetData(debug = false) {
     const manager = socket.io;
 
     socket.on('connect', () => {
-      console.log('Connected to System Media');
+      console.log('Connected to System Media')
     });
 
     socket.on('disconnect', reason => {
-      console.log('Disconnected from System Media:', reason);
+      console.log('Disconnected from System Media:', reason)
     });
 
     socket.on('connect_error', error => {
-      console.error('Connection error:', error?.message || error);
+      console.error(
+        'Connection error:',
+        error?.message || error
+      )
     });
 
     manager.on('reconnect', attempt => {
-      console.log(`Successfully reconnected after ${attempt} attempts.`);
+      console.log(
+        `Successfully reconnected after ${attempt} attempts.`
+      )
     });
 
     manager.on('reconnect_attempt', attempt => {
@@ -225,14 +265,17 @@ function GetData(debug = false) {
 
     if (debug) {
       socket.onAny((event, ...args) => {
-        console.debug(event, ...args);
+        console.debug(event, ...args)
       })
     }
 
-    return socket;
+    return socket
   } catch (error) {
     console.error(error?.message || error);
-    return { error: String(error?.message || error) };
+
+    return {
+      error: String(error?.message || error)
+    }
   }
 }
 
@@ -244,7 +287,7 @@ export default {
     const socket = GetData();
 
     if (socket?.error)
-      return () => { };
+      return () => {};
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
@@ -263,16 +306,58 @@ export default {
         });
       });
 
-      if (!data || data.error || !IsValidTrack(data))
+      if (!data || data.error || !IsValidTrack(data)) {
         return;
+      }
 
       onData?.(current => {
         const isNewTrack = current?._id !== data._id;
 
+        const hasProviderMetadata =
+          !isNewTrack &&
+          current?.metadataSource === 'provider';
+
+        const title = hasProviderMetadata
+          ? current.title
+          : data.title;
+
+        const artist = hasProviderMetadata
+          ? current.artist
+          : data.artist;
+
+        const album = hasProviderMetadata
+          ? current.album
+          : data.album;
+
+        const hasProviderCover =
+          !isNewTrack &&
+          current?.albumCoverSource === 'provider' &&
+          current?.albumCover;
+
+        const albumCover = hasProviderCover
+          ? current.albumCover
+          : data.albumCover || (
+              !isNewTrack
+                ? current?.albumCover
+                : ''
+            ) || '';
+
+        const albumCoverSource = hasProviderCover
+          ? 'provider'
+          : data.albumCover
+            ? data.albumCoverSource || 'websocket'
+            : !isNewTrack
+              ? current?.albumCoverSource || ''
+              : '';
+
         const next = {
-          ...current,
-          ...data,
-          albumCover: data.albumCover || current?.albumCover || '',
+          ...current, ...data,
+          title, artist,
+          album, albumCover,
+          albumCoverSource,
+          metadataSource: hasProviderMetadata
+            ? 'provider'
+            : data.metadataSource || '',
           albumAnimatedCover: isNewTrack
             ? null
             : current?.albumAnimatedCover ?? null
@@ -285,6 +370,8 @@ export default {
           current?.artist === next.artist &&
           current?.album === next.album &&
           current?.albumCover === next.albumCover &&
+          current?.albumCoverSource === next.albumCoverSource &&
+          current?.metadataSource === next.metadataSource &&
           current?.albumAnimatedCover === next.albumAnimatedCover;
 
         const samePlaybackState =
@@ -296,7 +383,7 @@ export default {
         return sameMetadata && samePlaybackState
           ? current
           : next;
-      })
+      });
     };
 
     socket.on('connect', handleConnect);
@@ -314,8 +401,8 @@ export default {
       socket.io.off('reconnect_attempt');
       socket.io.off('reconnect_failed');
 
-      if (socket?.connected)
-        socket?.disconnect();
+      if (socket.connected)
+        socket.disconnect();
     }
   }
 }

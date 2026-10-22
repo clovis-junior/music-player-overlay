@@ -27,9 +27,22 @@ export async function handler(event) {
     })
   }
 
-  const cleanTrack = track?.replace(/(\[.*?\]|\(.*?\))/g, '')?.replace(/ft\..*|feat\..*/i, '')?.trim();
-  const cleanArtist = artist.split('/')?.[0]?.split(',')?.[0]?.trim();
-  const cleanAlbum = album ? album.replace(/(\[.*?\]|\(.*?\))/g, '')?.replace(/Deluxe|Remastered|Special|Edition/i, '')?.trim() : '';
+  const cleanTrack = track
+    .replace(/\[.*?\]|\(.*?\)/g, '')
+    .replace(/ft\.?\s.*|feat\.?\s.*/i, '')
+    .trim();
+
+  const cleanArtist = artist
+    .split('/')[0]
+    .split(',')[0]
+    .trim();
+
+  const cleanAlbum = album
+    ? album
+      .replace(/\[.*?\]|\(.*?\)/g, '')
+      .replace(/Deluxe|Remastered|Special|Edition/gi, '')
+      .trim()
+    : '';
 
   async function searchAcrossRegions(term, regions) {
     const promises = regions.map(async (country) => {
@@ -76,7 +89,7 @@ export async function handler(event) {
 
     const bestMatch = results.reduce((best, current) => {
       let currentScore = 0;
-      
+
       if (current.trackName?.toLowerCase().includes(cleanTrack.toLowerCase())) currentScore += 5;
       if (current.artistName?.toLowerCase().includes(cleanArtist.toLowerCase())) currentScore += 4;
       if (cleanAlbum && current.collectionName?.toLowerCase().includes(cleanAlbum.toLowerCase())) currentScore += 3;
@@ -94,7 +107,7 @@ export async function handler(event) {
     }
 
     const rawCover = bestMatch?.artworkUrl100 || '';
-    const hdCover = rawCover.replace('100x100bb', '1200x1200bb');
+    const hdCover = rawCover.replace('100x100bb', '600x600bb');
 
     return {
       statusCode: 200,

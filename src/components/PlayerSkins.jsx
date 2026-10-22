@@ -77,6 +77,12 @@ function PlayerContent({ platformIcon = null, options = {}, music = {} }) {
           altText={music?.title} />
       )}
       <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
+        {(options?.skin === 'alternative' && options?.theme === 'default') && (
+          <MusicAlbumBackground
+            noBlur={options?.albumArtNoBlur}
+            albumImage={music?.albumCover}
+            altText={music?.title} />
+        )}
         {((options?.removeAlbumArt || options?.showVinyl) && options?.showPlatformIcon) && (
           <Streaming pathIcon={platformIcon} />
         )}
@@ -131,6 +137,12 @@ function DefaultFooter({
 
   return (
     <footer className={classes}>
+      {(options?.skin === 'alternative' && options?.theme === 'default') && (
+        <MusicAlbumBackground
+          noBlur={options?.albumArtNoBlur}
+          albumImage={music?.albumCover}
+          altText={music?.title} />
+      )}
       {musicTimes}
       {options?.swapProgressBar ? (
         <div className={styles?.feature}>
@@ -273,10 +285,10 @@ export function VerticalSkin(props) {
   )
 }
 
-export function AlternativeSkin(props) {
+export function FullSkin(props) {
   const { options, platformIcon, music, inline, playerClasses } = usePlayerProps(props, [
     styles?.music_player,
-    styles?.alternative
+    styles?.full
   ]);
 
   return (
@@ -287,6 +299,30 @@ export function AlternativeSkin(props) {
           albumImage={music?.albumCover}
           altText={music?.title} />
       )}
+      {!options?.removeAlbumArt && (
+        <MusicArt
+          music={music}
+          animated={options?.animatedAlbumArt}
+          vinyl={options?.showVinyl}
+          vinylStopped={options?.notRollVinyl}
+          showPlatform={options?.showPlatformIcon}
+          platformIcon={platformIcon} />
+      )}
+      {!options?.removeContent && (
+        <PlayerContent platformIcon={platformIcon} options={options} music={music} />
+      )}
+    </main>
+  )
+}
+
+export function AlternativeSkin(props) {
+  const { options, platformIcon, music, inline, playerClasses } = usePlayerProps(props, [
+    styles?.music_player,
+    styles?.alternative
+  ]);
+
+  return (
+    <main {...inline} className={playerClasses}>
       {!options?.removeAlbumArt && (
         <MusicArt
           music={music}

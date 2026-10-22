@@ -15,6 +15,10 @@ const playerSchema = {
       value: 'alternative'
     }, {
       default: false,
+      name: 'Fully',
+      value: 'full'
+    }, {
+      default: false,
       name: 'Card (Vertical)',
       value: 'vertical'
     }, {

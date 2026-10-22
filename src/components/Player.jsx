@@ -4,7 +4,7 @@ import { GetURLParams } from '../functions/Utils'
 import { defaultFont } from '../functions/GoogleFonts'
 import { useMusicPlatform } from '../hooks/MusicPlatform.js'
 
-import { AlbumArtCardSkin, AlternativeSkin, CompactSkin, DefaultSkin, VerticalSkin } from './PlayerSkins'
+import { AlbumArtCardSkin, AlternativeSkin, CompactSkin, DefaultSkin, FullSkin, VerticalSkin } from './PlayerSkins'
 import { getThemeFromPalette } from '../functions/ThemeFromPallete.js'
 
 const params = GetURLParams();
@@ -103,6 +103,7 @@ export default function Player({ options = {} }) {
     'compact-ultra': CompactSkin,
     'card': AlbumArtCardSkin,
     'vertical': VerticalSkin,
+    'full': FullSkin,
     'alternative': AlternativeSkin
   };
 
