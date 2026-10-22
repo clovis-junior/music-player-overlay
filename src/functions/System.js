@@ -99,146 +99,143 @@ function GetData(debug = false) {
 export default {
   id: 'universal',
   icon: null,
-
   
-connect({ onConnect, onDisconnect, onData }) {
-  const socket = GetData();
-
-  let activeTrackId = null;
-
-  const handleConnect = () => onConnect?.();
-  const handleDisconnect = () => onDisconnect?.();
-
-  const handleStateUpdate = state => {
-    const data = UpdatePlayerData(state);
-
-    if (!data) return;
-
-    const trackChanged = data._id !== activeTrackId;
-
-    if (trackChanged)
-      activeTrackId = data._id;
-
-    const isCurrentTrack = () => activeTrackId === data._id;
-
-    onData?.(current => {
-      if (!isCurrentTrack())
-        return current;
-
-      const isNewTrack = current?._id !== data._id;
-
-      const next = {
-        ...current, ...data,
-        albumCover: data.albumCover || (
-          isNewTrack ? null : current?.albumCover
-        ),
-        albumAnimatedCover: isNewTrack
-          ? null : current?.albumAnimatedCover
-      };
-
-      const sameMetadata =
-        current?._id === next._id &&
-        current?.title === next.title &&
-        current?.artist === next.artist &&
-        current?.album === next.album &&
-        current?.albumCover === next.albumCover &&
-        current?.albumAnimatedCover === next.albumAnimatedCover;
-
-      const samePlaybackState =
-        current?.isPlaying === next.isPlaying &&
-        current?.duration?.elapsed === next.duration.elapsed &&
-        current?.duration?.remaining === next.duration.remaining &&
-        current?.duration?.total === next.duration.total;
-
-      return sameMetadata && samePlaybackState
-        ? current
-        : next;
-    });
-
-    if (!trackChanged) return;
-
-    const trackId = data._id;
-
-    const stillCurrent = () => activeTrackId === trackId;
-
-    const applyMetadata = update => {
-      if (!stillCurrent()) return;
-
+  connect({ onConnect, onDisconnect, onData }) {
+    const socket = GetData();
+  
+    let activeTrackId = null;
+  
+    const handleConnect = () => onConnect?.();
+    const handleDisconnect = () => onDisconnect?.();
+  
+    const handleStateUpdate = state => {
+      const data = UpdatePlayerData(state);
+  
+      if (!data) return;
+  
+      const trackChanged = data._id !== activeTrackId;
+  
+      if (trackChanged)
+        activeTrackId = data._id;
+  
+      const trackId = data._id;
+      const stillCurrent = () => activeTrackId === trackId;
+  
       onData?.(current => {
-        if (!stillCurrent() || current?._id !== trackId)
-          return current;
-
-        return { ...current, ...update };
+        if (!stillCurrent()) return current;
+  
+        const isNewTrack = current?._id !== trackId;
+  
+        const next = {
+          ...current, ...data,
+          albumCover: data.albumCover || (
+            isNewTrack ? null : current?.albumCover
+          ),
+          albumAnimatedCover: isNewTrack
+            ? null : current?.albumAnimatedCover
+        };
+  
+        const sameMetadata =
+          current?._id === next._id &&
+          current?.title === next.title &&
+          current?.artist === next.artist &&
+          current?.album === next.album &&
+          current?.albumCover === next.albumCover &&
+          current?.albumAnimatedCover === next.albumAnimatedCover;
+  
+        const samePlaybackState =
+          current?.isPlaying === next.isPlaying &&
+          current?.duration?.elapsed === next.duration.elapsed &&
+          current?.duration?.remaining === next.duration.remaining &&
+          current?.duration?.total === next.duration.total;
+  
+        return sameMetadata && samePlaybackState
+          ? current : next;
       });
+
+      if (!trackChanged) return;
+  
+      const applyMetadata = update => {
+        if (!stillCurrent()) return;
+  
+        onData?.(current => {
+          if (!stillCurrent() || current?._id !== trackId)
+            return current;
+  
+          return { ...current, ...update }
+        })
+      };
+  
+      Promise.resolve()
+        .then(() => ResolveMetadata(data.artist, data.title))
+        .then(metadata => {
+          if (!metadata || !stillCurrent()) return;
+  
+          const update = {
+            title: metadata.title || data.title,
+            artist: metadata.artist || data.artist
+          };
+  
+          if (IsValidCover(metadata.albumCover))
+            update.albumCover = metadata.albumCover;
+  
+          applyMetadata(update)
+        })
+        .catch(error => {
+          console.error('ResolveMetadata error:', error);
+        });
+  
+      Promise.resolve()
+        .then(() =>
+          GetAlbumCoverAnimated(
+            data.title,
+            data.artist,
+            data.album
+          )
+        )
+        .then(async response => {
+          if (!stillCurrent()) return;
+  
+          if (!response?.animated) {
+            const metadata = await ResolveMetadata(
+              data.artist, data.title
+            );
+  
+            if (!stillCurrent()) return;
+  
+            const title = metadata?.title || data.title;
+            const artist = metadata?.artist || data.artist;
+            const album = metadata?.album || data.album;
+  
+            if (title !== data.title || artist !== data.artist || 
+                album !== data.album)
+              response = await GetAlbumCoverAnimated(title, artist, album);
+          }
+  
+          if (!response?.animated || !stillCurrent())
+            return;
+  
+          applyMetadata({ albumAnimatedCover: response.animated })
+        })
+        .catch(error => {
+          console.error('GetAlbumCoverAnimated error:', error)
+        });
     };
-
-const EnrichTrackMetadata = async () => {
-  if (!stillCurrent()) return;
-
-  let metadata = null;
-
-  try {
-    metadata = await ResolveMetadata(data.artist, data.title);
-  } catch (error) {
-    console.error('ResolveMetadata error:', error);
-  }
-
-  if (!stillCurrent()) return;
-
-  const title = metadata?.title || data.title;
-  const artist = metadata?.artist || data.artist;
-  const album = metadata?.album || data.album;
-
-  const update = { title, artist };
-
-  if (IsValidCover(metadata?.albumCover))
-    update.albumCover = metadata.albumCover;
-
-  applyMetadata(update);
-
-  try {
-    let response = await GetAlbumCoverAnimated(
-      title, artist, album
-    );
-
-    if (!stillCurrent()) return;
-
-    if (!response?.animated &&
-      (title !== data.title || artist !== data.artist)) {
-      response = await GetAlbumCoverAnimated(
-        data.title, data.artist, data.album
-      );
+  
+    socket?.on('connect', handleConnect);
+    socket?.on('disconnect', handleDisconnect);
+    socket?.on('state-update', handleStateUpdate);
+    socket?.connect();
+  
+    return () => {
+      socket?.off('connect', handleConnect);
+      socket?.off('disconnect', handleDisconnect);
+      socket?.off('state-update', handleStateUpdate);
+  
+      activeTrackId = null;
+  
+      if (socket?.connected)
+        socket.disconnect();
     }
-
-    if (!response?.animated || !stillCurrent())
-      return;
-
-    applyMetadata({
-      albumAnimatedCover: response.animated
-    });
-  } catch (error) {
-    console.error('Animated artwork error:', error);
   }
-};
-
-EnrichTrackMetadata()
-
-  };
-
-  socket?.on('connect', handleConnect);
-  socket?.on('disconnect', handleDisconnect);
-  socket?.on('state-update', handleStateUpdate);
-  socket?.connect();
-
-  return () => {
-    socket?.off('connect', handleConnect);
-    socket?.off('disconnect', handleDisconnect);
-    socket?.off('state-update', handleStateUpdate);
-
-    activeTrackId = null;
-
-    if (socket?.connected)
-      socket.disconnect();
-  }
-}
 }
