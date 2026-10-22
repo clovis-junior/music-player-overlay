@@ -71,7 +71,7 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
       })
   }
 
-  if (meta?.artist && meta?.track) {
+  if (meta.artist && meta.track) {
     ResolveMetadata(meta.artist, meta.track)
       .then(async (metadata) => {
         if (!metadata) return;
@@ -130,8 +130,7 @@ export default {
       const data = await UpdatePlayerData(state, metadata => {
         onData?.(current => {
           return {
-            ...current,
-            albumAnimatedCover: metadata.albumAnimatedCover
+            ...current, ...metadata
           }
         })
       });
@@ -144,7 +143,7 @@ export default {
         const next = {
           ...current, ...data,
           albumCover: data?.albumCover || current?.albumCover,
-          albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
+          albumAnimatedCover: isNewTrack ? data?.albumAnimatedCover : current?.albumAnimatedCover
         };
 
         const sameMetadata =
