@@ -47,7 +47,7 @@ export async function handler(event) {
     });
 
     const responses = await Promise.all(promises);
-    return responses.flat();
+    return responses.flat()
   }
 
   try {
@@ -55,12 +55,12 @@ export async function handler(event) {
 
     if (cleanAlbum) {
       const strictTerm = `${cleanArtist} ${cleanTrack} ${cleanAlbum}`;
-      results = await searchAcrossRegions(strictTerm, activeRegions)
+      results = await searchAcrossRegions(strictTerm, activeRegions);
     }
 
     if (results.length === 0) {
       const focusedTerm = `${cleanArtist} ${cleanTrack}`;
-      results = await searchAcrossRegions(focusedTerm, activeRegions)
+      results = await searchAcrossRegions(focusedTerm, activeRegions);
     }
 
     if (results.length === 0)
@@ -84,6 +84,14 @@ export async function handler(event) {
       current.score = currentScore;
       return (!best || currentScore > best.score) ? current : best;
     }, null);
+
+    if (!bestMatch || bestMatch.score === 0) {
+      return {
+        statusCode: 200,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify(null)
+      }
+    }
 
     const rawCover = bestMatch?.artworkUrl100 || '';
     const hdCover = rawCover.replace('100x100bb', '1200x1200bb');
