@@ -127,23 +127,22 @@ export default {
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
     const handleStateUpdate = async state => {
-      const data = await UpdatePlayerData(state, metadata => {
-        onData?.(current => {
-          return {
+      const data = await UpdatePlayerData(
+        state, metadata => {
+          onData?.(current => ({
             ...current, ...metadata
-          }
-        })
-      });
+          }))
+        });
 
       if (!data || data?.error) return;
 
       onData?.(current => {
-        const isNewTrack = current?._id !== data?._id;
-
+        const isNewTrack = current?._id !== data._id;
+        
         const next = {
           ...current, ...data,
           albumCover: data?.albumCover || current?.albumCover,
-          albumAnimatedCover: isNewTrack ? data?.albumAnimatedCover : current?.albumAnimatedCover
+          albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
         };
 
         const sameMetadata =
