@@ -127,8 +127,7 @@ export default {
   
         const next = {
           ...current, ...data,
-          albumCover: data.albumCover || (
-            isNewTrack ? null : current?.albumCover
+          albumCover: isNewTrack ? data.albumCover : current?.albumCover
           ),
           albumAnimatedCover: isNewTrack
             ? null : current?.albumAnimatedCover
@@ -186,11 +185,7 @@ export default {
   
       Promise.resolve()
         .then(() =>
-          GetAlbumCoverAnimated(
-            data.title,
-            data.artist,
-            data.album
-          )
+          GetAlbumCoverAnimated(data.title, data.artist, data.album)
         )
         .then(async response => {
           if (!stillCurrent()) return;
