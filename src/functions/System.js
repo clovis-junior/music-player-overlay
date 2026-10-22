@@ -80,7 +80,6 @@ function GetData(debug = false) {
   try {
     const socket = io(baseURL, {
       transports: ['websocket'],
-      auth: { 'token': token },
       autoConnect: false
     });
 
