@@ -35,11 +35,16 @@ export function getCachedMetadata(artist, title, album) {
   if (cache.has(key))
     return cache.get(key);
 
-  const promise = getMetadata(
-    artist,
-    title,
-    album
-  );
+  const promise = getMetadata(artist, title, album).then((data) => {
+    if (!data)
+      cache.delete(key);
+
+    return data;
+  }).catch(() => {
+    cache.delete(key);
+    return null
+  });
+
   cache.set(key, promise);
   return promise
 }
