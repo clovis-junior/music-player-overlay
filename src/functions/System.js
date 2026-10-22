@@ -9,6 +9,8 @@ const port = params?.get('port') || 1997;
 
 const baseURL = `http://${host}:${port}`;
 
+let lastProcessedId = null;
+
 function IsValidTrack(data) {
   return Boolean(data?.title && data?.artist)
 }
@@ -57,32 +59,36 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     }
   };
 
-  if (current.title && current.artist) {
-    GetAlbumCoverAnimated(
-      current.title, current.artist, current.album
-    ).then(response => {
-      if (response?.animated)
-        onMetadataUpdate?.({ 
-          _id: songId, 
-          albumAnimatedCover: response.animated 
-        })
-    })
-  }
+  if (songId !== lastProcessedId) {
+    lastProcessedId = songId;
 
-  if (meta?.artist && meta?.track) {
-    ResolveMetadata(meta.artist, meta.track, current.album)
-      .then(async (metadata) => {
-        if (!metadata) return;
-
-        const update = {
-          _id: songId,
-          title: metadata.title || current.title,
-          artist: metadata.artist || current.artist,
-          albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
-        };
-
-        onMetadataUpdate?.(update)
+    if (current.title && current.artist) {
+      GetAlbumCoverAnimated(
+        current.title, current.artist, current.album
+      ).then(response => {
+        if (response?.animated)
+          onMetadataUpdate?.({  
+            _id: songId,  
+            albumAnimatedCover: response.animated  
+          })
       })
+    }
+
+    if (meta?.artist && meta?.track) {
+      ResolveMetadata(meta.artist, meta.track, current.album)
+        .then(async (metadata) => {
+          if (!metadata) return;
+
+          const update = {
+            _id: songId,
+            title: metadata.title || current.title,
+            artist: metadata.artist || current.artist,
+            albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
+          };
+
+          onMetadataUpdate?.(update)
+        })
+    }
   }
 
   return current
@@ -125,12 +131,12 @@ export default {
       const data = await UpdatePlayerData(
         state, metadata => {
           onData?.(current => {
-            if ((current?._id && metadata?._id) && 
+            if ((current?._id && metadata?._id) &&  
                 (current._id !== metadata._id))
               return current;
 
             return { ...current, ...metadata }
-          });
+          })
         });
 
       if (!data || data?.error || !IsValidTrack(data)) return;
