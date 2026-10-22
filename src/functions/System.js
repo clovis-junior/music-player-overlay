@@ -27,7 +27,7 @@ export function IsValidCover(url) {
   if (value.includes('placeholder') || value.includes('default'))
     return false;
 
-  return /^https?:\/\/.+/i.test(value);
+  return /^https?:\/\/.+/i.test(value)
 }
 
 async function UpdatePlayerData(data, onMetadataUpdate) {
@@ -55,12 +55,12 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
     }
   };
 
-  if (!current.albumAnimatedCover) {
+  if (current.title && current.artist) {
     GetAlbumCoverAnimated(
-       current.title,  current.artist, current.album
+      current.title, current.artist, current.album
     ).then(response => {
       if (response?.animated)
-        current.albumAnimatedCover = response?.animated;
+        onMetadataUpdate?.({ albumAnimatedCover: response.animated });
     })
   }
 
@@ -75,14 +75,11 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
           albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
         };
 
-        if (current.albumAnimatedCover)
-          update.albumAnimatedCover = current.albumAnimatedCover;
-
         onMetadataUpdate?.(update)
       })
   }
 
-  return current
+  return current;
 }
 
 function GetData(debug = false) {
@@ -149,7 +146,7 @@ export default {
           current?.duration?.remaining === next?.duration?.remaining &&
           current?.duration?.total === next?.duration?.total;
 
-        return (sameMetadata && samePlaybackState) ? current : next
+        return (sameMetadata && samePlaybackState) ? current : next;
       })
     };
 
@@ -158,7 +155,7 @@ export default {
     socket?.on('state-update', handleStateUpdate);
     socket?.connect();
 
-    return () => {
+     return () => {
       socket?.off('connect', handleConnect);
       socket?.off('disconnect', handleDisconnect);
       socket?.off('state-update', handleStateUpdate);
