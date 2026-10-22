@@ -9,10 +9,8 @@ const port = params?.get('port') || 1997;
 
 const baseURL = `http://${host}:${port}`;
 
-let lastProcessedId = null;
-
 function IsValidTrack(data) {
-  return Boolean(data?.title && data?.artist)
+  return Boolean(data?.title && data?.artist);
 }
 
 export function IsValidCover(url) {
@@ -29,69 +27,63 @@ export function IsValidCover(url) {
   if (value.includes('placeholder') || value.includes('default'))
     return false;
 
-  return /^https?:\/\/.+/i.test(value)
+  return /^https?:\/\/.+/i.test(value);
 }
 
 async function UpdatePlayerData(data, onMetadataUpdate) {
-  if (data.error) return data;
+  if (data.error) return {};
 
   const player = data?.player;
   const song = data?.video;
-
-  const meta = NormalizeMetadata(
-    song?.author, song?.title
-  );
+  const meta = NormalizeMetadata(song?.author, song?.title);
 
   const songId = song?.id || `${song?.author || ''}|${song?.title || ''}`.toLowerCase().trim();
+  const isPlaying = player?.trackState === 1;
+  const title = meta?.track || song?.title || '';
+  const artist = meta?.artist || song?.author || '';
+  const album = song?.album || '';
+  const albumCover = song?.thumbnails?.at(-1)?.url || null;
+  const duration = {
+    elapsed: Number(player?.videoProgress) || 0,
+    remaining: Math.max(0, (song?.durationSeconds || 0) - (player?.videoProgress || 0)),
+    total: Number(song?.durationSeconds) || 0
+  };
 
   const current = {
     _id: songId,
-    isPlaying: player?.trackState === 1,
-    title: meta?.track || song?.title || '',
-    artist: meta?.artist || song?.author || '',
-    album: song?.album || '',
-    albumCover: song?.thumbnails?.at(-1)?.url || null,
-    albumAnimatedCover: null,
-    duration: {
-      elapsed: Number(player?.videoProgress) || 0,
-      remaining: Math.max(0, song?.durationSeconds - player?.videoProgress),
-      total: Number(song?.durationSeconds) || 0
-    }
+    isPlaying, duration,
+    title, artist,
+    album, albumCover,
+    albumAnimatedCover: null
   };
 
-  if (songId !== lastProcessedId) {
-    lastProcessedId = songId;
-
-    if (current.title && current.artist) {
-      GetAlbumCoverAnimated(
-        current.title, current.artist, current.album
-      ).then(response => {
-        if (response?.animated)
-          onMetadataUpdate?.({  
-            _id: songId,  
-            albumAnimatedCover: response.animated  
-          })
-      })
-    }
-
-    if (meta?.artist && meta?.track) {
-      ResolveMetadata(meta.artist, meta.track, current.album)
-        .then(async (metadata) => {
-          if (!metadata) return;
-
-          const update = {
+  if (title && artist) {
+    GetAlbumCoverAnimated(title, artist, album)
+      .then(response => {
+        if (response?.animated) {
+          onMetadataUpdate?.({
             _id: songId,
-            title: metadata.title || current.title,
-            artist: metadata.artist || current.artist,
-            albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
-          };
-
-          onMetadataUpdate?.(update)
-        })
-    }
+            albumAnimatedCover: response.animated
+          });
+        }
+      });
   }
 
-  return current
+  if (meta?.artist && meta?.track) {
+    ResolveMetadata(meta.artist, meta.track, album)
+      .then(async (metadata) => {
+        if (!metadata) return;
+
+        onMetadataUpdate?.({
+          _id: songId,
+          title: metadata.title || title,
+          artist: metadata.artist || artist,
+          albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : albumCover,
+        });
+      })
+  }
+
+  return current;
 }
 
 function GetData(debug = false) {
@@ -127,17 +119,15 @@ export default {
 
     const handleConnect = () => onConnect?.();
     const handleDisconnect = () => onDisconnect?.();
-    const handleStateUpdate = async (state) => {
-      const data = await UpdatePlayerData(
-        state, metadata => {
-          onData?.(current => {
-            if ((current?._id && metadata?._id) &&  
-                (current._id !== metadata._id))
-              return current;
+    const handleStateUpdate = async state => {
+      const data = await UpdatePlayerData(state, metadata => {
+        onData?.(current => {
+          if (current?._id && metadata?._id && current._id !== metadata._id)
+            return current;
 
-            return { ...current, ...metadata }
-          })
+          return { ...current, ...metadata }
         });
+      });
 
       if (!data || data?.error || !IsValidTrack(data)) return;
 
@@ -164,7 +154,7 @@ export default {
           current?.duration?.total === next?.duration?.total;
 
         return (sameMetadata && samePlaybackState) ? current : next;
-      })
+      });
     };
 
     socket?.on('connect', handleConnect);
