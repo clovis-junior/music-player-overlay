@@ -40,7 +40,6 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
   const track = data?.track;
   const source = data?.source;
   const meta = NormalizeMetadata(track?.artist, track?.name);
-
   
   const isPlaying = data.is_playing || false;
   const title = meta?.track || track?.title || '';
@@ -70,6 +69,24 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
             _id: trackId,
             albumAnimatedCover: response.animated
           })
+      })
+  }
+
+  if (meta?.artist && meta?.track) {
+    ResolveMetadata(meta.artist, meta.track)
+      .then(async (metadata) => {
+        if (!metadata) return;
+
+        const update = {
+          title: metadata.title || current.title,
+          artist: metadata.artist || current.artist,
+          albumCover: IsValidCover(metadata.albumCover) ? metadata.albumCover : current.albumCover,
+        };
+
+        if (current.albumAnimatedCover)
+          update.albumAnimatedCover = current.albumAnimatedCover;
+
+        onMetadataUpdate?.(update)
       })
   }
 
@@ -127,6 +144,7 @@ export default {
 
         const next = {
           ...current, ...data,
+          albumCover: data?.albumCover || current?.albumCover,
           albumAnimatedCover: isNewTrack ? null : current?.albumAnimatedCover
         };
 
