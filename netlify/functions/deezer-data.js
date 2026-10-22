@@ -1,68 +1,52 @@
-export async function handler(event) {
-  const params = new URLSearchParams(event.queryStringParameters);
+import { IsEmpty } from './Utils';
 
-  const artist = params.get('artist');
-  const track = params.get('track');
+const cache = new Map();
 
-  if (!artist || !track) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error: 'Missing metadata'
-      })
-    };
-  }
+async function getMetadata(artist, track) {
+  if (!artist || !track)
+    return null;
 
-  const cleanTrack = track
-    ?.replace(/(\[.*?\]|\(.*?\))/g, '')
-    ?.replace(/ft\..*|feat\..*/i, '')
-    ?.trim();
-
-  const cleanArtist = artist.split('/')?.[0]?.split(',')?.[0]?.trim();
+  const params = new URLSearchParams({
+    artist,
+    track
+  });
 
   try {
-    const query = encodeURIComponent(
-      `${cleanArtist} ${cleanTrack}`
-    );
-
     const response = await fetch(
-      `https://api.deezer.com/search?q=${query}`
+      `/.netlify/functions/deezer-data?${params}`
     );
 
-    const data = await response.json();
-    const result = data?.data?.[0];
+    if (!response.ok)
+      return null;
 
-    if (!result) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify(null)
-      };
-    }
+    return await response.json();
 
-    const artists = result?.contributors
-      ?.map(artist => artist?.name)
-      ?.filter(Boolean)?.join(', ') 
-      || result?.artist?.name;
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        title: result.title,
-        artist: artists,
-        album: result.album?.title,
-        albumCover: result.album?.cover_xl
-      })
-    };
-
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: error.message
-      })
-    };
+  } catch {
+    return null;
   }
+}
+
+export function getCachedMetadata(artist, title) {
+  if (IsEmpty(artist) || IsEmpty(title))
+    return Promise.resolve(null);
+
+  const key = `${artist}|${title}`
+    .toLowerCase()
+    .trim();
+
+  if (cache.has(key))
+    return cache.get(key);
+
+  const promise = getMetadata(artist, title).then((data) => {
+    if (!data)
+      cache.delete(key);
+
+    return data;
+  }).catch(() => {
+    cache.delete(key);
+    return null
+  });
+
+  cache.set(key, promise);
+  return promise
 }
