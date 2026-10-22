@@ -46,7 +46,7 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
   const title = meta?.track || track?.title || '';
   const artist = meta?.artist || track?.artist || '';
   const album = track?.album?.name || '';
-  const albumCover = track?.thumbnails?.at(-1)?.url || null;
+  const albumCover = track?.album?.image || null;
   const duration = {
     elapsed: Number(data?.progress) || 0,
     remaining: Math.max(0, (track?.duration || 0) - (data?.progress || 0)),
