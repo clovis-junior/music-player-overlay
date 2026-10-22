@@ -172,42 +172,57 @@ connect({ onConnect, onDisconnect, onData }) {
       });
     };
 
-    Promise.resolve()
-      .then(() => ResolveMetadata(data.artist, data.title))
-      .then(metadata => {
-        if (!metadata || !stillCurrent()) return;
-      
-        const update = {
-          title: metadata.title || data.title,
-          artist: metadata.artist || data.artist
-        };
-      
-        if (IsValidCover(metadata.albumCover))
-          update.albumCover = metadata.albumCover;
-      
-        applyMetadata(update);
-      }).catch(error => {
-        console.error('ResolveMetadata error:', error);
-      });
+const EnrichTrackMetadata = async () => {
+  if (!stillCurrent()) return;
 
-    Promise.resolve()
-      .then(() =>
-        GetAlbumCoverAnimated(
-          data.title, data.artist,
-          data.album
-        )
-      )
-      .then(response => {
-        if (!response?.animated || !stillCurrent())
-          return;
+  let metadata = null;
 
-        applyMetadata({
-          albumAnimatedCover: response.animated
-        });
-      })
-      .catch(error => {
-        console.error('GetAlbumCoverAnimated error:', error);
-      });
+  try {
+    metadata = await ResolveMetadata(data.artist, data.title);
+  } catch (error) {
+    console.error('ResolveMetadata error:', error);
+  }
+
+  if (!stillCurrent()) return;
+
+  const title = metadata?.title || data.title;
+  const artist = metadata?.artist || data.artist;
+  const album = metadata?.album || data.album;
+
+  const update = { title, artist };
+
+  if (IsValidCover(metadata?.albumCover))
+    update.albumCover = metadata.albumCover;
+
+  applyMetadata(update);
+
+  try {
+    let response = await GetAlbumCoverAnimated(
+      title, artist, album
+    );
+
+    if (!stillCurrent()) return;
+
+    if (!response?.animated &&
+      (title !== data.title || artist !== data.artist)) {
+      response = await GetAlbumCoverAnimated(
+        data.title, data.artist, data.album
+      );
+    }
+
+    if (!response?.animated || !stillCurrent())
+      return;
+
+    applyMetadata({
+      albumAnimatedCover: response.animated
+    });
+  } catch (error) {
+    console.error('Animated artwork error:', error);
+  }
+};
+
+EnrichTrackMetadata()
+
   };
 
   socket?.on('connect', handleConnect);
