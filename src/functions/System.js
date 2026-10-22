@@ -47,7 +47,7 @@ async function UpdatePlayerData(data, onMetadataUpdate) {
   const song = data?.video;
   const meta = NormalizeMetadata(song?.author, song?.title);
 
-  const songId = song?.id || `${song?.author || ''}|${song?.title || ''}`.toLowerCase().trim();
+  const songId = song?.id || `${meta?.track || song?.title || ''}`.toLowerCase().trim();
   const isPlaying = player?.trackState === 1;
   const title = meta?.track || song?.title || '';
   const artist = meta?.artist || song?.author || '';
