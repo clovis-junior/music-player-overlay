@@ -127,8 +127,7 @@ export default {
   
         const next = {
           ...current, ...data,
-          albumCover: isNewTrack ? data.albumCover : current?.albumCover
-          ),
+          albumCover: isNewTrack ? data.albumCover : current?.albumCover,
           albumAnimatedCover: isNewTrack
             ? null : current?.albumAnimatedCover
         };
