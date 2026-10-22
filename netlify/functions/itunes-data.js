@@ -1,4 +1,5 @@
-const TOP_REGIONS = ['US', 'GB', 'JP', 'BR', 'DE', 'FR'];
+const REGIONS = ['US', 'GB', 'JP', 'KR', 'BR', 'DE', 'FR'];
+const ASIAN_CHARS_REGEX = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u4e00-\u9faf\u3400-\u4dbf\uac00-\ud7af]/;
 
 export async function handler(event) {
   const params = new URLSearchParams(event.queryStringParameters);
@@ -13,6 +14,17 @@ export async function handler(event) {
       headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ error: 'Missing metadata' })
     }
+  }
+
+  const activeRegions = [...REGIONS];
+  if (ASIAN_CHARS_REGEX.test(artist + track)) {
+    ['KR', 'JP'].forEach(country => {
+      const index = activeRegions.indexOf(country);
+      if (index > -1) {
+        activeRegions.splice(index, 1);
+        activeRegions.unshift(country);
+      }
+    })
   }
 
   const cleanTrack = track?.replace(/(\[.*?\]|\(.*?\))/g, '')?.replace(/ft\..*|feat\..*/i, '')?.trim();
@@ -30,12 +42,12 @@ export async function handler(event) {
         const data = await res.json();
         return data?.results || []
       } catch {
-        return [];
+        return []
       }
     });
 
     const responses = await Promise.all(promises);
-    return responses.flat()
+    return responses.flat();
   }
 
   try {
@@ -43,16 +55,16 @@ export async function handler(event) {
 
     if (cleanAlbum) {
       const strictTerm = `${cleanArtist} ${cleanTrack} ${cleanAlbum}`;
-      results = await searchAcrossRegions(strictTerm, TOP_REGIONS)
+      results = await searchAcrossRegions(strictTerm, activeRegions)
     }
 
     if (results.length === 0) {
       const focusedTerm = `${cleanArtist} ${cleanTrack}`;
-      results = await searchAcrossRegions(focusedTerm, TOP_REGIONS)
+      results = await searchAcrossRegions(focusedTerm, activeRegions)
     }
 
     if (results.length === 0)
-      results = await searchAcrossRegions(cleanTrack, TOP_REGIONS);
+      results = await searchAcrossRegions(cleanTrack, activeRegions);
 
     if (results.length === 0) {
       return {
@@ -65,7 +77,6 @@ export async function handler(event) {
     const bestMatch = results.reduce((best, current) => {
       let currentScore = 0;
       
-      // Comparações ignorando maiúsculas/minúsculas
       if (current.trackName?.toLowerCase().includes(cleanTrack.toLowerCase())) currentScore += 5;
       if (current.artistName?.toLowerCase().includes(cleanArtist.toLowerCase())) currentScore += 4;
       if (cleanAlbum && current.collectionName?.toLowerCase().includes(cleanAlbum.toLowerCase())) currentScore += 3;
