@@ -132,8 +132,9 @@ export function NormalizeMetadata(author, title) {
   let track = title
     ?.replace(/\s*\(Official.*?\)/gi, '')
     ?.replace(/\s*\[Official.*?\]/gi, '')
-    ?.replace(/\s*Official Audio/gi, '')
-    ?.replace(/\s*Official Video/gi, '')
+    ?.replace(/\s*Official (Audio|Video|Music Video)/gi, '')
+    ?.replace(/\s*\((Lyric Video|Visualizer|Live|Remix)\)/gi, '')
+    ?.replace(/\s*\[(Lyric Video|Visualizer|Live|Remix)\]/gi, '')
     ?.trim();
 
   if (artist && track) {
