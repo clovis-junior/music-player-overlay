@@ -1,5 +1,5 @@
 import { GetAlbumCoverAnimated, ResolveMetadata } from './ResolveMetadata';
-import { GetURLParams, NormalizeMetadata } from './Utils';
+import { IsEmpty, GetURLParams, NormalizeMetadata } from './Utils';
 import { io } from 'socket.io-client';
 
 const params = GetURLParams();
