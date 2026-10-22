@@ -1,5 +1,4 @@
 const REGIONS = ['US', 'GB', 'JP', 'KR', 'BR', 'DE', 'FR'];
-const ASIAN_CHARS_REGEX = /[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uffef\u4e00-\u9faf\u3400-\u4dbf\uac00-\ud7af]/;
 
 export async function handler(event) {
   const params = new URLSearchParams(event.queryStringParameters);
@@ -14,17 +13,6 @@ export async function handler(event) {
       headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ error: 'Missing metadata' })
     }
-  }
-
-  const activeRegions = [...REGIONS];
-  if (ASIAN_CHARS_REGEX.test(artist + track)) {
-    ['KR', 'JP'].forEach(country => {
-      const index = activeRegions.indexOf(country);
-      if (index > -1) {
-        activeRegions.splice(index, 1);
-        activeRegions.unshift(country);
-      }
-    })
   }
 
   const cleanTrack = track?.replace(/(\[.*?\]|\(.*?\))/g, '')?.replace(/ft\..*|feat\..*/i, '')?.trim();
@@ -42,7 +30,7 @@ export async function handler(event) {
         const data = await res.json();
         return data?.results || []
       } catch {
-        return []
+        return [];
       }
     });
 
@@ -55,16 +43,16 @@ export async function handler(event) {
 
     if (cleanAlbum) {
       const strictTerm = `${cleanArtist} ${cleanTrack} ${cleanAlbum}`;
-      results = await searchAcrossRegions(strictTerm, activeRegions);
+      results = await searchAcrossRegions(strictTerm, REGIONS)
     }
 
     if (results.length === 0) {
       const focusedTerm = `${cleanArtist} ${cleanTrack}`;
-      results = await searchAcrossRegions(focusedTerm, activeRegions);
+      results = await searchAcrossRegions(focusedTerm, REGIONS)
     }
 
     if (results.length === 0)
-      results = await searchAcrossRegions(cleanTrack, activeRegions);
+      results = await searchAcrossRegions(cleanTrack, REGIONS);
 
     if (results.length === 0) {
       return {
@@ -84,14 +72,6 @@ export async function handler(event) {
       current.score = currentScore;
       return (!best || currentScore > best.score) ? current : best;
     }, null);
-
-    if (!bestMatch || bestMatch.score === 0) {
-      return {
-        statusCode: 200,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify(null)
-      }
-    }
 
     const rawCover = bestMatch?.artworkUrl100 || '';
     const hdCover = rawCover.replace('100x100bb', '1200x1200bb');
