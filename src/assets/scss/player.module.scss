@@ -638,10 +638,6 @@ $player-equalizer-gap: 2px;
       @include backdrop-filter(initial !important);
       box-shadow: initial !important;
 
-      &:not(:has(> .music_album_blur_container)) {
-        text-shadow: 0 0 0 transparent !important;
-      }
-
       &.inverted {
         & .music_infos {
           & > .music_album_blur_container {
@@ -662,6 +658,10 @@ $player-equalizer-gap: 2px;
         overflow: hidden;
         border-radius: $radius;
         position: relative;
+
+        &:not(:has(> .music_album_blur_container)) {
+          text-shadow: 0 0 0 transparent !important;
+        }
       }
 
       & .music_infos {
