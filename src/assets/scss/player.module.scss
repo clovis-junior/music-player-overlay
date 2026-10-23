@@ -612,6 +612,10 @@ $player-equalizer-gap: 2px;
       @extend .music_player_surface;
     }
 
+    &:not(:has(> .music_album_blur_container)) {
+      text-shadow: 0 0 0 transparent !important;
+    }
+
     &.square {
       & .player_content {
         & .music_infos,
