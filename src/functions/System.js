@@ -200,8 +200,9 @@ export default {
             const artist = metadata?.artist || data?.artist;
             const album = metadata?.album || data?.album;
   
-            if (title !== data.title || artist !== data.artist || 
-                album !== data.album)
+            if (title?.toLowerCase() !== data.title?.toLowerCase() ||
+                artist?.toLowerCase() !== data.artist?.toLowerCase() || 
+                album ?.toLowerCase() !== data.album?.toLowerCase())
               response = await GetAlbumCoverAnimated(title, artist, album);
           }
   
