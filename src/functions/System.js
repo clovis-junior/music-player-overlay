@@ -127,24 +127,24 @@ export default {
   
         const next = {
           ...current, ...data,
-          albumCover: isNewTrack ? data.albumCover : current?.albumCover,
+          albumCover: isNewTrack ? data?.albumCover : current?.albumCover,
           albumAnimatedCover: isNewTrack
             ? null : current?.albumAnimatedCover
         };
   
         const sameMetadata =
-          current?._id === next._id &&
-          current?.title === next.title &&
-          current?.artist === next.artist &&
-          current?.album === next.album &&
-          current?.albumCover === next.albumCover &&
-          current?.albumAnimatedCover === next.albumAnimatedCover;
+          current?._id === next?._id &&
+          current?.title === next?.title &&
+          current?.artist === next?.artist &&
+          current?.album === next?.album &&
+          current?.albumCover === next?.albumCover &&
+          current?.albumAnimatedCover === next?.albumAnimatedCover;
   
         const samePlaybackState =
-          current?.isPlaying === next.isPlaying &&
-          current?.duration?.elapsed === next.duration.elapsed &&
-          current?.duration?.remaining === next.duration.remaining &&
-          current?.duration?.total === next.duration.total;
+          current?.isPlaying === next?.isPlaying &&
+          current?.duration?.elapsed === next?.duration?.elapsed &&
+          current?.duration?.remaining === next?.duration?.remaining &&
+          current?.duration?.total === next?.duration?.total;
   
         return sameMetadata && samePlaybackState
           ? current : next;
@@ -169,12 +169,12 @@ export default {
           if (!metadata || !stillCurrent()) return;
   
           const update = {
-            title: metadata.title || data.title,
-            artist: metadata.artist || data.artist
+            title: metadata?.title || data?.title,
+            artist: metadata?.artist || data?.artist
           };
   
           if (IsValidCover(metadata.albumCover))
-            update.albumCover = metadata.albumCover;
+            update.albumCover = metadata?.albumCover;
   
           applyMetadata(update)
         })
@@ -184,7 +184,7 @@ export default {
   
       Promise.resolve()
         .then(() =>
-          GetAlbumCoverAnimated(data.title, data.artist, data.album)
+          GetAlbumCoverAnimated(data?.title, data?.artist, data?.album)
         )
         .then(async response => {
           if (!stillCurrent()) return;
@@ -196,9 +196,9 @@ export default {
   
             if (!stillCurrent()) return;
   
-            const title = metadata?.title || data.title;
-            const artist = metadata?.artist || data.artist;
-            const album = metadata?.album || data.album;
+            const title = metadata?.title || data?.title;
+            const artist = metadata?.artist || data?.artist;
+            const album = metadata?.album || data?.album;
   
             if (title !== data.title || artist !== data.artist || 
                 album !== data.album)
