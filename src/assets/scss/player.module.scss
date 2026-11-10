@@ -631,7 +631,8 @@ $player-equalizer-gap: 2px;
 
     &.transparent {
       & .player_content {
-        padding: 8px;
+        gap: 0;
+        padding: 0 0 2px 4px;
       }
       
       & .music_album_art,
@@ -644,12 +645,9 @@ $player-equalizer-gap: 2px;
         padding: initial !important;
       }
 
-      & .music_infos {
-        gap: 8px;
-      }
-
       & .player_features {
         gap: 12px;
+        overflow: initial !important;
       }
     }
 
