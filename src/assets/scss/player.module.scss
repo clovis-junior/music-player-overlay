@@ -629,13 +629,18 @@ $player-equalizer-gap: 2px;
       @extend .music_player_surface;
     }
 
+    &:not(.transparent) {
+      & .player_content {
+        @include backdrop-filter(initial !important);
+      }
+    }
+
     & .player_content {
       gap: 6px;
       padding: 0;
       border-radius: 0;
       overflow: initial !important;
       background-color: initial !important;
-      @include backdrop-filter(initial !important);
       box-shadow: initial !important;
 
       &.inverted {
@@ -864,13 +869,13 @@ $player-equalizer-gap: 2px;
       border-radius: 1px;
     }
 
-    & .music_progress_bar {
-      --radius: 2px !important;
+    // & .music_progress_bar {
+    //   --radius: 2px !important;
 
-      & .music_progress_bar_fill.with_pointer::after {
-        border-radius: 4px !important;
-      }
-    }
+    //   & .music_progress_bar_fill.with_pointer::after {
+    //     border-radius: 4px !important;
+    //   }
+    // }
   }
 
   & .music_album_art,
