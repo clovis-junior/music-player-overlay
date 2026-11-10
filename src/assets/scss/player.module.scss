@@ -629,8 +629,9 @@ $player-equalizer-gap: 2px;
       @extend .music_player_surface;
     }
 
-    &:not(.transparent) {
-      & .player_content {
+    &.transparent {
+      & .music_album_art,
+      & .music_infos, & .player_features {
         @include backdrop-filter(initial !important);
       }
     }
@@ -641,6 +642,7 @@ $player-equalizer-gap: 2px;
       border-radius: 0;
       overflow: initial !important;
       background-color: initial !important;
+      @include backdrop-filter(initial !important);
       box-shadow: initial !important;
 
       &.inverted {
