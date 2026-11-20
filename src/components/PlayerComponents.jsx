@@ -152,6 +152,38 @@ export function MusicTimes({
   },
   children = null
 }) {
+
+  const targetEnd = remainingTime ? duration?.remaining : duration?.total;
+
+  const [display, setDisplay] = useState({
+    elapsed: duration?.elapsed || 0,
+    end: targetEnd || 0
+  });
+
+  useEffect(() => {
+    const targetElapsed = duration?.elapsed || 0;
+    const targetTotal = targetEnd || 0;
+
+    const timer = setInterval(() => {
+      setDisplay(prev => {
+        const diffElapsed = targetElapsed - prev.elapsed;
+        const diffEnd = targetTotal - prev.end;
+
+        if (Math.abs(diffElapsed) <= 2 && Math.abs(diffEnd) <= 2) {
+          clearInterval(timer);
+          return { elapsed: targetElapsed, end: targetTotal }
+        }
+
+        return {
+          elapsed: Math.round(prev.elapsed + diffElapsed * 0.25),
+          end: Math.round(prev.end + diffEnd * 0.25)
+        }
+      })
+    }, 25);
+
+    return () => clearInterval(timer);
+  }, [duration?.elapsed, targetEnd]);
+  
   const classes = [
     styles?.music_time_values,
     align === 'left' && styles?.left,
@@ -161,9 +193,9 @@ export function MusicTimes({
 
   return (
     <div className={classes}>
-      <span id={styles?.music_time_elapsed}>{ConvertTime(duration?.elapsed)}</span>
+      <span id={styles?.music_time_elapsed}>{ConvertTime(display?.elapsed)}</span>
       {children}
-      <span id={styles?.music_time_total}>{ConvertTime(remainingTime ? duration?.remaining : duration?.total)}</span>
+      <span id={styles?.music_time_total}>{ConvertTime(display?.end)}</span>
     </div>
   )
 }
@@ -290,13 +322,66 @@ export function Scroll(props) {
   )
 }
 
-export function MusicInfo({ children }) {
+// export function MusicInfo({ children }) {
+//   return (
+//     <div className={styles?.music_info_mask}>
+//       {children}
+//     </div>
+//   )
+// }
+
+export function MusicInfo({ children, delay = 0 }) {
+  const currentText = children?.props?.children ?? children;
+
+  const [state, setState] = useState({
+    currentText,
+    currentNode: children,
+    previousNode: null,
+    isChanging: false
+  });
+
+  if (currentText !== state.currentText) {
+    setState({
+      currentText,
+      currentNode: children,
+      previousNode: state.currentNode,
+      isChanging: true
+    })
+  }
+
+  useEffect(() => {
+    if (!state.isChanging) return;
+
+    const timer = setTimeout(() => {
+      setState((prev) => ({
+        ...prev,
+        previousNode: null,
+        isChanging: false
+      }))
+    }, 450 + delay);
+
+    return () => clearTimeout(timer);
+  }, [state.isChanging, state.currentText, delay]);
+
   return (
-    <div className={styles?.music_info_mask}>
-      {children}
+    <div className={styles.music_info_mask}>
+      {state.isChanging && state.previousNode && (
+        <div className={`${styles.slot} ${styles.exiting}`}
+          style={{ animationDelay: `${delay}ms` }}
+          aria-hidden="true">
+          {state.previousNode}
+        </div>
+      )}
+
+      <div key={state.currentText}
+        className={`${styles.slot} ${state.isChanging ? styles.entering : ''}`}
+        style={{ animationDelay: `${delay}ms` }}>
+        {state.currentNode}
+      </div>
     </div>
   )
 }
+
 
 export function PlayerInfos({ children, inverted = false, align = 'left' }) {
   const style = [
@@ -325,7 +410,7 @@ export function MusicAlbumArt({
     return null;
 
   const isAnimatedValid = Boolean(animated) && !IsEmpty(albumAnimated);
-  
+
   return (
     <div className={styles?.music_album_art}>
       {showPlatform && platformIcon && (

@@ -4,6 +4,32 @@
 /* ********************************************************
     Animations
 ******************************************************** */
+@keyframes radio-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(115%);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+    filter: blur(0);
+  }
+}
+
+@keyframes radio-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0%);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-115%);
+    filter: blur(2px);
+  }
+}
+
 @keyframes fade-in {
   0% {
     opacity: 0;
@@ -153,13 +179,30 @@ $player-equalizer-gap: 2px;
   width: 100%;
   min-height: 1rem;
   max-height: 2rem;
-  display: block;
+  display: grid;
+  align-items: center;
   padding: 4px 0;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, white 2px, white calc(100% - 2rem), transparent 100%);
   text-overflow: ellipsis;
   position: relative;
+
+  & .slot {
+    grid-area: 1 / 1;
+    width: 100%;
+    min-width: 0;
+    will-change: transform, opacity, filter;
+
+    &.entering {
+      animation: radio-slide-in 450ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    &.exiting {
+      animation: radio-slide-out 450ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      pointer-events: none;
+    }
+  }
 }
 
 .music_progress_bar {
@@ -497,7 +540,7 @@ $player-equalizer-gap: 2px;
     @include backdrop-filter(blur(8px));
     box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
 
-    &:not(:has(> .music_album_blur_container)) {
+    &:not(.transparent):not(:has(> .music_album_blur_container)) {
       text-shadow: 0 0 0 transparent !important;
     }
 
@@ -615,11 +658,11 @@ $player-equalizer-gap: 2px;
       }
     }
 
-    &.no_shadow {
+    &.no_shadow, &.transparent {
       & .music_album_art,
       & .music_infos,
       & .player_features {
-        box-shadow: 0 0 0 0 transparent;
+        box-shadow: 0 0 0 0 transparent !important;
       }
     }
 
@@ -633,6 +676,7 @@ $player-equalizer-gap: 2px;
       & .player_content {
         gap: 0;
         padding: 0 0 2px 4px;
+        text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.8) !important;
       }
       
       & .music_album_art,
@@ -647,6 +691,7 @@ $player-equalizer-gap: 2px;
 
       & .player_features {
         gap: 12px;
+        margin-top: 6px;
         overflow: initial !important;
       }
     }
@@ -681,9 +726,9 @@ $player-equalizer-gap: 2px;
         border-radius: $radius;
         position: relative;
 
-        &:not(:has(> .music_album_blur_container)) {
-          text-shadow: 0 0 0 transparent !important;
-        }
+        // &:not(:has(> .music_album_blur_container)) {
+        //   text-shadow: 0 0 0 transparent !important;
+        // }
       }
 
       & .music_infos {

@@ -86,12 +86,12 @@ function PlayerContent({ platformIcon = null, options = {}, music = {} }) {
         {((options?.removeAlbumArt || options?.showVinyl) && options?.showPlatformIcon) && (
           <Streaming pathIcon={platformIcon} />
         )}
-        <MusicInfo>
+        <MusicInfo delay={0}>
           <Scroll key={music?.title} id={styles?.music_title} timer={6}>
             {music?.title}
           </Scroll>
         </MusicInfo>
-        <MusicInfo>
+        <MusicInfo delay={75}>
           <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
             {music?.artist}
           </Scroll>
@@ -190,12 +190,12 @@ export function AlbumArtCardSkin(props) {
                 duration={music?.duration} />
             )}
             <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
-              <MusicInfo>
+              <MusicInfo delay={0}>
                 <Scroll key={music?.title} id={styles?.music_title} timer={6}>
                   {music?.title}
                 </Scroll>
               </MusicInfo>
-              <MusicInfo>
+              <MusicInfo delay={75}>
                 <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
                   {music?.artist}
                 </Scroll>
@@ -217,12 +217,12 @@ export function CompactSkin(props) {
 
   const infos = (
     <PlayerInfos inverted={options?.invertInfos} align={options?.musicInfosAlign}>
-      <MusicInfo>
+      <MusicInfo delay={0}>
         <Scroll key={music?.title} id={styles?.music_title} timer={6}>
           {music?.title}
         </Scroll>
       </MusicInfo>
-      <MusicInfo>
+      <MusicInfo delay={75}>
         <Scroll key={music?.artist} id={styles?.music_artist} timer={8}>
           {music?.artist}
         </Scroll>
