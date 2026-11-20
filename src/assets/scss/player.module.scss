@@ -328,6 +328,7 @@ $player-equalizer-gap: 2px;
     --text-pallete-2nd: #{hexToRGB($light-pallete-2nd)};
     --accent-color: #{hexToRGB($light-pallete-3rd)};
 
+    align-items: stretch !important;
     padding: unset !important;
     overflow: unset !important;
 
@@ -353,16 +354,19 @@ $player-equalizer-gap: 2px;
     }
 
     @include backdrop-filter(none !important);
-    box-shadow: 0 0 0 transparent !important;
 
     & .music_album_art,
     & .player_content {
       @include backdrop-filter(none !important);
-      box-shadow: 0 0 0 transparent !important;
+    }
+
+    &:not(.no_shadow) .music_album_art {
+      box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
     }
 
     & .player_content {
       overflow: initial !important;
+      box-shadow: 0 0 0 transparent !important;
     }
   }
 
@@ -540,6 +544,10 @@ $player-equalizer-gap: 2px;
     @include backdrop-filter(blur(8px));
     box-shadow: 6px 6px 2px 0 rgba(0, 0, 0, 0.6);
 
+    &.transparent {
+      box-shadow: 0 0 0 0 transparent !important;
+    }
+
     &:not(.transparent):not(:has(> .music_album_blur_container)) {
       text-shadow: 0 0 0 transparent !important;
     }
@@ -648,7 +656,7 @@ $player-equalizer-gap: 2px;
 
   &.alternative {
     gap: 6px;
-    
+
     &.square {
       & .player_content {
         & .music_infos,
@@ -658,7 +666,7 @@ $player-equalizer-gap: 2px;
       }
     }
 
-    &.no_shadow, &.transparent {
+    &.no_shadow {
       & .music_album_art,
       & .music_infos,
       & .player_features {
@@ -673,26 +681,16 @@ $player-equalizer-gap: 2px;
     }
 
     &.transparent {
-      & .player_content {
-        gap: 0;
-        padding: 0 0 2px 4px;
-        text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.8) !important;
-      }
-      
       & .music_album_art,
-      & .music_infos, & .player_features {
-        @include backdrop-filter(initial !important);
-      }
-
-      & .music_infos, & .player_features {
-        flex: initial !important;
-        padding: initial !important;
-      }
-
+      & .music_infos,
       & .player_features {
-        gap: 12px;
-        margin-top: 6px;
-        overflow: initial !important;
+        @include backdrop-filter(initial !important);
+        text-shadow: inherit !important;
+      }
+
+      & .music_infos,
+      & .player_features {
+        box-shadow: 0 0 0 0 transparent !important;
       }
     }
 
@@ -914,7 +912,7 @@ $player-equalizer-gap: 2px;
     animation-name: waveform;
   }
 
-  &:not(.full, .alternative, .vertical).no_shadow {
+  &:not(.full, .vertical).no_shadow {
     & .music_album_art,
     & .player_content {
       box-shadow: 0 0 0 0 transparent;
